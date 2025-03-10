@@ -1,0 +1,5 @@
+[Bb]uild/
+[Bb]in/
+[Ll]ib/
+.cache/
+core.*
