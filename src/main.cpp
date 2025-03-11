@@ -1,7 +1,13 @@
-#include <iostream>
+#include "Scenes/GameScene/GameScene.hpp"
+#include "base/Game.hpp"
+#include "base/systems/RenderSystem.hpp"
 
 int main(void)
 {
-  std::cout << "Hello World!\n";
+  Base::Game game;
+  game.Init(1280, 720, "Spectrum");
+  game.RegisterScene<GameScene>();
+  game.RegisterSystem<Base::RenderSystem>(true);
+  game.Run();
   return 0;
 }
