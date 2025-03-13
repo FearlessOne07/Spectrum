@@ -1,7 +1,12 @@
+#pragma once
+#include "SpawnManager/SpawnManager.hpp"
 #include "base/Scene.hpp"
 
 class GameScene : public Base::Scene
 {
+private: // Attributes
+  SpawnManager _spawnMan = SpawnManager();
+
 private:
   void GetInput() override;
 
