@@ -1,4 +1,5 @@
 #include "SpawnManager.hpp"
+#include "Components/GemComponent/GemComponent.hpp"
 #include "Components/ShootComponent/ShootComponent.hpp"
 #include "base/Entity.hpp"
 #include "base/EntityManager.hpp"
@@ -11,8 +12,9 @@
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "raylib/raylib.h"
+#include <cstddef>
 
-void SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 position)
+size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 position)
 {
   Base::Entity *e = entityManager->AddEntity();
 
@@ -64,4 +66,7 @@ void SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 posit
   camcmp->cameraMode = Base::CameraMode::SMOOTH_FOLLOW;
   camcmp->maxFollowDistance = 200.f;
   camcmp->cameraSpeed = 1000.f;
+
+  auto *gemcmp = e->AddComponent<GemComponent>();
+  return e->GetID();
 }

@@ -1,11 +1,13 @@
 #pragma once
 #include "SpawnManager/SpawnManager.hpp"
 #include "base/Scene.hpp"
+#include <cstddef>
 
 class GameScene : public Base::Scene
 {
 private: // Attributes
   SpawnManager _spawnMan = SpawnManager();
+  size_t _playerID = 0;
 
 private:
   void GetInput() override;

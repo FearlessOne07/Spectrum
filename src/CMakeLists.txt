@@ -3,6 +3,8 @@ set(SOURCES
   "./Scenes/GameScene/GameScene.cpp"
   "./SpawnManager/SpawnManager.cpp"
   "./Systems/BulletSystem/BulletSystem.cpp"
+  "./Systems/GemSystem/GemSystem.cpp"
+  "./Gems/RedGem/RedGem.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
