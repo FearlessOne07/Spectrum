@@ -1,8 +1,6 @@
 #include "GameScene.hpp"
-#include "Components/GemComponent/GemComponent.hpp"
-#include "Gems/RedGem/RedGem.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
-#include "Systems/GemSystem/GemSystem.hpp"
+#include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "base/RenderContext.hpp"
 #include "base/RenderContextSingleton.hpp"
 #include "base/SystemManager.hpp"
@@ -22,9 +20,8 @@ void GameScene::Enter( //
   systemManager->ActivatSystem<Base::RenderSystem>();
   systemManager->ActivatSystem<Base::MoveSystem>();
   systemManager->ActivatSystem<Base::InputSystem>();
-  systemManager->ActivatSystem<Base::CameraSystem>();
   systemManager->ActivatSystem<BulletSystem>();
-  systemManager->ActivatSystem<GemSystem>();
+  systemManager->ActivatSystem<TrackingSystem>();
 
   // Spawn Player
   _playerID = _spawnMan.SpawnPlayer(GetEntityManager(), {0, 0});
@@ -32,13 +29,15 @@ void GameScene::Enter( //
   // Init Camera
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   rd->camera.offset = {rd->gameWidth / 2, rd->gameHeight / 2};
-  rd->camera.zoom = 1.1;
+  rd->camera.zoom = 0.8;
   rd->camera.target = {0, 0};
 }
 
 void GameScene::Update(float dt, Base::SystemManager *systemManager)
 {
   GetInput();
+
+  _spawnMan.SpawnEnemies(dt, GetEntityManager(), _playerID);
   systemManager->Update(dt);
 }
 
@@ -60,10 +59,4 @@ void GameScene::Exit(Base::SystemManager *systemManager, Base::AssetManager *ass
 
 void GameScene::GetInput()
 {
-  if (IsKeyPressed(KEY_UP))
-  {
-    auto e = GetEntityManager()->GetEntity(_playerID);
-    auto *gemcmp = e->GetComponent<GemComponent>();
-    gemcmp->eqiupRequest = typeid(RedGem);
-  }
 }

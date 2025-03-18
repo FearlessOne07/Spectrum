@@ -6,6 +6,12 @@
 class SpawnManager
 {
 private:
+  float _spawnDuration = 7.f;
+  float _spawnTimer = _spawnDuration;
+
+  float _spawnOffset = 200;
+
 public:
   size_t SpawnPlayer(Base::EntityManager *entityManager, Vector2 position);
+  void SpawnEnemies(float dt, Base::EntityManager *entityManager, size_t playerID);
 };

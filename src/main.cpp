@@ -1,6 +1,6 @@
 #include "Scenes/GameScene/GameScene.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
-#include "Systems/GemSystem/GemSystem.hpp"
+#include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "base/Game.hpp"
 #include "base/systems/CameraSystem.hpp"
 #include "base/systems/InputSystem.hpp"
@@ -18,10 +18,12 @@ int main(void)
   // Register Systems
   game.RegisterSystem<Base::RenderSystem>(true);
   game.RegisterSystem<Base::InputSystem>();
-  game.RegisterSystem<GemSystem>();
   game.RegisterSystem<BulletSystem>();
   game.RegisterSystem<Base::MoveSystem>();
+  game.RegisterSystem<TrackingSystem>();
   game.RegisterSystem<Base::CameraSystem>();
+
+  // Run game
   game.Run();
   return 0;
 }

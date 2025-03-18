@@ -10,6 +10,12 @@
 #include <memory>
 #include <vector>
 
+void BulletSystem::Start()
+{
+}
+void BulletSystem::Stop()
+{
+}
 void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
 {
   std::vector<std::shared_ptr<Base::Entity>> entities_shtcmp = entityManager->Query<ShootComponent>();

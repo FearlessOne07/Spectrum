@@ -1,18 +1,20 @@
 #include "SpawnManager.hpp"
-#include "Components/GemComponent/GemComponent.hpp"
 #include "Components/ShootComponent/ShootComponent.hpp"
+#include "Components/TrackingComponent/TrackingComponent.hpp"
 #include "base/Entity.hpp"
 #include "base/EntityManager.hpp"
 #include "base/RenderContext.hpp"
 #include "base/RenderContextSingleton.hpp"
 #include "base/components/BoundingBoxComponent.hpp"
-#include "base/components/CameraComponent.hpp"
 #include "base/components/InputComponent.hpp"
 #include "base/components/MoveComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TransformComponent.hpp"
+#include "raylib.h"
 #include "raylib/raylib.h"
 #include <cstddef>
+#include <iostream>
+#include <random>
 
 size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 position)
 {
@@ -62,11 +64,73 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 pos
     shtcmp->target = GetScreenToWorld2D(rd->GetScreenToGame(GetMousePosition()), rd->camera);
   });
 
-  auto *camcmp = e->AddComponent<Base::CameraComponent>();
-  camcmp->cameraMode = Base::CameraMode::SMOOTH_FOLLOW;
-  camcmp->maxFollowDistance = 200.f;
-  camcmp->cameraSpeed = 1000.f;
-
-  auto *gemcmp = e->AddComponent<GemComponent>();
   return e->GetID();
+}
+
+void SpawnManager::SpawnEnemies(float dt, Base::EntityManager *entityManager, size_t playerID)
+{
+
+  if (_spawnTimer >= _spawnDuration)
+  {
+    _spawnTimer = 0.f;
+    std::cout << "Spawning...\n";
+    const Base::RenderContext *rctx = Base::RenderContextSingleton::GetInstance();
+
+    std::random_device rd;
+    std::mt19937_64 gen(rd());
+
+    std::uniform_int_distribution sideDist(1, 4);
+    int side = sideDist(gen);
+
+    Vector2 min = {-_spawnOffset, -_spawnOffset};
+    Vector2 max = {rctx->gameWidth + _spawnOffset, rctx->gameHeight + _spawnOffset};
+
+    Vector2 position = {0, 0};
+    float ypos = 0.f;
+    float xpos = 0.f;
+
+    switch (side)
+    {
+    case 1: // Right
+      ypos = std::uniform_real_distribution<float>(min.y, max.y)(gen);
+      position = GetScreenToWorld2D({max.x, ypos}, rctx->camera);
+      break;
+    case 2: // Left
+      ypos = std::uniform_real_distribution<float>(min.y, max.y)(gen);
+      position = GetScreenToWorld2D({min.x, ypos}, rctx->camera);
+      break;
+    case 3: // Up
+      xpos = std::uniform_real_distribution<float>(min.x, max.x)(gen);
+      position = GetScreenToWorld2D({xpos, min.y}, rctx->camera);
+      break;
+    case 4: // Down
+      xpos = std::uniform_real_distribution<float>(min.x, max.x)(gen);
+      position = GetScreenToWorld2D({xpos, max.y}, rctx->camera);
+      break;
+    }
+
+    Base::Entity *e = entityManager->AddEntity();
+
+    auto *transcmp = e->GetComponent<Base::TransformComponent>();
+    transcmp->position = position;
+
+    auto *trckcmp = e->AddComponent<TrackingComponent>();
+    trckcmp->targetEntityID = playerID;
+
+    auto *mvcmp = e->AddComponent<Base::MoveComponent>();
+    mvcmp->speed = std::uniform_int_distribution(200, 500)(gen);
+    mvcmp->acceleration = 4.f;
+
+    auto *shpcmp = e->AddComponent<Base::ShapeComponent>();
+    shpcmp->color = RED;
+    shpcmp->fill = true;
+    shpcmp->fillOutline = true;
+    shpcmp->outlineColor = WHITE;
+    shpcmp->points = 6;
+    shpcmp->radius = 30;
+  }
+  else
+  {
+    _spawnTimer += dt;
+  }
 }
