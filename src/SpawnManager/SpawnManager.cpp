@@ -42,10 +42,7 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 pos
   auto *abbcmp = e->AddComponent<Base::BoundingBoxComponent>();
   abbcmp->size = {.x = shpcmp->radius * 2, .y = shpcmp->radius * 2};
   abbcmp->positionOffset = {.x = shpcmp->radius, .y = shpcmp->radius};
-  abbcmp->draw = true;
-  abbcmp->fill = false;
-  abbcmp->color = RED;
-  abbcmp->nonFillThickness = 2;
+  abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HURTBOX);
 
   auto *inpcmp = e->AddComponent<Base::InputComponent>();
   inpcmp->BindKeyPressed(KEY_A, [mvcmp]() { mvcmp->targetVelocity.x = -1; });
@@ -128,6 +125,11 @@ void SpawnManager::SpawnEnemies(float dt, Base::EntityManager *entityManager, si
     shpcmp->outlineColor = WHITE;
     shpcmp->points = 6;
     shpcmp->radius = 30;
+
+    auto *abbcmp = e->AddComponent<Base::BoundingBoxComponent>();
+    abbcmp->size = {shpcmp->radius * 2, shpcmp->radius * 2};
+    abbcmp->positionOffset = {shpcmp->radius, shpcmp->radius};
+    abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HITBOX);
   }
   else
   {
