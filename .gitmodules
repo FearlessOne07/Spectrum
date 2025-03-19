@@ -1,3 +1,4 @@
 [submodule "vendor/Base"]
 	path = vendor/Base
 	url = https://github.com/FearlessOne07/Base
+	branch = main
