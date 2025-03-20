@@ -43,6 +43,9 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 pos
   abbcmp->size = {.x = shpcmp->radius * 2, .y = shpcmp->radius * 2};
   abbcmp->positionOffset = {.x = shpcmp->radius, .y = shpcmp->radius};
   abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HURTBOX);
+  abbcmp->draw = true;
+  abbcmp->fill = false;
+  abbcmp->color = RED;
 
   auto *inpcmp = e->AddComponent<Base::InputComponent>();
   inpcmp->BindKeyPressed(KEY_A, [mvcmp]() { mvcmp->targetVelocity.x = -1; });
