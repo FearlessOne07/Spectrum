@@ -4,7 +4,7 @@
 #include "base/RenderContext.hpp"
 #include "base/RenderContextSingleton.hpp"
 #include "base/SystemManager.hpp"
-#include "base/systems/CameraSystem.hpp"
+#include "base/systems/EntityCollisionSystem.hpp"
 #include "base/systems/InputSystem.hpp"
 #include "base/systems/MoveSystem.hpp"
 #include "base/systems/RenderSystem.hpp"
@@ -22,6 +22,7 @@ void GameScene::Enter( //
   systemManager->ActivatSystem<Base::InputSystem>();
   systemManager->ActivatSystem<BulletSystem>();
   systemManager->ActivatSystem<TrackingSystem>();
+  systemManager->ActivatSystem<Base::EntityCollisionSystem>();
 
   // Spawn Player
   _playerID = _spawnMan.SpawnPlayer(GetEntityManager(), {0, 0});

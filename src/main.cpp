@@ -3,6 +3,7 @@
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "base/Game.hpp"
 #include "base/systems/CameraSystem.hpp"
+#include "base/systems/EntityCollisionSystem.hpp"
 #include "base/systems/InputSystem.hpp"
 #include "base/systems/MoveSystem.hpp"
 #include "base/systems/RenderSystem.hpp"
@@ -22,6 +23,7 @@ int main(void)
   game.RegisterSystem<Base::MoveSystem>();
   game.RegisterSystem<TrackingSystem>();
   game.RegisterSystem<Base::CameraSystem>();
+  game.RegisterSystem<Base::EntityCollisionSystem>();
 
   // Run game
   game.Run();

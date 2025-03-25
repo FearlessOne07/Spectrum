@@ -1,17 +1,27 @@
 #include "BulletSystem.hpp"
 #include "Components/BulletComponent/BulletComponent.hpp"
 #include "Components/ShootComponent/ShootComponent.hpp"
+#include "Components/Tags/BulletTag.hpp"
+#include "Components/Tags/EnemyTag.hpp"
 #include "base/Entity.hpp"
 #include "base/EntityManager.hpp"
+#include "base/Event.hpp"
+#include "base/EventBus.hpp"
+#include "base/components/BoundingBoxComponent.hpp"
 #include "base/components/MoveComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TransformComponent.hpp"
+#include "base/events/EntityCollisionEvent.hpp"
 #include "raylib/raymath.h"
+#include <iostream>
 #include <memory>
 #include <vector>
 
 void BulletSystem::Start()
 {
+  Base::EventBus::GetInstance()->SubscribeEvent<Base::EntityCollisionEvent>(
+    [this](const std::shared_ptr<Base::Event> &event) -> void { this->EntityCollisionHandler(event); } //
+  );
 }
 void BulletSystem::Stop()
 {
@@ -29,8 +39,9 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
     {
       if (shtcmp->IsFiring)
       {
+
         shtcmp->bulletFireTimer = 0.f;
-        shtcmp->IsFiring = false;
+        std::cout << "Fire...\n";
 
         Base::Entity *bullet = entityManager->AddEntity();
 
@@ -51,6 +62,13 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
         auto bulcmp = bullet->AddComponent<BulletComponent>();
         bulcmp->lifeTime = shtcmp->bulletLifetime;
         bulcmp->target = shtcmp->target;
+
+        auto abbcmp = bullet->AddComponent<Base::BoundingBoxComponent>();
+        abbcmp->size = {shpcmp->radius * 2, shpcmp->radius * 2};
+        abbcmp->positionOffset = {shpcmp->radius, shpcmp->radius};
+        abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HITBOX);
+
+        bullet->AddComponent<BulletTag>();
       }
     }
     else
@@ -77,5 +95,19 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
         bulcmp->lifeTimer += dt;
       }
     }
+  }
+}
+
+void BulletSystem::EntityCollisionHandler(const std::shared_ptr<Base::Event> &event)
+{
+  auto collEvent = std::static_pointer_cast<Base::EntityCollisionEvent>(event);
+
+  auto attack = collEvent->hittBoxEntity;
+  auto defence = collEvent->hurtBoxEntity;
+
+  if (attack->HasComponent<BulletTag>() && defence->HasComponent<EnemyTag>())
+  {
+    defence->SetDead();
+    attack->SetDead();
   }
 }

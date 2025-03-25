@@ -1,5 +1,7 @@
 #include "SpawnManager.hpp"
 #include "Components/ShootComponent/ShootComponent.hpp"
+#include "Components/Tags/EnemyTag.hpp"
+#include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent/TrackingComponent.hpp"
 #include "base/Entity.hpp"
 #include "base/EntityManager.hpp"
@@ -63,6 +65,9 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 pos
     shtcmp->IsFiring = true;
     shtcmp->target = GetScreenToWorld2D(rd->GetScreenToGame(GetMousePosition()), rd->camera);
   });
+  inpcmp->BindMouseButtonReleased(MOUSE_BUTTON_LEFT, [shtcmp]() { shtcmp->IsFiring = false; });
+
+  e->AddComponent<PlayerTag>();
 
   return e->GetID();
 }
@@ -132,7 +137,9 @@ void SpawnManager::SpawnEnemies(float dt, Base::EntityManager *entityManager, si
     auto *abbcmp = e->AddComponent<Base::BoundingBoxComponent>();
     abbcmp->size = {shpcmp->radius * 2, shpcmp->radius * 2};
     abbcmp->positionOffset = {shpcmp->radius, shpcmp->radius};
-    abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HITBOX);
+    abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HURTBOX);
+
+    e->AddComponent<EnemyTag>();
   }
   else
   {
