@@ -4,6 +4,7 @@ set(SOURCES
   "./SpawnManager/SpawnManager.cpp"
   "./Systems/BulletSystem/BulletSystem.cpp"
   "./Systems/TrackingSystem/TrackingSystem.cpp"
+  "./Systems/HealthSystem/HealthSystem.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

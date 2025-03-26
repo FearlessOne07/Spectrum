@@ -1,5 +1,5 @@
 #include "TrackingSystem.hpp"
-#include "Components/TrackingComponent/TrackingComponent.hpp"
+#include "Components/TrackingComponent.hpp"
 #include "base/Entity.hpp"
 #include "base/EntityManager.hpp"
 #include "base/components/MoveComponent.hpp"

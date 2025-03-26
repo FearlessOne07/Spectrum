@@ -1,7 +1,8 @@
 #include "BulletSystem.hpp"
-#include "Components/BulletComponent/BulletComponent.hpp"
-#include "Components/ShootComponent/ShootComponent.hpp"
-#include "Components/Tags/BulletTag.hpp"
+#include "Components/BulletComponent.hpp"
+#include "Components/DamageComponent.hpp"
+#include "Components/HealthComponent.hpp"
+#include "Components/ShootComponent.hpp"
 #include "Components/Tags/EnemyTag.hpp"
 #include "base/Entity.hpp"
 #include "base/EntityManager.hpp"
@@ -34,6 +35,7 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
   {
     auto *transcmp = e->GetComponent<Base::TransformComponent>();
     auto *shtcmp = e->GetComponent<ShootComponent>();
+    auto *dmgcmp = e->GetComponent<DamageComponent>();
 
     if (shtcmp->bulletFireTimer >= shtcmp->bulletFireRate)
     {
@@ -68,7 +70,8 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
         abbcmp->positionOffset = {shpcmp->radius, shpcmp->radius};
         abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HITBOX);
 
-        bullet->AddComponent<BulletTag>();
+        auto bulDmgcmp = bullet->AddComponent<DamageComponent>();
+        bulDmgcmp->damage = dmgcmp->damage;
       }
     }
     else
@@ -105,9 +108,17 @@ void BulletSystem::EntityCollisionHandler(const std::shared_ptr<Base::Event> &ev
   auto attack = collEvent->hittBoxEntity;
   auto defence = collEvent->hurtBoxEntity;
 
-  if (attack->HasComponent<BulletTag>() && defence->HasComponent<EnemyTag>())
+  if (attack->HasComponent<BulletComponent>() && defence->HasComponent<EnemyTag>())
   {
-    defence->SetDead();
+
+    // Bullet
+    auto dmgcmp = attack->GetComponent<DamageComponent>();
     attack->SetDead();
+
+    // Enemy
+    auto hlthcmp = defence->GetComponent<HealthComponent>();
+    hlthcmp->health -= dmgcmp->damage;
+
+    std::cout << "Damage taken: " << dmgcmp->damage << "\n";
   }
 }

@@ -1,8 +1,10 @@
 #include "SpawnManager.hpp"
-#include "Components/ShootComponent/ShootComponent.hpp"
+#include "Components/DamageComponent.hpp"
+#include "Components/HealthComponent.hpp"
+#include "Components/ShootComponent.hpp"
 #include "Components/Tags/EnemyTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
-#include "Components/TrackingComponent/TrackingComponent.hpp"
+#include "Components/TrackingComponent.hpp"
 #include "base/Entity.hpp"
 #include "base/EntityManager.hpp"
 #include "base/RenderContext.hpp"
@@ -66,6 +68,9 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 pos
     shtcmp->target = GetScreenToWorld2D(rd->GetScreenToGame(GetMousePosition()), rd->camera);
   });
   inpcmp->BindMouseButtonReleased(MOUSE_BUTTON_LEFT, [shtcmp]() { shtcmp->IsFiring = false; });
+
+  auto dmgcmp = e->AddComponent<DamageComponent>();
+  dmgcmp->damage = 2;
 
   e->AddComponent<PlayerTag>();
 
@@ -138,6 +143,12 @@ void SpawnManager::SpawnEnemies(float dt, Base::EntityManager *entityManager, si
     abbcmp->size = {shpcmp->radius * 2, shpcmp->radius * 2};
     abbcmp->positionOffset = {shpcmp->radius, shpcmp->radius};
     abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HURTBOX);
+
+    auto hlthcmp = e->AddComponent<HealthComponent>();
+    hlthcmp->health = 8;
+
+    auto dmgcmp = e->AddComponent<DamageComponent>();
+    dmgcmp->damage = 2;
 
     e->AddComponent<EnemyTag>();
   }

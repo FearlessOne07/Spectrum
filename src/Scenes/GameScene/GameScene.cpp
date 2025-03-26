@@ -1,5 +1,6 @@
 #include "GameScene.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
+#include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "base/RenderContext.hpp"
 #include "base/RenderContextSingleton.hpp"
@@ -15,7 +16,6 @@ void GameScene::Enter( //
   Base::SceneData sceneData //
 )
 {
-
   // Activate Systems
   systemManager->ActivatSystem<Base::RenderSystem>();
   systemManager->ActivatSystem<Base::MoveSystem>();
@@ -23,6 +23,7 @@ void GameScene::Enter( //
   systemManager->ActivatSystem<BulletSystem>();
   systemManager->ActivatSystem<TrackingSystem>();
   systemManager->ActivatSystem<Base::EntityCollisionSystem>();
+  systemManager->ActivatSystem<HealthSystem>();
 
   // Spawn Player
   _playerID = _spawnMan.SpawnPlayer(GetEntityManager(), {0, 0});
