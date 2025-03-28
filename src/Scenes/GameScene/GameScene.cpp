@@ -33,6 +33,9 @@ void GameScene::Enter( //
   rd->camera.offset = {rd->gameWidth / 2, rd->gameHeight / 2};
   rd->camera.zoom = 0.8;
   rd->camera.target = {0, 0};
+
+  // Event Handler
+  _playerEVH.Init();
 }
 
 void GameScene::Update(float dt, Base::SystemManager *systemManager)

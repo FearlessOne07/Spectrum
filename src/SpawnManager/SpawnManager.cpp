@@ -17,7 +17,6 @@
 #include "raylib.h"
 #include "raylib/raylib.h"
 #include <cstddef>
-#include <iostream>
 #include <random>
 
 size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 position)
@@ -33,7 +32,7 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 pos
   mvcmp->acceleration = 3;
 
   auto *shtcmp = e->AddComponent<ShootComponent>();
-  shtcmp->bulletFireRate = 1;
+  shtcmp->bulletFireRate = 0.5;
   shtcmp->bulletLifetime = 3;
   shtcmp->bulletSpeed = 2000.f;
 
@@ -83,7 +82,6 @@ void SpawnManager::SpawnEnemies(float dt, Base::EntityManager *entityManager, si
   if (_spawnTimer >= _spawnDuration)
   {
     _spawnTimer = 0.f;
-    std::cout << "Spawning...\n";
     const Base::RenderContext *rctx = Base::RenderContextSingleton::GetInstance();
 
     std::random_device rd;
@@ -143,6 +141,7 @@ void SpawnManager::SpawnEnemies(float dt, Base::EntityManager *entityManager, si
     abbcmp->size = {shpcmp->radius * 2, shpcmp->radius * 2};
     abbcmp->positionOffset = {shpcmp->radius, shpcmp->radius};
     abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HURTBOX);
+    abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HITBOX);
 
     auto hlthcmp = e->AddComponent<HealthComponent>();
     hlthcmp->health = 8;

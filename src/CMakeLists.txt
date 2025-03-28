@@ -5,6 +5,7 @@ set(SOURCES
   "./Systems/BulletSystem/BulletSystem.cpp"
   "./Systems/TrackingSystem/TrackingSystem.cpp"
   "./Systems/HealthSystem/HealthSystem.cpp"
+  "./Events/Handlers/PlayerEventHandler.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

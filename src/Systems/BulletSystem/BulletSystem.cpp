@@ -14,7 +14,6 @@
 #include "base/components/TransformComponent.hpp"
 #include "base/events/EntityCollisionEvent.hpp"
 #include "raylib/raymath.h"
-#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -43,8 +42,6 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
       {
 
         shtcmp->bulletFireTimer = 0.f;
-        std::cout << "Fire...\n";
-
         Base::Entity *bullet = entityManager->AddEntity();
 
         auto *bulTranscmp = bullet->GetComponent<Base::TransformComponent>();
@@ -110,7 +107,6 @@ void BulletSystem::EntityCollisionHandler(const std::shared_ptr<Base::Event> &ev
 
   if (attack->HasComponent<BulletComponent>() && defence->HasComponent<EnemyTag>())
   {
-
     // Bullet
     auto dmgcmp = attack->GetComponent<DamageComponent>();
     attack->SetDead();
@@ -118,7 +114,5 @@ void BulletSystem::EntityCollisionHandler(const std::shared_ptr<Base::Event> &ev
     // Enemy
     auto hlthcmp = defence->GetComponent<HealthComponent>();
     hlthcmp->health -= dmgcmp->damage;
-
-    std::cout << "Damage taken: " << dmgcmp->damage << "\n";
   }
 }
