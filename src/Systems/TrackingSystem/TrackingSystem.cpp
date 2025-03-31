@@ -24,11 +24,3 @@ void TrackingSystem::Update(float dt, Base::EntityManager *entityManager)
     );
   }
 }
-
-void TrackingSystem::Stop()
-{
-}
-
-void TrackingSystem::Start()
-{
-}

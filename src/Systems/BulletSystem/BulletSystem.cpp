@@ -9,6 +9,7 @@
 #include "base/Event.hpp"
 #include "base/EventBus.hpp"
 #include "base/components/BoundingBoxComponent.hpp"
+#include "base/components/ImpulseComponent.hpp"
 #include "base/components/MoveComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TransformComponent.hpp"
@@ -23,9 +24,7 @@ void BulletSystem::Start()
     [this](const std::shared_ptr<Base::Event> &event) -> void { this->EntityCollisionHandler(event); } //
   );
 }
-void BulletSystem::Stop()
-{
-}
+
 void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
 {
   std::vector<std::shared_ptr<Base::Entity>> entities_shtcmp = entityManager->Query<ShootComponent>();
@@ -114,5 +113,9 @@ void BulletSystem::EntityCollisionHandler(const std::shared_ptr<Base::Event> &ev
     // Enemy
     auto hlthcmp = defence->GetComponent<HealthComponent>();
     hlthcmp->health -= dmgcmp->damage;
+
+    auto impcmp = defence->GetComponent<Base::ImpulseComponent>();
+    impcmp->direction = attack->GetComponent<Base::MoveComponent>()->velocity;
+    impcmp->forceDecayFactor = 1;
   }
 }

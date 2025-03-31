@@ -6,7 +6,6 @@ class BulletSystem : public Base::System
 {
 private:
   void Start() override;
-  void Stop() override;
 
 private: // Hanlders
   void EntityCollisionHandler(const std::shared_ptr<Base::Event> &);

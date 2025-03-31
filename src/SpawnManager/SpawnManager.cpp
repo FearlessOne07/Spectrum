@@ -10,6 +10,7 @@
 #include "base/RenderContext.hpp"
 #include "base/RenderContextSingleton.hpp"
 #include "base/components/BoundingBoxComponent.hpp"
+#include "base/components/ImpulseComponent.hpp"
 #include "base/components/InputComponent.hpp"
 #include "base/components/MoveComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
@@ -149,6 +150,7 @@ void SpawnManager::SpawnEnemies(float dt, Base::EntityManager *entityManager, si
     auto dmgcmp = e->AddComponent<DamageComponent>();
     dmgcmp->damage = 2;
 
+    e->AddComponent<Base::ImpulseComponent>();
     e->AddComponent<EnemyTag>();
   }
   else
