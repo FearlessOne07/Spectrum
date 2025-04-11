@@ -71,7 +71,7 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 pos
 
   auto dmgcmp = e->AddComponent<DamageComponent>();
   dmgcmp->damage = 2;
-
+  e->AddComponent<Base::ImpulseComponent>();
   e->AddComponent<PlayerTag>();
 
   return e->GetID();
@@ -127,7 +127,7 @@ void SpawnManager::SpawnEnemies(float dt, Base::EntityManager *entityManager, si
     trckcmp->targetEntityID = playerID;
 
     auto *mvcmp = e->AddComponent<Base::MoveComponent>();
-    mvcmp->speed = std::uniform_int_distribution(200, 500)(gen);
+    mvcmp->speed = std::uniform_int_distribution(200, 200)(gen);
     mvcmp->acceleration = 4.f;
 
     auto *shpcmp = e->AddComponent<Base::ShapeComponent>();
@@ -150,7 +150,6 @@ void SpawnManager::SpawnEnemies(float dt, Base::EntityManager *entityManager, si
     auto dmgcmp = e->AddComponent<DamageComponent>();
     dmgcmp->damage = 2;
 
-    e->AddComponent<Base::ImpulseComponent>();
     e->AddComponent<EnemyTag>();
   }
   else

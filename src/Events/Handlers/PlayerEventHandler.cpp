@@ -3,6 +3,8 @@
 #include "Components/Tags/PlayerTag.hpp"
 #include "base/Event.hpp"
 #include "base/EventBus.hpp"
+#include "base/components/ImpulseComponent.hpp"
+#include "base/components/MoveComponent.hpp"
 #include "base/events/EntityCollisionEvent.hpp"
 #include <iostream>
 #include <memory>
@@ -25,6 +27,9 @@ void PlayerEventHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base:
 
   if (attack->HasComponent<EnemyTag>() && defence->HasComponent<PlayerTag>())
   {
-    std::cout << "Coll\n";
+    std::cout << "Col\n";
+    auto *impcmp = defence->GetComponent<Base::ImpulseComponent>();
+    impcmp->force = 10.f;
+    impcmp->direction = attack->GetComponent<Base::MoveComponent>()->velocity;
   }
 }

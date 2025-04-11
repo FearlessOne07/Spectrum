@@ -113,9 +113,5 @@ void BulletSystem::EntityCollisionHandler(const std::shared_ptr<Base::Event> &ev
     // Enemy
     auto hlthcmp = defence->GetComponent<HealthComponent>();
     hlthcmp->health -= dmgcmp->damage;
-
-    auto impcmp = defence->GetComponent<Base::ImpulseComponent>();
-    impcmp->direction = attack->GetComponent<Base::MoveComponent>()->velocity;
-    impcmp->force = 2;
   }
 }
