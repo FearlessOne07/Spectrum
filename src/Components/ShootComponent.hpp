@@ -10,6 +10,6 @@ struct ShootComponent : public Base::Component
   bool IsFiring = false;
 
   // Bullet spec
-  float bulletSpeed = 0.f;
+  float bulletForce = 0.f;
   float bulletLifetime = 0.f;
 };

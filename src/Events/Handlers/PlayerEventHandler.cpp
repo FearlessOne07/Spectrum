@@ -5,6 +5,7 @@
 #include "base/EventBus.hpp"
 #include "base/components/ImpulseComponent.hpp"
 #include "base/components/MoveComponent.hpp"
+#include "base/components/RigidBodyComponent.hpp"
 #include "base/events/EntityCollisionEvent.hpp"
 #include <iostream>
 #include <memory>
@@ -29,7 +30,7 @@ void PlayerEventHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base:
   {
     std::cout << "Col\n";
     auto *impcmp = defence->GetComponent<Base::ImpulseComponent>();
-    impcmp->force = 10.f;
-    impcmp->direction = attack->GetComponent<Base::MoveComponent>()->velocity;
+    impcmp->force = attack->GetComponent<Base::MoveComponent>()->driveForce * 1.1;
+    impcmp->direction = attack->GetComponent<Base::RigidBodyComponent>()->direction;
   }
 }

@@ -13,6 +13,7 @@
 #include "base/components/ImpulseComponent.hpp"
 #include "base/components/InputComponent.hpp"
 #include "base/components/MoveComponent.hpp"
+#include "base/components/RigidBodyComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "raylib.h"
@@ -29,13 +30,18 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 pos
 
   // Input comp registeration
   auto *mvcmp = e->AddComponent<Base::MoveComponent>();
-  mvcmp->speed = 1000.f;
-  mvcmp->acceleration = 3;
+  mvcmp->driveForce = 5000;
+  mvcmp->brakeForce = 500.f;
+
+  auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
+  rbcmp->isKinematic = false;
+  rbcmp->mass = 1;
+  rbcmp->drag = 3;
 
   auto *shtcmp = e->AddComponent<ShootComponent>();
   shtcmp->bulletFireRate = 0.5;
   shtcmp->bulletLifetime = 3;
-  shtcmp->bulletSpeed = 2000.f;
+  shtcmp->bulletForce = 2000.f;
 
   auto *shpcmp = e->AddComponent<Base::ShapeComponent>();
   shpcmp->fill = true;
@@ -52,15 +58,15 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 pos
   abbcmp->color = RED;
 
   auto *inpcmp = e->AddComponent<Base::InputComponent>();
-  inpcmp->BindKeyPressed(KEY_A, [mvcmp]() { mvcmp->targetVelocity.x = -1; });
-  inpcmp->BindKeyPressed(KEY_D, [mvcmp]() { mvcmp->targetVelocity.x = 1; });
-  inpcmp->BindKeyPressed(KEY_W, [mvcmp]() { mvcmp->targetVelocity.y = -1; });
-  inpcmp->BindKeyPressed(KEY_S, [mvcmp]() { mvcmp->targetVelocity.y = 1; });
+  inpcmp->BindKeyPressed(KEY_A, [rbcmp]() { rbcmp->direction.x = -1; });
+  inpcmp->BindKeyPressed(KEY_D, [rbcmp]() { rbcmp->direction.x = 1; });
+  inpcmp->BindKeyPressed(KEY_W, [rbcmp]() { rbcmp->direction.y = -1; });
+  inpcmp->BindKeyPressed(KEY_S, [rbcmp]() { rbcmp->direction.y = 1; });
 
-  inpcmp->BindKeyReleased(KEY_A, [mvcmp]() { mvcmp->targetVelocity.x = 0; });
-  inpcmp->BindKeyReleased(KEY_D, [mvcmp]() { mvcmp->targetVelocity.x = 0; });
-  inpcmp->BindKeyReleased(KEY_S, [mvcmp]() { mvcmp->targetVelocity.y = 0; });
-  inpcmp->BindKeyReleased(KEY_W, [mvcmp]() { mvcmp->targetVelocity.y = 0; });
+  inpcmp->BindKeyReleased(KEY_A, [rbcmp]() { rbcmp->direction.x = 0; });
+  inpcmp->BindKeyReleased(KEY_D, [rbcmp]() { rbcmp->direction.x = 0; });
+  inpcmp->BindKeyReleased(KEY_S, [rbcmp]() { rbcmp->direction.y = 0; });
+  inpcmp->BindKeyReleased(KEY_W, [rbcmp]() { rbcmp->direction.y = 0; });
 
   inpcmp->BindMouseButtonDown(MOUSE_BUTTON_LEFT, [shtcmp]() {
     const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
@@ -127,8 +133,12 @@ void SpawnManager::SpawnEnemies(float dt, Base::EntityManager *entityManager, si
     trckcmp->targetEntityID = playerID;
 
     auto *mvcmp = e->AddComponent<Base::MoveComponent>();
-    mvcmp->speed = std::uniform_int_distribution(200, 200)(gen);
-    mvcmp->acceleration = 4.f;
+    mvcmp->driveForce = std::uniform_int_distribution(1000, 1000)(gen);
+
+    auto *rbcmp = e->AddComponent<Base::RigidBodyComponent>();
+    rbcmp->isKinematic = false;
+    rbcmp->drag = 3;
+    rbcmp->mass = 1;
 
     auto *shpcmp = e->AddComponent<Base::ShapeComponent>();
     shpcmp->color = RED;

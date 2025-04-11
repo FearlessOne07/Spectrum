@@ -2,7 +2,7 @@
 #include "Components/TrackingComponent.hpp"
 #include "base/Entity.hpp"
 #include "base/EntityManager.hpp"
-#include "base/components/MoveComponent.hpp"
+#include "base/components/RigidBodyComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "raymath.h"
 #include <memory>
@@ -14,12 +14,12 @@ void TrackingSystem::Update(float dt, Base::EntityManager *entityManager)
 
   for (auto &e : entities)
   {
-    auto *mvcomp = e->GetComponent<Base::MoveComponent>();
     auto *trckcomp = e->GetComponent<TrackingComponent>();
     auto *transcomp = e->GetComponent<Base::TransformComponent>();
+    auto *rbcmp = e->GetComponent<Base::RigidBodyComponent>();
 
     const Base::Entity *e2 = entityManager->GetEntity(trckcomp->targetEntityID);
-    mvcomp->targetVelocity = Vector2Subtract(                                     //
+    rbcmp->direction = Vector2Subtract(                                           //
       e2->GetComponent<Base::TransformComponent>()->position, transcomp->position //
     );
   }

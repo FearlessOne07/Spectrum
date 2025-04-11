@@ -11,6 +11,7 @@
 #include "base/components/BoundingBoxComponent.hpp"
 #include "base/components/ImpulseComponent.hpp"
 #include "base/components/MoveComponent.hpp"
+#include "base/components/RigidBodyComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/events/EntityCollisionEvent.hpp"
@@ -46,10 +47,15 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
         auto *bulTranscmp = bullet->GetComponent<Base::TransformComponent>();
         bulTranscmp->position = transcmp->position;
 
+        auto *rbcmp = bullet->AddComponent<Base::RigidBodyComponent>();
+        rbcmp->isKinematic = false;
+        rbcmp->mass = 1;
+
+        auto *impcmp = bullet->AddComponent<Base::ImpulseComponent>();
+        impcmp->force = shtcmp->bulletForce;
+        impcmp->direction = Vector2Subtract(shtcmp->target, transcmp->position);
+
         auto *mvcmp = bullet->AddComponent<Base::MoveComponent>();
-        mvcmp->targetVelocity = Vector2Subtract(shtcmp->target, transcmp->position);
-        mvcmp->speed = shtcmp->bulletSpeed;
-        mvcmp->acceleration = shtcmp->bulletSpeed;
 
         auto *shpcmp = bullet->AddComponent<Base::ShapeComponent>();
         shpcmp->points = 50;
