@@ -9,7 +9,11 @@
 #include "base/systems/InputSystem.hpp"
 #include "base/systems/MoveSystem.hpp"
 #include "base/systems/RenderSystem.hpp"
+#include "base/ui/UIManager.hpp"
+#include "base/ui/elements/UIButton.hpp"
 #include "raylib.h"
+#include <iostream>
+#include <memory>
 
 void GameScene::Enter( //
   Base::SystemManager *systemManager, Base::AssetManager *assetManager,
@@ -25,8 +29,18 @@ void GameScene::Enter( //
   systemManager->ActivatSystem<Base::EntityCollisionSystem>();
   systemManager->ActivatSystem<HealthSystem>();
 
-  // Load Assets
+  // Load UI
+  Base::UIManager *uiMan = GetUIManager();
+  uiMan->AddLayer("HUD");
 
+  // Button
+  auto button = std::make_shared<Base::UIButton>();
+  button->position = {500, 500};
+  button->onClick = []() { std::cout << "Noice\n"; };
+
+  uiMan->AddElement("HUD", "main_button", button);
+
+  // Load Assets
   assetManager->LoadAsset<Texture>("assets/ship.png");
 
   // Spawn Player
@@ -46,7 +60,7 @@ void GameScene::Enter( //
 void GameScene::Update(float dt, Base::SystemManager *systemManager)
 {
   GetInput();
-
+  GetUIManager()->Update();
   _spawnMan.SpawnEnemies(dt, GetEntityManager(), _playerID);
   systemManager->Update(dt);
 }
@@ -55,8 +69,9 @@ void GameScene::Render(Base::SystemManager *systemManager)
 {
   DrawText(TextFormat("FPS: %i", GetFPS()), 0, 0, 40, WHITE);
 
-  const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
+  GetUIManager()->RenderLayer("HUD");
 
+  const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   BeginMode2D(rd->camera);
   systemManager->Render();
   EndMode2D();
