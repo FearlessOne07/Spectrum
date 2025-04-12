@@ -5,6 +5,7 @@
 #include "Components/Tags/EnemyTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
+#include "base/AssetManager.hpp"
 #include "base/Entity.hpp"
 #include "base/EntityManager.hpp"
 #include "base/RenderContext.hpp"
@@ -15,20 +16,20 @@
 #include "base/components/MoveComponent.hpp"
 #include "base/components/RigidBodyComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
+#include "base/components/TextureComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "raylib.h"
 #include "raylib/raylib.h"
 #include <cstddef>
 #include <random>
 
-size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 position)
+size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManager *assetManager, Vector2 position)
 {
   Base::Entity *e = entityManager->AddEntity();
 
   auto *transcmp = e->GetComponent<Base::TransformComponent>();
   transcmp->position = position;
 
-  // Input comp registeration
   auto *mvcmp = e->AddComponent<Base::MoveComponent>();
   mvcmp->driveForce = 5000;
   mvcmp->brakeForce = 500.f;
@@ -43,19 +44,16 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 pos
   shtcmp->bulletLifetime = 3;
   shtcmp->bulletForce = 2000.f;
 
-  auto *shpcmp = e->AddComponent<Base::ShapeComponent>();
-  shpcmp->fill = true;
-  shpcmp->color = WHITE;
-  shpcmp->points = 8;
-  shpcmp->radius = 30;
+  auto *txtcmp = e->AddComponent<Base::TextureComponent>();
+  txtcmp->texture = assetManager->GetAsset<Texture>("ship");
+  txtcmp->origin = {30, 30};
+  txtcmp->source = {0, 0, 240, 240};
+  txtcmp->scale = 1.f / 4.f;
 
   auto *abbcmp = e->AddComponent<Base::BoundingBoxComponent>();
-  abbcmp->size = {.x = shpcmp->radius * 2, .y = shpcmp->radius * 2};
-  abbcmp->positionOffset = {.x = shpcmp->radius, .y = shpcmp->radius};
+  abbcmp->size = {.x = 60, .y = 60};
+  abbcmp->positionOffset = {.x = 30, .y = 30};
   abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HURTBOX);
-  abbcmp->draw = true;
-  abbcmp->fill = false;
-  abbcmp->color = RED;
 
   auto *inpcmp = e->AddComponent<Base::InputComponent>();
   inpcmp->BindKeyPressed(KEY_A, [rbcmp]() { rbcmp->direction.x = -1; });
@@ -83,9 +81,10 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Vector2 pos
   return e->GetID();
 }
 
-void SpawnManager::SpawnEnemies(float dt, Base::EntityManager *entityManager, size_t playerID)
+void SpawnManager::SpawnEnemies(                                //
+  float dt, Base::EntityManager *entityManager, size_t playerID //
+)
 {
-
   if (_spawnTimer >= _spawnDuration)
   {
     _spawnTimer = 0.f;

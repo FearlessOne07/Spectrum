@@ -25,8 +25,12 @@ void GameScene::Enter( //
   systemManager->ActivatSystem<Base::EntityCollisionSystem>();
   systemManager->ActivatSystem<HealthSystem>();
 
+  // Load Assets
+
+  assetManager->LoadAsset<Texture>("assets/ship.png");
+
   // Spawn Player
-  _playerID = _spawnMan.SpawnPlayer(GetEntityManager(), {0, 0});
+  _playerID = _spawnMan.SpawnPlayer(GetEntityManager(), assetManager, {0, 0});
 
   // Init Camera
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
