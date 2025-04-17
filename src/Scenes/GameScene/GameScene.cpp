@@ -61,7 +61,7 @@ void GameScene::Update(float dt, Base::SystemManager *systemManager)
 {
   GetInput();
   GetUIManager()->Update();
-  _spawnMan.SpawnEnemies(dt, GetEntityManager(), _playerID);
+  // _spawnMan.SpawnEnemies(dt, GetEntityManager(), _playerID);
   systemManager->Update(dt);
 }
 

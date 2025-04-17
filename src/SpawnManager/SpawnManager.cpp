@@ -56,10 +56,10 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Base::Asset
   abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HURTBOX);
 
   auto *inpcmp = e->AddComponent<Base::InputComponent>();
-  inpcmp->BindKeyPressed(KEY_A, [rbcmp]() { rbcmp->direction.x = -1; });
-  inpcmp->BindKeyPressed(KEY_D, [rbcmp]() { rbcmp->direction.x = 1; });
-  inpcmp->BindKeyPressed(KEY_W, [rbcmp]() { rbcmp->direction.y = -1; });
-  inpcmp->BindKeyPressed(KEY_S, [rbcmp]() { rbcmp->direction.y = 1; });
+  inpcmp->BindKeyDown(KEY_A, [rbcmp]() { rbcmp->direction.x = -1; });
+  inpcmp->BindKeyDown(KEY_D, [rbcmp]() { rbcmp->direction.x = 1; });
+  inpcmp->BindKeyDown(KEY_W, [rbcmp]() { rbcmp->direction.y = -1; });
+  inpcmp->BindKeyDown(KEY_S, [rbcmp]() { rbcmp->direction.y = 1; });
 
   inpcmp->BindKeyReleased(KEY_A, [rbcmp]() { rbcmp->direction.x = 0; });
   inpcmp->BindKeyReleased(KEY_D, [rbcmp]() { rbcmp->direction.x = 0; });
