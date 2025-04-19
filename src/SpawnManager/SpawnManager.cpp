@@ -16,7 +16,6 @@
 #include "base/components/MoveComponent.hpp"
 #include "base/components/RigidBodyComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
-#include "base/components/TextureComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "raylib.h"
 #include "raylib/raylib.h"
@@ -31,7 +30,7 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Base::Asset
   transcmp->position = position;
 
   auto *mvcmp = e->AddComponent<Base::MoveComponent>();
-  mvcmp->driveForce = 5000;
+  mvcmp->driveForce = 3000;
   mvcmp->brakeForce = 500.f;
 
   auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
@@ -44,11 +43,11 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Base::Asset
   shtcmp->bulletLifetime = 3;
   shtcmp->bulletForce = 2000.f;
 
-  auto *txtcmp = e->AddComponent<Base::TextureComponent>();
-  txtcmp->texture = assetManager->GetAsset<Texture>("ship");
-  txtcmp->origin = {30, 30};
-  txtcmp->source = {0, 0, 240, 240};
-  txtcmp->scale = 1.f / 4.f;
+  auto *shpcmp = e->AddComponent<Base::ShapeComponent>();
+  shpcmp->fill = true;
+  shpcmp->color = WHITE;
+  shpcmp->points = 8;
+  shpcmp->radius = 30;
 
   auto *abbcmp = e->AddComponent<Base::BoundingBoxComponent>();
   abbcmp->size = {.x = 60, .y = 60};
@@ -132,7 +131,7 @@ void SpawnManager::SpawnEnemies(                                //
     trckcmp->targetEntityID = playerID;
 
     auto *mvcmp = e->AddComponent<Base::MoveComponent>();
-    mvcmp->driveForce = std::uniform_int_distribution(1000, 1000)(gen);
+    mvcmp->driveForce = std::uniform_int_distribution(500, 700)(gen);
 
     auto *rbcmp = e->AddComponent<Base::RigidBodyComponent>();
     rbcmp->isKinematic = false;

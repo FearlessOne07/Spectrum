@@ -29,19 +29,10 @@ void GameScene::Enter( //
   systemManager->ActivatSystem<Base::EntityCollisionSystem>();
   systemManager->ActivatSystem<HealthSystem>();
 
-  // Load UI
-  Base::UIManager *uiMan = GetUIManager();
-  uiMan->AddLayer("HUD");
-
   // Button
   auto button = std::make_shared<Base::UIButton>();
   button->position = {500, 500};
   button->onClick = []() { std::cout << "Noice\n"; };
-
-  uiMan->AddElement("HUD", "main_button", button);
-
-  // Load Assets
-  assetManager->LoadAsset<Texture>("assets/ship.png");
 
   // Spawn Player
   _playerID = _spawnMan.SpawnPlayer(GetEntityManager(), assetManager, {0, 0});
@@ -61,15 +52,13 @@ void GameScene::Update(float dt, Base::SystemManager *systemManager)
 {
   GetInput();
   GetUIManager()->Update();
-  // _spawnMan.SpawnEnemies(dt, GetEntityManager(), _playerID);
+  _spawnMan.SpawnEnemies(dt, GetEntityManager(), _playerID);
   systemManager->Update(dt);
 }
 
 void GameScene::Render(Base::SystemManager *systemManager)
 {
   DrawText(TextFormat("FPS: %i", GetFPS()), 0, 0, 40, WHITE);
-
-  GetUIManager()->RenderLayer("HUD");
 
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   BeginMode2D(rd->camera);

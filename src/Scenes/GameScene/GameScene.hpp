@@ -13,6 +13,7 @@ private: // Attributes
 
 private:
   void GetInput() override;
+  void RegisterSceneEvents();
 
 public:
   void Update(float dt, Base::SystemManager *systemManager) override;
