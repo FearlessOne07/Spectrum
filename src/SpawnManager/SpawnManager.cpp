@@ -39,9 +39,10 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Base::Asset
   rbcmp->drag = 3;
 
   auto *shtcmp = e->AddComponent<ShootComponent>();
-  shtcmp->bulletFireRate = 0.5;
+  shtcmp->bulletFireRate = 1;
   shtcmp->bulletLifetime = 3;
   shtcmp->bulletForce = 2000.f;
+  shtcmp->bulletFireTimer = 1;
 
   auto *shpcmp = e->AddComponent<Base::ShapeComponent>();
   shpcmp->fill = true;
