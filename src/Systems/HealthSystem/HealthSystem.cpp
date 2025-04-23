@@ -1,6 +1,6 @@
 #include "HealthSystem.hpp"
 #include "Components/HealthComponent.hpp"
-#include "base/EntityManager.hpp"
+#include <base/EntityManager.hpp>
 #include <memory>
 #include <vector>
 

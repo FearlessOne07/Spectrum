@@ -1,5 +1,5 @@
-#include "base/Component.hpp"
-#include "raylib.h"
+#include <base/Component.hpp>
+#include <raylib.h>
 
 struct BulletComponent : public Base::Component
 {

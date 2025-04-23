@@ -1,10 +1,10 @@
 #include "TrackingSystem.hpp"
 #include "Components/TrackingComponent.hpp"
-#include "base/Entity.hpp"
-#include "base/EntityManager.hpp"
-#include "base/components/RigidBodyComponent.hpp"
-#include "base/components/TransformComponent.hpp"
-#include "raymath.h"
+#include <base/Entity.hpp>
+#include <base/EntityManager.hpp>
+#include <base/components/RigidBodyComponent.hpp>
+#include <base/components/TransformComponent.hpp>
+#include <raymath.h>
 #include <memory>
 #include <vector>
 

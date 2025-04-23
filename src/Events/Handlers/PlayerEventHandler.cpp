@@ -1,13 +1,12 @@
 #include "PlayerEventHandler.hpp"
 #include "Components/Tags/EnemyTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
-#include "base/Event.hpp"
-#include "base/EventBus.hpp"
-#include "base/components/ImpulseComponent.hpp"
-#include "base/components/MoveComponent.hpp"
-#include "base/components/RigidBodyComponent.hpp"
-#include "base/events/EntityCollisionEvent.hpp"
-#include <memory>
+#include <base/Event.hpp>
+#include <base/EventBus.hpp>
+#include <base/components/ImpulseComponent.hpp>
+#include <base/components/MoveComponent.hpp>
+#include <base/components/RigidBodyComponent.hpp>
+#include <base/events/EntityCollisionEvent.hpp>
 
 void PlayerEventHandler::Init()
 {

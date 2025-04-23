@@ -1,7 +1,7 @@
 #pragma once
-#include "base/AssetManager.hpp"
-#include "base/EntityManager.hpp"
-#include "raylib/raylib.h"
+#include <base/AssetManager.hpp>
+#include <base/EntityManager.hpp>
+#include <raylib/raylib.h>
 #include <cstddef>
 #include <queue>
 #include <vector>

@@ -1,5 +1,5 @@
 #pragma once
-#include "base/Component.hpp"
+#include <base/Component.hpp>
 #include <cstddef>
 
 struct TrackingComponent : public Base::Component
