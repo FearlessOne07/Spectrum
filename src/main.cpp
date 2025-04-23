@@ -2,6 +2,7 @@
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
+#include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
 #include <base/Game.hpp>
 #include <base/systems/CameraSystem.hpp>
 #include <base/systems/EntityCollisionSystem.hpp>
@@ -22,6 +23,7 @@ int main(void)
   game.RegisterSystem<Base::InputSystem>();
   game.RegisterSystem<BulletSystem>();
   game.RegisterSystem<Base::MoveSystem>();
+  game.RegisterSystem<TransformEffectsSystem>();
   game.RegisterSystem<TrackingSystem>();
   game.RegisterSystem<HealthSystem>();
   game.RegisterSystem<Base::CameraSystem>();

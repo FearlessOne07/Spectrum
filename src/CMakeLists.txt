@@ -1,11 +1,14 @@
 set(SOURCES
   "./main.cpp"
   "./Scenes/GameScene/GameScene.cpp"
-  "./Spawner/Spawner.cpp"
   "./Systems/BulletSystem/BulletSystem.cpp"
   "./Systems/TrackingSystem/TrackingSystem.cpp"
   "./Systems/HealthSystem/HealthSystem.cpp"
+  "./Systems/TransformEffectsSystem/TransformEffectsSystem.cpp"
+
   "./Events/Handlers/PlayerEventHandler.cpp"
+
+  "./Spawner/Spawner.cpp"
   "./WaveManager/WaveManager.cpp"
 )
 

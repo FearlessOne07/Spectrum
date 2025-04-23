@@ -2,6 +2,7 @@
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
+#include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
 #include <base/RenderContext.hpp>
 #include <base/RenderContextSingleton.hpp>
 #include <base/SystemManager.hpp>
@@ -17,6 +18,13 @@ void GameScene::Enter( //
   Base::SceneData sceneData //
 )
 {
+  // Init Camera
+  const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
+  rd->camera.offset = {rd->gameWidth / 2, rd->gameHeight / 2};
+  rd->camera.zoom = 1.1;
+  rd->camera.target = {0, 0};
+  rd->camera.rotation = 0.f;
+
   // Activate Systems
   systemManager->ActivatSystem<Base::RenderSystem>();
   systemManager->ActivatSystem<Base::MoveSystem>();
@@ -25,19 +33,13 @@ void GameScene::Enter( //
   systemManager->ActivatSystem<TrackingSystem>();
   systemManager->ActivatSystem<Base::EntityCollisionSystem>();
   systemManager->ActivatSystem<HealthSystem>();
+  systemManager->ActivatSystem<TransformEffectsSystem>();
 
   // Wave manager
   _waveManager = WaveManager(GetEntityManager());
 
   // Spawn Player
   _playerID = _waveManager.SpawnPlayer(assetManager);
-
-  // Init Camera
-  const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  rd->camera.offset = {rd->gameWidth / 2, rd->gameHeight / 2};
-  rd->camera.zoom = 0.8;
-  rd->camera.target = {0, 0};
-  rd->camera.rotation = 0.f;
 
   // Event Handler
   _playerEVH.Init();

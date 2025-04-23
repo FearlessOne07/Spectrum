@@ -5,6 +5,7 @@
 #include "Components/Tags/EnemyTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
+#include "Components/TransformEffects.hpp"
 #include <base/AssetManager.hpp>
 #include <base/Entity.hpp>
 #include <base/EntityManager.hpp>
@@ -17,10 +18,10 @@
 #include <base/components/RigidBodyComponent.hpp>
 #include <base/components/ShapeComponent.hpp>
 #include <base/components/TransformComponent.hpp>
-#include <raylib.h>
-#include <raylib/raylib.h>
 #include <cstddef>
 #include <random>
+#include <raylib.h>
+#include <raylib/raylib.h>
 
 void Spawner::SetToSpawn(std::vector<EnemyType> toSpawn)
 {
@@ -29,6 +30,7 @@ void Spawner::SetToSpawn(std::vector<EnemyType> toSpawn)
     _toSpawn.push(type);
   }
 }
+
 int Spawner::GetToSpawnCount() const
 {
   return _toSpawn.size();
@@ -37,9 +39,17 @@ int Spawner::GetToSpawnCount() const
 size_t Spawner::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManager *assetManager, Vector2 position)
 {
   Base::Entity *e = entityManager->AddEntity();
+  const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
 
   auto *transcmp = e->GetComponent<Base::TransformComponent>();
   transcmp->position = position;
+
+  auto *transfxcmp = e->AddComponent<TransformEffectsComponent>();
+  transfxcmp->targetAngularVelocity = 180;
+  transfxcmp->angularAcceleration = 1;
+  transfxcmp->bind = true;
+  transfxcmp->bindMin = GetScreenToWorld2D({0, 0}, rd->camera);
+  transfxcmp->bindMax = GetScreenToWorld2D({rd->gameWidth, rd->gameHeight}, rd->camera);
 
   auto *mvcmp = e->AddComponent<Base::MoveComponent>();
   mvcmp->driveForce = 3000;
