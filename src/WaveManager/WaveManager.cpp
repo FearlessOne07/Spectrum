@@ -4,6 +4,7 @@
 #include "base/AssetManager.hpp"
 #include "base/EntityManager.hpp"
 #include <cstddef>
+#include <iostream>
 #include <random>
 
 WaveManager::WaveManager(Base::EntityManager *entityMan) : _entityMan(entityMan)
@@ -12,6 +13,8 @@ WaveManager::WaveManager(Base::EntityManager *entityMan) : _entityMan(entityMan)
 
 void WaveManager::GenerateWave()
 {
+
+  std::cout << "Generating Wave\n";
   // Init Variables
   int aliveCount = _entityMan->Query<EnemyTag>().size();
 
@@ -101,22 +104,17 @@ void WaveManager::GenerateWave()
         _wavePoints -= pool[cheapestType].cost;
         _enemiesToSpawn.push_back(cheapestType);
       }
-      else
-      {
-        // If we reach here, something is still wrong with our logic
-        break; // Exit the loop to prevent infinite execution
-      }
     }
   }
 
-  _spawner.SpawnWave(_enemiesToSpawn, _entityMan, _playerID); // Fixed: removed asterisks
+  _spawner.SetToSpawn(_enemiesToSpawn);
   _currentWave++;
 }
 
 void WaveManager::SpawnWaves(float dt)
 {
   int count = _entityMan->Query<EnemyTag>().size();
-  if (_waveTimer >= _waveTime || count == 0)
+  if (_waveTimer >= _waveTime || (count == 0 && _spawner.GetToSpawnCount() == 0))
   {
     _waveTimer = 0;
     GenerateWave();
@@ -125,6 +123,7 @@ void WaveManager::SpawnWaves(float dt)
   {
     _waveTimer += dt;
   }
+  _spawner.SpawnWave(dt, _entityMan, _playerID);
 }
 
 size_t WaveManager::SpawnPlayer(Base::AssetManager *assetManager)

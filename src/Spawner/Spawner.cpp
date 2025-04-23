@@ -21,7 +21,18 @@
 #include "raylib/raylib.h"
 #include <cstddef>
 #include <random>
-#include <vector>
+
+void Spawner::SetToSpawn(std::vector<EnemyType> toSpawn)
+{
+  for (EnemyType type : toSpawn)
+  {
+    _toSpawn.push(type);
+  }
+}
+int Spawner::GetToSpawnCount() const
+{
+  return _toSpawn.size();
+}
 
 size_t Spawner::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManager *assetManager, Vector2 position)
 {
@@ -82,96 +93,16 @@ size_t Spawner::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManag
   return e->GetID();
 }
 
-void Spawner::SpawnEnemies(                                     //
-  float dt, Base::EntityManager *entityManager, size_t playerID //
-)
+void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, size_t playerID)
 {
-  if (_spawnTimer >= _spawnDuration)
+
+  if (_spawnTimer >= _spawnDuration && !_toSpawn.empty())
   {
     _spawnTimer = 0.f;
     const Base::RenderContext *rctx = Base::RenderContextSingleton::GetInstance();
 
-    std::random_device rd;
-    std::mt19937_64 gen(rd());
-
-    std::uniform_int_distribution sideDist(1, 4);
-    int side = sideDist(gen);
-
-    Vector2 min = {-_spawnOffset, -_spawnOffset};
-    Vector2 max = {rctx->gameWidth + _spawnOffset, rctx->gameHeight + _spawnOffset};
-
-    Vector2 position = {0, 0};
-    float ypos = 0.f;
-    float xpos = 0.f;
-    switch (side)
-    {
-    case 1: // Right
-      ypos = std::uniform_real_distribution<float>(min.y, max.y)(gen);
-      position = GetScreenToWorld2D({max.x, ypos}, rctx->camera);
-      break;
-    case 2: // Left
-      ypos = std::uniform_real_distribution<float>(min.y, max.y)(gen);
-      position = GetScreenToWorld2D({min.x, ypos}, rctx->camera);
-      break;
-    case 3: // Up
-      xpos = std::uniform_real_distribution<float>(min.x, max.x)(gen);
-      position = GetScreenToWorld2D({xpos, min.y}, rctx->camera);
-      break;
-    case 4: // Down
-      xpos = std::uniform_real_distribution<float>(min.x, max.x)(gen);
-      position = GetScreenToWorld2D({xpos, max.y}, rctx->camera);
-      break;
-    }
-
-    Base::Entity *e = entityManager->AddEntity();
-
-    auto *transcmp = e->GetComponent<Base::TransformComponent>();
-    transcmp->position = position;
-
-    auto *trckcmp = e->AddComponent<TrackingComponent>();
-    trckcmp->targetEntityID = playerID;
-
-    auto *mvcmp = e->AddComponent<Base::MoveComponent>();
-    mvcmp->driveForce = std::uniform_int_distribution(500, 700)(gen);
-
-    auto *rbcmp = e->AddComponent<Base::RigidBodyComponent>();
-    rbcmp->isKinematic = false;
-    rbcmp->drag = 3;
-    rbcmp->mass = 1;
-
-    auto *shpcmp = e->AddComponent<Base::ShapeComponent>();
-    shpcmp->color = RED;
-    shpcmp->fill = true;
-    shpcmp->fillOutline = true;
-    shpcmp->outlineColor = WHITE;
-    shpcmp->points = 6;
-    shpcmp->radius = 30;
-
-    auto *abbcmp = e->AddComponent<Base::BoundingBoxComponent>();
-    abbcmp->size = {shpcmp->radius * 2, shpcmp->radius * 2};
-    abbcmp->positionOffset = {shpcmp->radius, shpcmp->radius};
-    abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HURTBOX);
-    abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HITBOX);
-
-    auto hlthcmp = e->AddComponent<HealthComponent>();
-    hlthcmp->health = 8;
-
-    auto dmgcmp = e->AddComponent<DamageComponent>();
-    dmgcmp->damage = 2;
-
-    e->AddComponent<EnemyTag>();
-  }
-  else
-  {
-    _spawnTimer += dt;
-  }
-}
-
-void Spawner::SpawnWave(std::vector<EnemyType> toSpawn, Base::EntityManager *entityManager, size_t playerID)
-{
-  for (EnemyType &type : toSpawn)
-  {
-    const Base::RenderContext *rctx = Base::RenderContextSingleton::GetInstance();
+    EnemyType &type = _toSpawn.front();
+    _toSpawn.pop();
 
     std::random_device rd;
     std::mt19937_64 gen(rd());
@@ -253,5 +184,9 @@ void Spawner::SpawnWave(std::vector<EnemyType> toSpawn, Base::EntityManager *ent
       shpcmp->color = BLUE;
       break;
     }
+  }
+  else
+  {
+    _spawnTimer += dt;
   }
 }

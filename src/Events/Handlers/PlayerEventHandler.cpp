@@ -28,7 +28,7 @@ void PlayerEventHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base:
   if (attack->HasComponent<EnemyTag>() && defence->HasComponent<PlayerTag>())
   {
     auto *impcmp = defence->GetComponent<Base::ImpulseComponent>();
-    impcmp->force = attack->GetComponent<Base::MoveComponent>()->driveForce * 1.5;
+    impcmp->force = attack->GetComponent<Base::MoveComponent>()->driveForce * 2;
     impcmp->direction = attack->GetComponent<Base::RigidBodyComponent>()->direction;
   }
 }

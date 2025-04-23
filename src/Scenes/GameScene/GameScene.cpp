@@ -10,10 +10,7 @@
 #include "base/systems/MoveSystem.hpp"
 #include "base/systems/RenderSystem.hpp"
 #include "base/ui/UIManager.hpp"
-#include "base/ui/elements/UIButton.hpp"
 #include "raylib.h"
-#include <iostream>
-#include <memory>
 
 void GameScene::Enter( //
   Base::SystemManager *systemManager, Base::AssetManager *assetManager,
@@ -28,11 +25,6 @@ void GameScene::Enter( //
   systemManager->ActivatSystem<TrackingSystem>();
   systemManager->ActivatSystem<Base::EntityCollisionSystem>();
   systemManager->ActivatSystem<HealthSystem>();
-
-  // Button
-  auto button = std::make_shared<Base::UIButton>();
-  button->position = {500, 500};
-  button->onClick = []() { std::cout << "Noice\n"; };
 
   // Wave manager
   _waveManager = WaveManager(GetEntityManager());
