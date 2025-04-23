@@ -1,4 +1,4 @@
-#include "SpawnManager.hpp"
+#include "Spawner.hpp"
 #include "Components/DamageComponent.hpp"
 #include "Components/HealthComponent.hpp"
 #include "Components/ShootComponent.hpp"
@@ -21,8 +21,9 @@
 #include "raylib/raylib.h"
 #include <cstddef>
 #include <random>
+#include <vector>
 
-size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManager *assetManager, Vector2 position)
+size_t Spawner::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManager *assetManager, Vector2 position)
 {
   Base::Entity *e = entityManager->AddEntity();
 
@@ -39,7 +40,7 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Base::Asset
   rbcmp->drag = 3;
 
   auto *shtcmp = e->AddComponent<ShootComponent>();
-  shtcmp->bulletFireRate = 1;
+  shtcmp->bulletFireRate = 0.6;
   shtcmp->bulletLifetime = 3;
   shtcmp->bulletForce = 2000.f;
   shtcmp->bulletFireTimer = 1;
@@ -81,7 +82,7 @@ size_t SpawnManager::SpawnPlayer(Base::EntityManager *entityManager, Base::Asset
   return e->GetID();
 }
 
-void SpawnManager::SpawnEnemies(                                //
+void Spawner::SpawnEnemies(                                     //
   float dt, Base::EntityManager *entityManager, size_t playerID //
 )
 {
@@ -102,7 +103,6 @@ void SpawnManager::SpawnEnemies(                                //
     Vector2 position = {0, 0};
     float ypos = 0.f;
     float xpos = 0.f;
-
     switch (side)
     {
     case 1: // Right
@@ -164,5 +164,94 @@ void SpawnManager::SpawnEnemies(                                //
   else
   {
     _spawnTimer += dt;
+  }
+}
+
+void Spawner::SpawnWave(std::vector<EnemyType> toSpawn, Base::EntityManager *entityManager, size_t playerID)
+{
+  for (EnemyType &type : toSpawn)
+  {
+    const Base::RenderContext *rctx = Base::RenderContextSingleton::GetInstance();
+
+    std::random_device rd;
+    std::mt19937_64 gen(rd());
+
+    std::uniform_int_distribution sideDist(1, 4);
+    int side = sideDist(gen);
+
+    Vector2 min = {-_spawnOffset, -_spawnOffset};
+    Vector2 max = {rctx->gameWidth + _spawnOffset, rctx->gameHeight + _spawnOffset};
+
+    Vector2 position = {0, 0};
+    float ypos = 0.f;
+    float xpos = 0.f;
+
+    switch (side)
+    {
+    case 1: // Right
+      ypos = std::uniform_real_distribution<float>(min.y, max.y)(gen);
+      position = GetScreenToWorld2D({max.x, ypos}, rctx->camera);
+      break;
+    case 2: // Left
+      ypos = std::uniform_real_distribution<float>(min.y, max.y)(gen);
+      position = GetScreenToWorld2D({min.x, ypos}, rctx->camera);
+      break;
+    case 3: // Up
+      xpos = std::uniform_real_distribution<float>(min.x, max.x)(gen);
+      position = GetScreenToWorld2D({xpos, min.y}, rctx->camera);
+      break;
+    case 4: // Down
+      xpos = std::uniform_real_distribution<float>(min.x, max.x)(gen);
+      position = GetScreenToWorld2D({xpos, max.y}, rctx->camera);
+      break;
+    }
+
+    Base::Entity *e = entityManager->AddEntity();
+
+    e->AddComponent<EnemyTag>();
+
+    auto *transcmp = e->GetComponent<Base::TransformComponent>();
+    transcmp->position = position;
+
+    auto *trckcmp = e->AddComponent<TrackingComponent>();
+    trckcmp->targetEntityID = playerID;
+
+    auto *mvcmp = e->AddComponent<Base::MoveComponent>();
+    mvcmp->driveForce = std::uniform_int_distribution(300, 500)(gen);
+
+    auto *rbcmp = e->AddComponent<Base::RigidBodyComponent>();
+    rbcmp->isKinematic = false;
+    rbcmp->drag = 3;
+    rbcmp->mass = 1;
+
+    auto *shpcmp = e->AddComponent<Base::ShapeComponent>();
+    shpcmp->fill = true;
+    shpcmp->fillOutline = true;
+    shpcmp->outlineColor = WHITE;
+    shpcmp->radius = 30;
+
+    auto *abbcmp = e->AddComponent<Base::BoundingBoxComponent>();
+    abbcmp->size = {shpcmp->radius * 2, shpcmp->radius * 2};
+    abbcmp->positionOffset = {shpcmp->radius, shpcmp->radius};
+    abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HURTBOX);
+    abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HITBOX);
+
+    auto hlthcmp = e->AddComponent<HealthComponent>();
+    hlthcmp->health = 8;
+
+    auto dmgcmp = e->AddComponent<DamageComponent>();
+    dmgcmp->damage = 2;
+
+    switch (type)
+    {
+    case EnemyType::CHASER:
+      shpcmp->points = 3;
+      shpcmp->color = RED;
+      break;
+    case EnemyType::SHOOTER:
+      shpcmp->points = 6;
+      shpcmp->color = BLUE;
+      break;
+    }
   }
 }

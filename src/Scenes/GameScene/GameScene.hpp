@@ -1,15 +1,16 @@
 #pragma once
 #include "Events/Handlers/PlayerEventHandler.hpp"
-#include "SpawnManager/SpawnManager.hpp"
+#include "Spawner/Spawner.hpp"
+#include "WaveManager/WaveManager.hpp"
 #include "base/Scene.hpp"
 #include <cstddef>
 
 class GameScene : public Base::Scene
 {
 private: // Attributes
-  SpawnManager _spawnMan = SpawnManager();
-  size_t _playerID = 0;
+  WaveManager _waveManager = WaveManager(GetEntityManager());
   PlayerEventHandler _playerEVH = PlayerEventHandler();
+  size_t _playerID = 0;
 
 private:
   void GetInput() override;

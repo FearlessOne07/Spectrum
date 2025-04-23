@@ -3,16 +3,25 @@
 #include "base/EntityManager.hpp"
 #include "raylib/raylib.h"
 #include <cstddef>
+#include <vector>
 
-class SpawnManager
+class Spawner
 {
+public:
+  enum class EnemyType : uint8_t
+  {
+    CHASER = 0,
+    SHOOTER
+  };
+
 private:
+  // Spawming
   float _spawnDuration = 7.f;
   float _spawnTimer = _spawnDuration;
-
   float _spawnOffset = 200;
 
 public:
   size_t SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManager *assetManager, Vector2 position);
   void SpawnEnemies(float dt, Base::EntityManager *entityManager, size_t playerID);
+  void SpawnWave(std::vector<EnemyType> toSpawn, Base::EntityManager *entityManager, size_t playerID);
 };

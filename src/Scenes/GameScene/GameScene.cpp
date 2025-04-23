@@ -34,8 +34,11 @@ void GameScene::Enter( //
   button->position = {500, 500};
   button->onClick = []() { std::cout << "Noice\n"; };
 
+  // Wave manager
+  _waveManager = WaveManager(GetEntityManager());
+
   // Spawn Player
-  _playerID = _spawnMan.SpawnPlayer(GetEntityManager(), assetManager, {0, 0});
+  _playerID = _waveManager.SpawnPlayer(assetManager);
 
   // Init Camera
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
@@ -52,7 +55,7 @@ void GameScene::Update(float dt, Base::SystemManager *systemManager)
 {
   GetInput();
   GetUIManager()->Update();
-  _spawnMan.SpawnEnemies(dt, GetEntityManager(), _playerID);
+  _waveManager.SpawnWaves(dt);
   systemManager->Update(dt);
 }
 

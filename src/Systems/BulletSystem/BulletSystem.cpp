@@ -4,6 +4,7 @@
 #include "Components/HealthComponent.hpp"
 #include "Components/ShootComponent.hpp"
 #include "Components/Tags/EnemyTag.hpp"
+#include "Components/Tags/PlayerTag.hpp"
 #include "base/Entity.hpp"
 #include "base/EntityManager.hpp"
 #include "base/Event.hpp"
@@ -35,12 +36,12 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
     auto *transcmp = e->GetComponent<Base::TransformComponent>();
     auto *shtcmp = e->GetComponent<ShootComponent>();
     auto *dmgcmp = e->GetComponent<DamageComponent>();
+    auto *impcmpShooter = e->GetComponent<Base::ImpulseComponent>();
 
     if (shtcmp->bulletFireTimer >= shtcmp->bulletFireRate)
     {
       if (shtcmp->IsFiring)
       {
-
         shtcmp->bulletFireTimer = 0.f;
         Base::Entity *bullet = entityManager->AddEntity();
 
