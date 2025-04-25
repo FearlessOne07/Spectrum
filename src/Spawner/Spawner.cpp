@@ -205,6 +205,9 @@ void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, size_t pla
       shtcmp->bulletFireRate = 2.f;
       shtcmp->bulletKnockbackForce = 800;
       shtcmp->bulletSpeed = 1000.f;
+
+      transfxcmp->bindMin = GetScreenToWorld2D({0, 0}, rctx->camera);
+      transfxcmp->bindMax = GetScreenToWorld2D({rctx->gameWidth, rctx->gameHeight}, rctx->camera);
       break;
     }
   }
