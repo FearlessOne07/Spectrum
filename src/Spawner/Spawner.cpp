@@ -63,8 +63,8 @@ size_t Spawner::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManag
   auto *shtcmp = e->AddComponent<ShootComponent>();
   shtcmp->bulletFireRate = 0.6;
   shtcmp->bulletLifetime = 3;
-  shtcmp->bulletForce = 2000.f;
   shtcmp->bulletFireTimer = 1;
+  shtcmp->bulletSpeed = 1500.f;
 
   auto *shpcmp = e->AddComponent<Base::ShapeComponent>();
   shpcmp->fill = true;
@@ -100,7 +100,8 @@ size_t Spawner::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManag
   e->AddComponent<Base::ImpulseComponent>();
   e->AddComponent<PlayerTag>();
 
-  return e->GetID();
+  _playerID = e->GetID();
+  return _playerID;
 }
 
 void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, size_t playerID)
@@ -183,6 +184,12 @@ void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, size_t pla
     auto dmgcmp = e->AddComponent<DamageComponent>();
     dmgcmp->damage = 2;
 
+    auto transfxcmp = e->AddComponent<TransformEffectsComponent>();
+    transfxcmp->rotate = true;
+    transfxcmp->angularAcceleration = 0.5;
+    transfxcmp->targetAngularVelocity = 90;
+    transfxcmp->bind = false;
+
     switch (type)
     {
     case EnemyType::CHASER:
@@ -192,6 +199,12 @@ void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, size_t pla
     case EnemyType::SHOOTER:
       shpcmp->points = 6;
       shpcmp->color = BLUE;
+      trckcmp->trackingDistance = 800;
+
+      auto *shtcmp = e->AddComponent<ShootComponent>();
+      shtcmp->bulletFireRate = 2.f;
+      shtcmp->bulletKnockbackForce = 800;
+      shtcmp->bulletSpeed = 1000.f;
       break;
     }
   }

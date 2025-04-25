@@ -48,5 +48,5 @@ private:
 public:
   WaveManager(Base::EntityManager *entityManager);
   void SpawnWaves(float dt);
-  size_t SpawnPlayer(Base::AssetManager *assetManager);
+  void SpawnPlayer(Base::AssetManager *assetManager);
 };

@@ -9,7 +9,6 @@ class GameScene : public Base::Scene
 private: // Attributes
   WaveManager _waveManager = WaveManager(GetEntityManager());
   PlayerEventHandler _playerEVH = PlayerEventHandler();
-  size_t _playerID = 0;
 
 private:
   void GetInput() override;

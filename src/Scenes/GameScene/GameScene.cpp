@@ -21,7 +21,7 @@ void GameScene::Enter( //
   // Init Camera
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   rd->camera.offset = {rd->gameWidth / 2, rd->gameHeight / 2};
-  rd->camera.zoom = 1.1;
+  rd->camera.zoom = 1;
   rd->camera.target = {0, 0};
   rd->camera.rotation = 0.f;
 
@@ -38,8 +38,7 @@ void GameScene::Enter( //
   // Wave manager
   _waveManager = WaveManager(GetEntityManager());
 
-  // Spawn Player
-  _playerID = _waveManager.SpawnPlayer(assetManager);
+  _waveManager.SpawnPlayer(assetManager);
 
   // Event Handler
   _playerEVH.Init();

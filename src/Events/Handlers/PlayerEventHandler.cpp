@@ -1,6 +1,12 @@
 #include "PlayerEventHandler.hpp"
+#include "Components/BulletComponent.hpp"
+#include "Components/DamageComponent.hpp"
+#include "Components/HealthComponent.hpp"
+#include "Components/ShootComponent.hpp"
 #include "Components/Tags/EnemyTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
+#include "raylib/raylib.h"
+#include "raylib/raymath.h"
 #include <base/Event.hpp>
 #include <base/EventBus.hpp>
 #include <base/components/ImpulseComponent.hpp>
@@ -11,7 +17,6 @@
 void PlayerEventHandler::Init()
 {
   auto eventBus = Base::EventBus::GetInstance();
-
   eventBus->SubscribeEvent<Base::EntityCollisionEvent>(
     [this](const std::shared_ptr<Base::Event> &event) { this->PlayerEnemyCollisionHandler(event); } //
   );
@@ -24,10 +29,40 @@ void PlayerEventHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base:
   auto attack = collEvent->hittBoxEntity;
   auto defence = collEvent->hurtBoxEntity;
 
-  if (attack->HasComponent<EnemyTag>() && defence->HasComponent<PlayerTag>())
+  if (defence->HasComponent<PlayerTag>())
   {
-    auto *impcmp = defence->GetComponent<Base::ImpulseComponent>();
-    impcmp->force = attack->GetComponent<Base::MoveComponent>()->driveForce * 2;
-    impcmp->direction = attack->GetComponent<Base::RigidBodyComponent>()->direction;
+    if (                                                                        //
+      attack->HasComponent<BulletComponent>() &&                                //
+      attack->GetComponent<BulletComponent>()->sender->HasComponent<EnemyTag>() //
+    )
+    {
+      // Bullet
+      auto dmgcmp = attack->GetComponent<DamageComponent>();
+      auto bulcmp = attack->GetComponent<BulletComponent>();
+      auto rbcmp = attack->GetComponent<Base::RigidBodyComponent>();
+      attack->SetDead();
+
+      auto *impcmp = defence->GetComponent<Base::ImpulseComponent>();
+      impcmp->force = bulcmp->sender->GetComponent<ShootComponent>()->bulletKnockbackForce;
+      impcmp->direction = rbcmp->direction;
+    }
+    else if (attack->HasComponent<EnemyTag>())
+    {
+
+      Vector2 attackDir = attack->GetComponent<Base::RigidBodyComponent>()->direction;
+      auto *impcmp = defence->GetComponent<Base::ImpulseComponent>();
+
+      if (Vector2Length(attackDir) == 0)
+      {
+        auto *defrbcmp = defence->GetComponent<Base::RigidBodyComponent>();
+        impcmp->direction = defrbcmp->direction;
+      }
+      else
+      {
+        impcmp->direction = attackDir;
+      }
+
+      impcmp->force = attack->GetComponent<Base::MoveComponent>()->driveForce * 2;
+    }
   }
 }

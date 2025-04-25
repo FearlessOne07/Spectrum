@@ -4,6 +4,7 @@
 #include "Components/HealthComponent.hpp"
 #include "Components/ShootComponent.hpp"
 #include "Components/Tags/EnemyTag.hpp"
+#include "Components/Tags/PlayerTag.hpp"
 #include <base/Entity.hpp>
 #include <base/EntityManager.hpp>
 #include <base/Event.hpp>
@@ -15,8 +16,8 @@
 #include <base/components/ShapeComponent.hpp>
 #include <base/components/TransformComponent.hpp>
 #include <base/events/EntityCollisionEvent.hpp>
-#include <raylib/raymath.h>
 #include <memory>
+#include <raylib/raymath.h>
 #include <vector>
 
 void BulletSystem::Start()
@@ -35,7 +36,6 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
     auto *transcmp = e->GetComponent<Base::TransformComponent>();
     auto *shtcmp = e->GetComponent<ShootComponent>();
     auto *dmgcmp = e->GetComponent<DamageComponent>();
-    auto *impcmpShooter = e->GetComponent<Base::ImpulseComponent>();
 
     if (shtcmp->bulletFireTimer >= shtcmp->bulletFireRate)
     {
@@ -48,12 +48,9 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
         bulTranscmp->position = transcmp->position;
 
         auto *rbcmp = bullet->AddComponent<Base::RigidBodyComponent>();
-        rbcmp->isKinematic = false;
-        rbcmp->mass = 1;
-
-        auto *impcmp = bullet->AddComponent<Base::ImpulseComponent>();
-        impcmp->force = shtcmp->bulletForce;
-        impcmp->direction = Vector2Subtract(shtcmp->target, transcmp->position);
+        rbcmp->isKinematic = true;
+        rbcmp->speed = shtcmp->bulletSpeed;
+        rbcmp->direction = Vector2Subtract(shtcmp->target, transcmp->position);
 
         auto *mvcmp = bullet->AddComponent<Base::MoveComponent>();
 
@@ -66,6 +63,7 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
         auto bulcmp = bullet->AddComponent<BulletComponent>();
         bulcmp->lifeTime = shtcmp->bulletLifetime;
         bulcmp->target = shtcmp->target;
+        bulcmp->sender = shtcmp->GetOwner();
 
         auto abbcmp = bullet->AddComponent<Base::BoundingBoxComponent>();
         abbcmp->size = {shpcmp->radius * 2, shpcmp->radius * 2};
@@ -110,7 +108,10 @@ void BulletSystem::EntityCollisionHandler(const std::shared_ptr<Base::Event> &ev
   auto attack = collEvent->hittBoxEntity;
   auto defence = collEvent->hurtBoxEntity;
 
-  if (attack->HasComponent<BulletComponent>() && defence->HasComponent<EnemyTag>())
+  if ( //
+    attack->HasComponent<BulletComponent>() && defence->HasComponent<EnemyTag>() &&
+    attack->GetComponent<BulletComponent>()->sender->HasComponent<PlayerTag>() //
+  )
   {
     // Bullet
     auto dmgcmp = attack->GetComponent<DamageComponent>();

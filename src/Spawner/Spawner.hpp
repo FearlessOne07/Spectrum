@@ -1,9 +1,9 @@
 #pragma once
 #include <base/AssetManager.hpp>
 #include <base/EntityManager.hpp>
-#include <raylib/raylib.h>
 #include <cstddef>
 #include <queue>
+#include <raylib/raylib.h>
 #include <vector>
 
 class Spawner
@@ -21,6 +21,9 @@ private:
   float _spawnTimer = _spawnDuration;
   float _spawnOffset = 200;
   std::queue<EnemyType> _toSpawn = {};
+
+  // Player
+  size_t _playerID = -1;
 
 public:
   size_t SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManager *assetManager, Vector2 position);

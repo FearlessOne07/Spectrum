@@ -3,8 +3,6 @@
 #include "Spawner/Spawner.hpp"
 #include <base/AssetManager.hpp>
 #include <base/EntityManager.hpp>
-#include <cstddef>
-#include <iostream>
 #include <random>
 
 WaveManager::WaveManager(Base::EntityManager *entityMan) : _entityMan(entityMan)
@@ -14,7 +12,6 @@ WaveManager::WaveManager(Base::EntityManager *entityMan) : _entityMan(entityMan)
 void WaveManager::GenerateWave()
 {
 
-  std::cout << "Generating Wave\n";
   // Init Variables
   int aliveCount = _entityMan->Query<EnemyTag>().size();
 
@@ -114,7 +111,7 @@ void WaveManager::GenerateWave()
 void WaveManager::SpawnWaves(float dt)
 {
   int count = _entityMan->Query<EnemyTag>().size();
-  if (_waveTimer >= _waveTime || (count == 0 && _spawner.GetToSpawnCount() == 0))
+  if (_waveTimer >= _waveTime && (count == 0 && _spawner.GetToSpawnCount() == 0))
   {
     _waveTimer = 0;
     GenerateWave();
@@ -126,8 +123,7 @@ void WaveManager::SpawnWaves(float dt)
   _spawner.SpawnWave(dt, _entityMan, _playerID);
 }
 
-size_t WaveManager::SpawnPlayer(Base::AssetManager *assetManager)
+void WaveManager::SpawnPlayer(Base::AssetManager *assetManager)
 {
   _playerID = _spawner.SpawnPlayer(_entityMan, assetManager, {0, 0});
-  return _playerID;
 }
