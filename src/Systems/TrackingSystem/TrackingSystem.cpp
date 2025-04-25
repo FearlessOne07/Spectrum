@@ -6,7 +6,7 @@
 #include <base/EntityManager.hpp>
 #include <base/RenderContext.hpp>
 #include <base/RenderContextSingleton.hpp>
-#include <base/components/BoundingBoxComponent.hpp>
+#include <base/components/ColliderComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
 #include <base/components/TransformComponent.hpp>
 #include <iostream>
@@ -25,7 +25,7 @@ void TrackingSystem::Update(float dt, Base::EntityManager *entityManager)
     auto *transcomp = e->GetComponent<Base::TransformComponent>();
     auto *rbcmp = e->GetComponent<Base::RigidBodyComponent>();
     auto *transfxcmp = e->GetComponent<TransformEffectsComponent>();
-    auto *abbcmp = e->GetComponent<Base::BoundingBoxComponent>();
+    auto *abbcmp = e->GetComponent<Base::ColliderComponent>();
 
     const Base::Entity *target = entityManager->GetEntity(trckcomp->targetEntityID);
     Vector2 targetPos = target->GetComponent<Base::TransformComponent>()->position;
@@ -61,7 +61,7 @@ void TrackingSystem::Update(float dt, Base::EntityManager *entityManager)
     {
       auto *shtcmp = e->GetComponent<ShootComponent>();
       auto *transfxcmp = e->GetComponent<TransformEffectsComponent>();
-      auto *abbcmp = e->GetComponent<Base::BoundingBoxComponent>();
+      auto *abbcmp = e->GetComponent<Base::ColliderComponent>();
 
       auto rd = Base::RenderContextSingleton::GetInstance();
 

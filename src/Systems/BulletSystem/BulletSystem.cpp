@@ -9,7 +9,7 @@
 #include <base/EntityManager.hpp>
 #include <base/Event.hpp>
 #include <base/EventBus.hpp>
-#include <base/components/BoundingBoxComponent.hpp>
+#include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
 #include <base/components/MoveComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
@@ -65,10 +65,10 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
         bulcmp->target = shtcmp->target;
         bulcmp->sender = shtcmp->GetOwner();
 
-        auto abbcmp = bullet->AddComponent<Base::BoundingBoxComponent>();
+        auto abbcmp = bullet->AddComponent<Base::ColliderComponent>();
         abbcmp->size = {shpcmp->radius * 2, shpcmp->radius * 2};
         abbcmp->positionOffset = {shpcmp->radius, shpcmp->radius};
-        abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HITBOX);
+        abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
 
         auto bulDmgcmp = bullet->AddComponent<DamageComponent>();
         bulDmgcmp->damage = dmgcmp->damage;

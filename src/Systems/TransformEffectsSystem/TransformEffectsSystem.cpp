@@ -6,7 +6,7 @@
 #include "raylib/raymath.h"
 #include <base/Entity.hpp>
 #include <base/EntityManager.hpp>
-#include <base/components/BoundingBoxComponent.hpp>
+#include <base/components/ColliderComponent.hpp>
 #include <memory>
 #include <raylib.h>
 #include <vector>
@@ -30,10 +30,10 @@ void TransformEffectsSystem::Update(float dt, Base::EntityManager *entityManager
 
     if (transfxcmp->bind)
     {
-      if (e->HasComponent<Base::BoundingBoxComponent>())
+      if (e->HasComponent<Base::ColliderComponent>())
       {
         auto *rbcmp = e->GetComponent<Base::RigidBodyComponent>();
-        auto *abbcmp = e->GetComponent<Base::BoundingBoxComponent>();
+        auto *abbcmp = e->GetComponent<Base::ColliderComponent>();
         Vector2 positionMin = {
           transcmp->position.x - abbcmp->positionOffset.x,
           transcmp->position.y - abbcmp->positionOffset.y,

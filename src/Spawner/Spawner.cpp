@@ -11,7 +11,7 @@
 #include <base/EntityManager.hpp>
 #include <base/RenderContext.hpp>
 #include <base/RenderContextSingleton.hpp>
-#include <base/components/BoundingBoxComponent.hpp>
+#include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
 #include <base/components/InputComponent.hpp>
 #include <base/components/MoveComponent.hpp>
@@ -72,10 +72,10 @@ size_t Spawner::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManag
   shpcmp->points = 8;
   shpcmp->radius = 30;
 
-  auto *abbcmp = e->AddComponent<Base::BoundingBoxComponent>();
+  auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
   abbcmp->size = {.x = 60, .y = 60};
   abbcmp->positionOffset = {.x = 30, .y = 30};
-  abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HURTBOX);
+  abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
 
   auto *inpcmp = e->AddComponent<Base::InputComponent>();
   inpcmp->BindKeyDown(KEY_A, [rbcmp]() { rbcmp->direction.x = -1; });
@@ -172,11 +172,11 @@ void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, size_t pla
     shpcmp->outlineColor = WHITE;
     shpcmp->radius = 30;
 
-    auto *abbcmp = e->AddComponent<Base::BoundingBoxComponent>();
+    auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
     abbcmp->size = {shpcmp->radius * 2, shpcmp->radius * 2};
     abbcmp->positionOffset = {shpcmp->radius, shpcmp->radius};
-    abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HURTBOX);
-    abbcmp->SetTypeFlag(Base::BoundingBoxComponent::Type::HITBOX);
+    abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
+    abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
 
     auto hlthcmp = e->AddComponent<HealthComponent>();
     hlthcmp->health = 8;
