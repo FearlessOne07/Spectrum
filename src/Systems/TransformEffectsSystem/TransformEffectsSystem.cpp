@@ -32,33 +32,85 @@ void TransformEffectsSystem::Update(float dt, Base::EntityManager *entityManager
     {
       if (e->HasComponent<Base::ColliderComponent>())
       {
+
         auto *rbcmp = e->GetComponent<Base::RigidBodyComponent>();
         auto *abbcmp = e->GetComponent<Base::ColliderComponent>();
-        Vector2 positionMin = {
-          transcmp->position.x - abbcmp->positionOffset.x,
-          transcmp->position.y - abbcmp->positionOffset.y,
-        };
-        Vector2 positionMax = {positionMin.x + abbcmp->size.x, positionMin.y + abbcmp->size.y};
+
+        Vector2 positionMin = {0, 0};
+        Vector2 positionMax = {0, 0};
+
+        if (abbcmp->shape == Base::ColliderComponent::Shape::BOX)
+        {
+          positionMin = {
+            transcmp->position.x - abbcmp->positionOffset.x,
+            transcmp->position.y - abbcmp->positionOffset.y,
+          };
+
+          positionMax = {positionMin.x + abbcmp->size.x, positionMin.y + abbcmp->size.y};
+        }
+        else if (abbcmp->shape == Base::ColliderComponent::Shape::CIRCLE)
+        {
+          positionMin = {
+            (transcmp->position.x - abbcmp->radius) - abbcmp->positionOffset.x,
+            (transcmp->position.y - abbcmp->radius) - abbcmp->positionOffset.y,
+          };
+
+          positionMax = {
+            (transcmp->position.x + abbcmp->radius) - abbcmp->positionOffset.x,
+            (transcmp->position.y + abbcmp->radius) - abbcmp->positionOffset.y,
+          };
+        }
 
         if (positionMin.x < transfxcmp->bindMin.x)
         {
-          transcmp->position.x = transfxcmp->bindMin.x + abbcmp->positionOffset.x;
+
+          if (abbcmp->shape == Base::ColliderComponent::Shape::BOX)
+          {
+            transcmp->position.x = transfxcmp->bindMin.x + abbcmp->positionOffset.x;
+          }
+          else if (abbcmp->shape == Base::ColliderComponent::Shape::CIRCLE)
+          {
+            transcmp->position.x = (transfxcmp->bindMin.x + abbcmp->radius) + abbcmp->positionOffset.x;
+          }
+
           rbcmp->velocity.x = 0;
         }
         else if (positionMax.x > transfxcmp->bindMax.x)
         {
-          transcmp->position.x = transfxcmp->bindMax.x - abbcmp->positionOffset.x;
+
+          if (abbcmp->shape == Base::ColliderComponent::Shape::BOX)
+          {
+            transcmp->position.x = transfxcmp->bindMax.x - abbcmp->positionOffset.x;
+          }
+          else if (abbcmp->shape == Base::ColliderComponent::Shape::CIRCLE)
+          {
+            transcmp->position.x = (transfxcmp->bindMax.x - abbcmp->radius) - abbcmp->positionOffset.x;
+          }
           rbcmp->velocity.x = 0;
         }
 
         if (positionMin.y < transfxcmp->bindMin.y)
         {
-          transcmp->position.y = transfxcmp->bindMin.y + abbcmp->positionOffset.y;
+          if (abbcmp->shape == Base::ColliderComponent::Shape::BOX)
+          {
+            transcmp->position.y = transfxcmp->bindMin.y + abbcmp->positionOffset.y;
+          }
+          else if (abbcmp->shape == Base::ColliderComponent::Shape::CIRCLE)
+          {
+            transcmp->position.y = (transfxcmp->bindMin.y + abbcmp->radius) + abbcmp->positionOffset.y;
+          }
           rbcmp->velocity.y = 0;
         }
         else if (positionMax.y > transfxcmp->bindMax.y)
         {
-          transcmp->position.y = transfxcmp->bindMax.y - abbcmp->positionOffset.y;
+          if (abbcmp->shape == Base::ColliderComponent::Shape::BOX)
+          {
+            transcmp->position.y = transfxcmp->bindMax.y - abbcmp->positionOffset.y;
+          }
+          else if (abbcmp->shape == Base::ColliderComponent::Shape::CIRCLE)
+          {
+            transcmp->position.y = (transfxcmp->bindMax.y - abbcmp->radius) - abbcmp->positionOffset.y;
+          }
           rbcmp->velocity.y = 0;
         }
       }
