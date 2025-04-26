@@ -66,8 +66,8 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
         bulcmp->sender = shtcmp->GetOwner();
 
         auto abbcmp = bullet->AddComponent<Base::ColliderComponent>();
-        abbcmp->size = {shpcmp->radius * 2, shpcmp->radius * 2};
-        abbcmp->positionOffset = {shpcmp->radius, shpcmp->radius};
+        abbcmp->radius = shpcmp->radius;
+        abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
         abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
 
         auto bulDmgcmp = bullet->AddComponent<DamageComponent>();

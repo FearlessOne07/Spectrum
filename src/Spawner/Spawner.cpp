@@ -73,8 +73,8 @@ size_t Spawner::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManag
   shpcmp->radius = 30;
 
   auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
-  abbcmp->size = {.x = 60, .y = 60};
-  abbcmp->positionOffset = {.x = 30, .y = 30};
+  abbcmp->radius = shpcmp->radius;
+  abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
   abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
 
   auto *inpcmp = e->AddComponent<Base::InputComponent>();
@@ -173,8 +173,8 @@ void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, size_t pla
     shpcmp->radius = 30;
 
     auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
-    abbcmp->size = {shpcmp->radius * 2, shpcmp->radius * 2};
-    abbcmp->positionOffset = {shpcmp->radius, shpcmp->radius};
+    abbcmp->radius = shpcmp->radius;
+    abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
 
