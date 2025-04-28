@@ -88,12 +88,12 @@ size_t Spawner::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManag
   inpcmp->BindKeyReleased(KEY_S, [rbcmp]() { rbcmp->direction.y = 0; });
   inpcmp->BindKeyReleased(KEY_W, [rbcmp]() { rbcmp->direction.y = 0; });
 
-  inpcmp->BindMouseButtonDown(MOUSE_BUTTON_LEFT, [shtcmp]() {
-    const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-    shtcmp->IsFiring = true;
-    shtcmp->target = GetScreenToWorld2D(rd->GetScreenToGame(GetMousePosition()), rd->camera);
-  });
-  inpcmp->BindMouseButtonReleased(MOUSE_BUTTON_LEFT, [shtcmp]() { shtcmp->IsFiring = false; });
+  // inpcmp->BindMouseButtonDown(MOUSE_BUTTON_LEFT, [shtcmp]() {
+  //   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
+  //   shtcmp->IsFiring = true;
+  //   shtcmp->target = GetScreenToWorld2D(rd->GetScreenToGame(GetMousePosition()), rd->camera);
+  // });
+  // inpcmp->BindMouseButtonReleased(MOUSE_BUTTON_LEFT, [shtcmp]() { shtcmp->IsFiring = false; });
 
   auto dmgcmp = e->AddComponent<DamageComponent>();
   dmgcmp->damage = 2;
@@ -149,9 +149,7 @@ void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, size_t pla
     }
 
     Base::Entity *e = entityManager->AddEntity();
-
-    e->AddComponent<EnemyTag>();
-
+e->AddComponent<EnemyTag>();
     auto *transcmp = e->GetComponent<Base::TransformComponent>();
     transcmp->position = position;
 
