@@ -26,9 +26,6 @@ void GameScene::Enter( //
 {
   // Register Events
   auto bus = Base::EventBus::GetInstance();
-  bus->SubscribeEvent<Base::MouseButtonEvent>([this](const std::shared_ptr<Base::Event> &event) {
-    this->OnMouseEvent(std::static_pointer_cast<Base::MouseButtonEvent>(event));
-  });
   // Init Camera
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   rd->camera.offset = {rd->gameWidth / 2, rd->gameHeight / 2};
@@ -50,13 +47,6 @@ void GameScene::Enter( //
   _waveManager = WaveManager(GetEntityManager());
   _waveManager.SpawnPlayer(assetManager);
 
-  // Emitter
-  _emitter = GetParticleManager()->AddEmitter();
-  _emitter->particleStartSize = {50, 50};
-  _emitter->particleLifeTime = 0.5f;
-  _emitter->position = GetMousePosition();
-  _emitter->isEmitting = false;
-
   // Event Handler
   _playerEVH.Init();
 }
@@ -66,8 +56,8 @@ void GameScene::Update(float dt, Base::SystemManager *systemManager)
   GetInput();
   GetUIManager()->Update();
   _waveManager.SpawnWaves(dt);
-  systemManager->Update(dt);
   GetParticleManager()->Update(dt);
+  systemManager->Update(dt);
 }
 
 void GameScene::Render(Base::SystemManager *systemManager)
@@ -88,27 +78,4 @@ void GameScene::Exit(Base::SystemManager *systemManager, Base::AssetManager *ass
 
 void GameScene::GetInput()
 {
-}
-
-void GameScene::OnMouseEvent(const std::shared_ptr<Base::MouseButtonEvent> &event)
-{
-  std::random_device rd;
-  std::mt19937_64 gen(rd());
-
-  std::uniform_real_distribution<float> angleDist(0, 360);
-  const Base::RenderContext *rctx = Base::RenderContextSingleton::GetInstance();
-
-  if (event->button == MOUSE_BUTTON_LEFT && event->action == Base::MouseButtonEvent::Action::HELD)
-  {
-    float angle = angleDist(gen);
-    _emitter->particleDirection = {static_cast<float>(sin(angle * DEG2RAD)), static_cast<float>(cos(angle * DEG2RAD))};
-    _emitter->isEmitting = true;
-    _emitter->particleShape = Base::ParticleEmitter::ParticleShape::CIRCLE;
-    _emitter->position = GetScreenToWorld2D(rctx->GetScreenToGame(GetMousePosition()), rctx->camera);
-    _emitter->particleSpeed = std::uniform_real_distribution<float>(1000)(gen);
-  }
-  else if (event->button == MOUSE_LEFT_BUTTON && event->action == Base::MouseButtonEvent::Action::RELEASED)
-  {
-    _emitter->isEmitting = false;
-  }
 }
