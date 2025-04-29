@@ -1,5 +1,5 @@
 #pragma once
-#include <base/Event.hpp>
+#include <base/signals/Event.hpp>
 #include <memory>
 
 class PlayerEventHandler

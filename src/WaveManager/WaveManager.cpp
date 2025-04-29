@@ -1,8 +1,8 @@
 #include "WaveManager.hpp"
 #include "Components/Tags/EnemyTag.hpp"
 #include "Spawner/Spawner.hpp"
-#include <base/AssetManager.hpp>
-#include <base/EntityManager.hpp>
+#include <base/assets/AssetManager.hpp>
+#include <base/entities/EntityManager.hpp>
 #include <random>
 
 WaveManager::WaveManager(Base::EntityManager *entityMan) : _entityMan(entityMan)

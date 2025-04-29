@@ -1,5 +1,5 @@
-#include <base/Event.hpp>
-#include <base/System.hpp>
+#include <base/signals/Event.hpp>
+#include <base/systems/System.hpp>
 #include <memory>
 
 class BulletSystem : public Base::System

@@ -5,19 +5,19 @@
 #include "Components/ShootComponent.hpp"
 #include "Components/Tags/EnemyTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
-#include <base/Entity.hpp>
-#include <base/EntityManager.hpp>
-#include <base/Event.hpp>
-#include <base/EventBus.hpp>
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
 #include <base/components/MoveComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
 #include <base/components/ShapeComponent.hpp>
 #include <base/components/TransformComponent.hpp>
+#include <base/entities/Entity.hpp>
+#include <base/entities/EntityManager.hpp>
 #include <base/events/EntityCollisionEvent.hpp>
+#include <base/signals/Event.hpp>
+#include <base/signals/EventBus.hpp>
 #include <memory>
-#include <raylib/raymath.h>
+#include <raymath.h>
 #include <vector>
 
 void BulletSystem::Start()

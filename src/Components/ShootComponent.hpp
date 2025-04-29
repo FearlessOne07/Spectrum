@@ -1,5 +1,5 @@
 #pragma once
-#include <base/Component.hpp>
+#include <base/components/Component.hpp>
 #include <raylib.h>
 
 struct ShootComponent : public Base::Component

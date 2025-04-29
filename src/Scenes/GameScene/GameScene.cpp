@@ -3,20 +3,15 @@
 #include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
-#include "base/EventBus.hpp"
-#include "base/input/Events/MouseButtonEvent.hpp"
-#include "base/particles/ParticleEmitter.hpp"
-#include "raylib/raylib.h"
-#include <base/RenderContext.hpp>
-#include <base/RenderContextSingleton.hpp>
-#include <base/SystemManager.hpp>
+#include "base/signals/EventBus.hpp"
+#include <base/game/RenderContext.hpp>
+#include <base/game/RenderContextSingleton.hpp>
 #include <base/systems/EntityCollisionSystem.hpp>
 #include <base/systems/InputSystem.hpp>
 #include <base/systems/MoveSystem.hpp>
 #include <base/systems/RenderSystem.hpp>
+#include <base/systems/SystemManager.hpp>
 #include <base/ui/UIManager.hpp>
-#include <memory>
-#include <random>
 #include <raylib.h>
 
 void GameScene::Enter( //

@@ -1,18 +1,17 @@
 #include "PlayerEventHandler.hpp"
 #include "Components/BulletComponent.hpp"
 #include "Components/DamageComponent.hpp"
-#include "Components/HealthComponent.hpp"
 #include "Components/ShootComponent.hpp"
 #include "Components/Tags/EnemyTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
-#include "raylib/raylib.h"
-#include "raylib/raymath.h"
-#include <base/Event.hpp>
-#include <base/EventBus.hpp>
 #include <base/components/ImpulseComponent.hpp>
 #include <base/components/MoveComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
 #include <base/events/EntityCollisionEvent.hpp>
+#include <base/signals/Event.hpp>
+#include <base/signals/EventBus.hpp>
+#include <raylib.h>
+#include <raymath.h>
 
 void PlayerEventHandler::Init()
 {

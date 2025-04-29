@@ -1,7 +1,7 @@
 #pragma once
 #include "Events/Handlers/PlayerEventHandler.hpp"
 #include "WaveManager/WaveManager.hpp"
-#include <base/Scene.hpp>
+#include <base/scenes/Scene.hpp>
 
 class GameScene : public Base::Scene
 {

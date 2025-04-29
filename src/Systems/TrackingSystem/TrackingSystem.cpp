@@ -2,19 +2,18 @@
 #include "Components/ShootComponent.hpp"
 #include "Components/TrackingComponent.hpp"
 #include "Components/TransformEffects.hpp"
-#include <base/Entity.hpp>
-#include <base/EntityManager.hpp>
-#include <base/RenderContext.hpp>
-#include <base/RenderContextSingleton.hpp>
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
 #include <base/components/TransformComponent.hpp>
-#include <iostream>
+#include <base/entities/Entity.hpp>
+#include <base/entities/EntityManager.hpp>
+#include <base/game/RenderContext.hpp>
+#include <base/game/RenderContextSingleton.hpp>
 #include <memory>
 #include <raylib.h>
-#include <raylib/raylib.h>
 #include <raymath.h>
 #include <vector>
+
 void TrackingSystem::Update(float dt, Base::EntityManager *entityManager)
 {
   std::vector<std::shared_ptr<Base::Entity>> entities = entityManager->Query<TrackingComponent>();

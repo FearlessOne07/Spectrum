@@ -1,9 +1,9 @@
 #pragma once
-#include <base/AssetManager.hpp>
-#include <base/EntityManager.hpp>
+#include <base/assets/AssetManager.hpp>
+#include <base/entities/EntityManager.hpp>
 #include <cstddef>
 #include <queue>
-#include <raylib/raylib.h>
+#include <raylib.h>
 #include <vector>
 
 class Spawner

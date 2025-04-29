@@ -6,11 +6,7 @@
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
 #include "Components/TransformEffects.hpp"
-#include <base/AssetManager.hpp>
-#include <base/Entity.hpp>
-#include <base/EntityManager.hpp>
-#include <base/RenderContext.hpp>
-#include <base/RenderContextSingleton.hpp>
+#include <base/assets/AssetManager.hpp>
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
 #include <base/components/InputComponent.hpp>
@@ -18,10 +14,13 @@
 #include <base/components/RigidBodyComponent.hpp>
 #include <base/components/ShapeComponent.hpp>
 #include <base/components/TransformComponent.hpp>
+#include <base/entities/Entity.hpp>
+#include <base/entities/EntityManager.hpp>
+#include <base/game/RenderContext.hpp>
+#include <base/game/RenderContextSingleton.hpp>
 #include <cstddef>
 #include <random>
 #include <raylib.h>
-#include <raylib/raylib.h>
 
 void Spawner::SetToSpawn(std::vector<EnemyType> toSpawn)
 {

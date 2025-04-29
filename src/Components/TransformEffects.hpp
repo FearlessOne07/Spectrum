@@ -1,7 +1,7 @@
 #pragma once
 
-#include "raylib/raylib.h"
-#include <base/Component.hpp>
+#include <base/components/Component.hpp>
+#include <raylib.h>
 
 struct TransformEffectsComponent : public Base::Component
 {

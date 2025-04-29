@@ -1,6 +1,6 @@
 
 #pragma once
-#include <base/Component.hpp>
+#include <base/components/Component.hpp>
 
 struct EnemyTag : public Base::Component
 {

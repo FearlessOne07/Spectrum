@@ -3,7 +3,7 @@
 #include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
-#include <base/Game.hpp>
+#include <base/game/Game.hpp>
 #include <base/systems/CameraSystem.hpp>
 #include <base/systems/EntityCollisionSystem.hpp>
 #include <base/systems/InputSystem.hpp>

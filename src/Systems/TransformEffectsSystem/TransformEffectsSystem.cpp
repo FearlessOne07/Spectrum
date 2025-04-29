@@ -1,14 +1,13 @@
 #include "TransformEffectsSystem.hpp"
 #include "Components/TransformEffects.hpp"
-#include "base/components/MoveComponent.hpp"
 #include "base/components/RigidBodyComponent.hpp"
 #include "base/components/TransformComponent.hpp"
-#include "raylib/raymath.h"
-#include <base/Entity.hpp>
-#include <base/EntityManager.hpp>
 #include <base/components/ColliderComponent.hpp>
+#include <base/entities/Entity.hpp>
+#include <base/entities/EntityManager.hpp>
 #include <memory>
 #include <raylib.h>
+#include <raymath.h>
 #include <vector>
 
 void TransformEffectsSystem::Update(float dt, Base::EntityManager *entityManager)
