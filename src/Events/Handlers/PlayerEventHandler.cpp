@@ -7,23 +7,21 @@
 #include <base/components/ImpulseComponent.hpp>
 #include <base/components/MoveComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
-#include <base/events/EntityCollisionEvent.hpp>
-#include <base/signals/Event.hpp>
-#include <base/signals/EventBus.hpp>
+#include <base/signals/EntityCollisionSignal.hpp>
+#include <base/signals/SignalManager.hpp>
 #include <raylib.h>
 #include <raymath.h>
 
 void PlayerEventHandler::Init()
 {
-  auto eventBus = Base::EventBus::GetInstance();
-  eventBus->SubscribeEvent<Base::EntityCollisionEvent>(
-    [this](const std::shared_ptr<Base::Event> &event) { this->PlayerEnemyCollisionHandler(event); } //
-  );
+  auto signalManager = Base::SignalManager::GetInstance();
+  signalManager->SubscribeSignal<Base::EntityCollisionSignal>(
+    [this](const std::shared_ptr<Base::Signal> &signal) { this->PlayerEnemyCollisionHandler(signal); });
 }
 
-void PlayerEventHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base::Event> event)
+void PlayerEventHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base::Signal> event)
 {
-  auto collEvent = std::static_pointer_cast<Base::EntityCollisionEvent>(event);
+  auto collEvent = std::static_pointer_cast<Base::EntityCollisionSignal>(event);
 
   auto attack = collEvent->hittBoxEntity;
   auto defence = collEvent->hurtBoxEntity;

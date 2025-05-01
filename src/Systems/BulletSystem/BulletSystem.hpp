@@ -1,4 +1,4 @@
-#include <base/signals/Event.hpp>
+#include <base/signals/Signal.hpp>
 #include <base/systems/System.hpp>
 #include <memory>
 
@@ -8,7 +8,7 @@ private:
   void Start() override;
 
 private: // Hanlders
-  void EntityCollisionHandler(const std::shared_ptr<Base::Event> &);
+  void EntityCollisionHandler(const std::shared_ptr<Base::Signal> &);
 
 public:
   virtual void Update(float dt, Base::EntityManager *entityManager) override;

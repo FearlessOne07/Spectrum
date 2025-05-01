@@ -22,8 +22,8 @@ private:
 private:
   // Enemy Weights
   std::unordered_map<Spawner::EnemyType, EnemySpec> _enemySpawnInfo = {
-    {Spawner::EnemyType::CHASER, EnemySpec{.spawnChance = 0.8f, .cost = 1, .unlockWave = 1}},
-    {Spawner::EnemyType::SHOOTER, EnemySpec{.spawnChance = 0.2f, .cost = 2, .unlockWave = 2}},
+      {Spawner::EnemyType::CHASER, EnemySpec{.spawnChance = 0.8f, .cost = 1, .unlockWave = 1}},
+      {Spawner::EnemyType::SHOOTER, EnemySpec{.spawnChance = 0.2f, .cost = 2, .unlockWave = 2}},
   };
 
   // Wave
@@ -46,6 +46,7 @@ private:
   size_t _playerID = 0;
 
 public:
+  WaveManager() = default;
   WaveManager(Base::EntityManager *entityManager);
   void SpawnWaves(float dt);
   void SpawnPlayer(Base::AssetManager *assetManager);

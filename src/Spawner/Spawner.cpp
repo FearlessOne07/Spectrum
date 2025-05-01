@@ -90,7 +90,7 @@ size_t Spawner::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManag
   inpcmp->BindMouseButtonDown(MOUSE_BUTTON_LEFT, [shtcmp]() {
     const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
     shtcmp->IsFiring = true;
-    shtcmp->target = GetScreenToWorld2D(rd->GetScreenToGame(GetMousePosition()), rd->camera);
+    shtcmp->target = GetScreenToWorld2D(rd->mousePosition, rd->camera);
   });
   inpcmp->BindMouseButtonReleased(MOUSE_BUTTON_LEFT, [shtcmp]() { shtcmp->IsFiring = false; });
 

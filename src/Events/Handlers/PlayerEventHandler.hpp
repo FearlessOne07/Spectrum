@@ -1,11 +1,11 @@
 #pragma once
-#include <base/signals/Event.hpp>
+#include <base/signals/Signal.hpp>
 #include <memory>
 
 class PlayerEventHandler
 {
 private: // Handlers
-  void PlayerEnemyCollisionHandler(const std::shared_ptr<Base::Event>);
+  void PlayerEnemyCollisionHandler(const std::shared_ptr<Base::Signal>);
 
 public:
   // Function to regsier events

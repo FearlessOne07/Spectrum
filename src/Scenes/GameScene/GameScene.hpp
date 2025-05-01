@@ -6,19 +6,15 @@
 class GameScene : public Base::Scene
 {
 private: // Attributes
-  WaveManager _waveManager = WaveManager(GetEntityManager());
   PlayerEventHandler _playerEVH = PlayerEventHandler();
 
 private:
-  void GetInput() override;
   void RegisterSceneEvents();
+  WaveManager _waveManager = WaveManager();
 
 public:
-  void Update(float dt, Base::SystemManager *systemManager) override;
-  void Enter( //
-    Base::SystemManager *systemManager, Base::AssetManager *assetManager,
-    Base::SceneData sceneData = Base::SceneData() //
-    ) override;
-  void Render(Base::SystemManager *systemManager) override;
-  void Exit(Base::SystemManager *systemManager, Base::AssetManager *assetManager) override;
+  void Update(float dt) override;
+  void Enter(Base::SceneData sceneData = Base::SceneData()) override;
+  void Render() override;
+  void Exit() override;
 };

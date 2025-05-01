@@ -1,6 +1,10 @@
 set(SOURCES
   "./main.cpp"
   "./Scenes/GameScene/GameScene.cpp"
+  "./Scenes/GameScene/Layers/MainGameLayer.cpp"
+  "./Scenes/GameScene/Layers/ParticleLayer.cpp"
+
+
   "./Systems/BulletSystem/BulletSystem.cpp"
   "./Systems/TrackingSystem/TrackingSystem.cpp"
   "./Systems/HealthSystem/HealthSystem.cpp"

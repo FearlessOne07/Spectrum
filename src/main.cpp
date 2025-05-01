@@ -20,14 +20,16 @@ int main(void)
 
   // Register Systems
   game.RegisterSystem<Base::RenderSystem>(true);
+
   game.RegisterSystem<Base::InputSystem>();
-  game.RegisterSystem<BulletSystem>();
   game.RegisterSystem<Base::MoveSystem>();
+  game.RegisterSystem<Base::EntityCollisionSystem>();
+  game.RegisterSystem<Base::CameraSystem>();
+
+  game.RegisterSystem<BulletSystem>();
   game.RegisterSystem<TransformEffectsSystem>();
   game.RegisterSystem<TrackingSystem>();
   game.RegisterSystem<HealthSystem>();
-  game.RegisterSystem<Base::CameraSystem>();
-  game.RegisterSystem<Base::EntityCollisionSystem>();
 
   // Run game
   game.Run();

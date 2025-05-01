@@ -13,17 +13,17 @@
 #include <base/components/TransformComponent.hpp>
 #include <base/entities/Entity.hpp>
 #include <base/entities/EntityManager.hpp>
-#include <base/events/EntityCollisionEvent.hpp>
-#include <base/signals/Event.hpp>
-#include <base/signals/EventBus.hpp>
+#include <base/signals/EntityCollisionSignal.hpp>
+#include <base/signals/Signal.hpp>
+#include <base/signals/SignalManager.hpp>
 #include <memory>
 #include <raymath.h>
 #include <vector>
 
 void BulletSystem::Start()
 {
-  Base::EventBus::GetInstance()->SubscribeEvent<Base::EntityCollisionEvent>(
-    [this](const std::shared_ptr<Base::Event> &event) -> void { this->EntityCollisionHandler(event); } //
+  Base::SignalManager::GetInstance()->SubscribeSignal<Base::EntityCollisionSignal>(
+    [this](const std::shared_ptr<Base::Signal> &event) -> void { this->EntityCollisionHandler(event); } //
   );
 }
 
@@ -101,9 +101,9 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
   }
 }
 
-void BulletSystem::EntityCollisionHandler(const std::shared_ptr<Base::Event> &event)
+void BulletSystem::EntityCollisionHandler(const std::shared_ptr<Base::Signal> &event)
 {
-  auto collEvent = std::static_pointer_cast<Base::EntityCollisionEvent>(event);
+  auto collEvent = std::static_pointer_cast<Base::EntityCollisionSignal>(event);
 
   auto attack = collEvent->hittBoxEntity;
   auto defence = collEvent->hurtBoxEntity;
