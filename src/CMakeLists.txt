@@ -4,13 +4,12 @@ set(SOURCES
   "./Scenes/GameScene/Layers/MainGameLayer.cpp"
   "./Scenes/GameScene/Layers/ParticleLayer.cpp"
 
-
   "./Systems/BulletSystem/BulletSystem.cpp"
   "./Systems/TrackingSystem/TrackingSystem.cpp"
   "./Systems/HealthSystem/HealthSystem.cpp"
   "./Systems/TransformEffectsSystem/TransformEffectsSystem.cpp"
 
-  "./Events/Handlers/PlayerEventHandler.cpp"
+  "./Signals/Handlers/PlayerEventHandler.cpp"
 
   "./Spawner/Spawner.cpp"
   "./WaveManager/WaveManager.cpp"

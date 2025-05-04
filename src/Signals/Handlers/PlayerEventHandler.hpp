@@ -2,7 +2,7 @@
 #include <base/signals/Signal.hpp>
 #include <memory>
 
-class PlayerEventHandler
+class PlayerSignalHandler
 {
 private: // Handlers
   void PlayerEnemyCollisionHandler(const std::shared_ptr<Base::Signal>);

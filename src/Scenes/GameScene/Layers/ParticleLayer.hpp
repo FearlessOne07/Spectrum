@@ -1,3 +1,5 @@
+#include "Signals/EntityDiedSignal.hpp"
+#include "base/signals/Signal.hpp"
 #include <base/particles/ParticleEmitter.hpp>
 #include <base/scenes/SceneLayer.hpp>
 #include <random>
@@ -6,7 +8,9 @@ class ParticleLayer : public Base::SceneLayer
 {
   std::random_device _rd;
   std::mt19937_64 _gen;
-  Base::ParticleEmitter *emitter;
+  Base::ParticleEmitter *_emitter;
+
+  void OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal);
 
 public:
   void Update(float dt) override;

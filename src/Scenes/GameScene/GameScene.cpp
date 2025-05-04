@@ -44,7 +44,6 @@ void GameScene::Enter(Base::SceneData sceneData)
   GetLayerStack().AttachLayer<ParticleLayer>();
 
   // Event Handler
-  _playerEVH.Init();
 }
 
 void GameScene::Update(float dt)
