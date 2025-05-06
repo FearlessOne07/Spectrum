@@ -3,7 +3,6 @@
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/game/RenderContextSingleton.hpp"
-#include "base/input/Events/MouseButtonEvent.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleEmitter.hpp"
 #include "base/scenes/Scene.hpp"
@@ -21,7 +20,8 @@ void ParticleLayer::OnAttach()
   _emitter->burst = true;
   _emitter->emissionType = Base::ParticleEmitter::EmissionType::POINT;
   _emitter->particleShape = Base::ParticleEmitter::ParticleShape::POLYGON;
-  _emitter->burstEmissionRate = 60;
+  _emitter->burstEmissionCount = 60;
+  _emitter->particleRotationSpeed = 180;
   _emitter->isEmitting = false;
 
   auto *bus = Base::SignalManager::GetInstance();
@@ -40,7 +40,6 @@ void ParticleLayer::Update(float dt)
 
 void ParticleLayer::Render()
 {
-
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   BeginMode2D(rd->camera);
   _owner->GetParticleManager()->Render();
@@ -58,10 +57,10 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
     auto e = signal->entity;
     auto shpcmp = e->GetComponent<Base::ShapeComponent>();
     auto transcmp = e->GetComponent<Base::TransformComponent>();
-    std::uniform_real_distribution<float> lifeRange(0.5, 1.5);
-    std::uniform_real_distribution<float> radiusRange(0.2 * shpcmp->radius, 0.5 * shpcmp->radius);
+    std::uniform_real_distribution<float> lifeRange(0.5, 1);
+    std::uniform_real_distribution<float> radiusRange(0.3 * shpcmp->radius, 0.6 * shpcmp->radius);
     std::uniform_real_distribution<float> angleDist(0, 360);
-    std::uniform_real_distribution<float> speedDist(100, 200);
+    std::uniform_real_distribution<float> speedDist(0, 700);
 
     _emitter->isEmitting = true;
     _emitter->particleStartColor = shpcmp->color;
@@ -70,7 +69,7 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
       emitter.particleLifeTime = lifeRange(_gen);
       emitter.particleStartRadius = radiusRange(_gen);
       emitter.particleEndRadius = 0;
-      emitter.particleSpeed = speedDist(_gen);
+      emitter.particleStartSpeed = speedDist(_gen);
 
       float angle = angleDist(_gen);
       emitter.particleDirection = {static_cast<float>(sin(angle * DEG2RAD)), static_cast<float>(cos(angle * DEG2RAD))};

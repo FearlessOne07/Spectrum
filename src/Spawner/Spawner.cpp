@@ -196,7 +196,7 @@ void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, size_t pla
     case EnemyType::SHOOTER:
       shpcmp->points = 6;
       shpcmp->color = BLUE;
-      trckcmp->trackingDistance = 800;
+      trckcmp->trackingDistance = 1000;
 
       auto *shtcmp = e->AddComponent<ShootComponent>();
       shtcmp->bulletFireRate = 2.f;
