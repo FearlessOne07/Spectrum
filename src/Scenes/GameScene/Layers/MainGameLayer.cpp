@@ -25,16 +25,6 @@ void MainGameLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
   {
     if (keyEvent->key == KEY_T && keyEvent->action == Base::InputEvent::Action::PRESSED)
     {
-      Base::CameraManager::CameraShakeConfig config;
-      config.trauma = 1.f;
-      config.frequency = 30.0f;
-      config.shakeMagnitude = 80.0f;
-      config.duration = 1.5;
-      config.traumaMultiplyer = 1.5;
-      config.rotationMagnitude = 1.4;
-
-      _owner->GetCameraManager()->Shake(config);
-      keyEvent->isHandled = true;
     }
   }
   _owner->GetSystemManager()->OnInputEvent(event);
