@@ -9,6 +9,7 @@
 #include <base/components/RigidBodyComponent.hpp>
 #include <base/signals/EntityCollisionSignal.hpp>
 #include <base/signals/SignalManager.hpp>
+#include <iostream>
 #include <raylib.h>
 #include <raymath.h>
 
@@ -25,6 +26,7 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
 
   auto attack = collEvent->hittBoxEntity;
   auto defence = collEvent->hurtBoxEntity;
+  std::cout << "col\n";
 
   if (defence->HasComponent<PlayerTag>())
   {
@@ -41,7 +43,15 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
 
       auto *impcmp = defence->GetComponent<Base::ImpulseComponent>();
       impcmp->force = bulcmp->sender->GetComponent<ShootComponent>()->bulletKnockbackForce;
-      impcmp->direction = rbcmp->direction;
+
+      if (Vector2Length(collEvent->collisionNormal) > 0)
+      {
+        impcmp->direction = collEvent->collisionNormal * -1;
+      }
+      else
+      {
+        impcmp->direction = rbcmp->direction;
+      }
     }
     else if (attack->HasComponent<EnemyTag>())
     {
@@ -49,14 +59,9 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
       Vector2 attackDir = attack->GetComponent<Base::RigidBodyComponent>()->direction;
       auto *impcmp = defence->GetComponent<Base::ImpulseComponent>();
 
-      if (Vector2Length(attackDir) == 0)
+      if (Vector2Length(collEvent->collisionNormal) > 0)
       {
-        auto *defrbcmp = defence->GetComponent<Base::RigidBodyComponent>();
-        impcmp->direction = defrbcmp->direction;
-      }
-      else
-      {
-        impcmp->direction = attackDir;
+        impcmp->direction = collEvent->collisionNormal * -1;
       }
 
       impcmp->force = attack->GetComponent<Base::MoveComponent>()->driveForce * 2;

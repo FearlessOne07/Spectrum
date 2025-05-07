@@ -42,11 +42,11 @@ void GameScene::Enter(Base::SceneData sceneData)
   systemManager->ActivatSystem<HealthSystem>();
   systemManager->ActivatSystem<TransformEffectsSystem>();
 
+  GetAssetManager()->LoadAsset<Texture>("assets/jess.jpg");
+
   // Layers
   GetLayerStack().AttachLayer<MainGameLayer>();
   GetLayerStack().AttachLayer<ParticleLayer>();
-
-  // Event Handler
 }
 
 void GameScene::Update(float dt)

@@ -7,6 +7,7 @@
 #include "Components/TrackingComponent.hpp"
 #include "Components/TransformEffects.hpp"
 #include "base/camera/CameraManager.hpp"
+#include "base/components/TextureComponent.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
@@ -53,6 +54,7 @@ size_t Spawner::SpawnPlayer( //
   transfxcmp->bind = true;
   transfxcmp->bindMin = camManager->GetScreenToWorld({0, 0});
   transfxcmp->bindMax = camManager->GetScreenToWorld({rd->gameWidth, rd->gameHeight});
+  transfxcmp->rotate = false;
 
   auto *mvcmp = e->AddComponent<Base::MoveComponent>();
   mvcmp->driveForce = 3000;
@@ -69,15 +71,14 @@ size_t Spawner::SpawnPlayer( //
   shtcmp->bulletFireTimer = 1;
   shtcmp->bulletSpeed = 1500.f;
 
-  auto *shpcmp = e->AddComponent<Base::ShapeComponent>();
-  shpcmp->fill = true;
-  shpcmp->color = WHITE;
-  shpcmp->points = 8;
-  shpcmp->radius = 30;
+  auto txtcmp = e->AddComponent<Base::TextureComponent>();
+  txtcmp->texture = assetManager->GetAsset<Texture>("jess");
+  txtcmp->source = {0, 0, static_cast<float>(txtcmp->texture->width), static_cast<float>(txtcmp->texture->height)};
 
   auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
-  abbcmp->radius = shpcmp->radius;
-  abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
+  abbcmp->size = {100, 100};
+  abbcmp->positionOffset = {50, 50};
+  abbcmp->shape = Base::ColliderComponent::Shape::BOX;
   abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
 
   auto *inpcmp = e->AddComponent<Base::InputComponent>();
@@ -202,7 +203,7 @@ void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, Base::Came
       trckcmp->trackingDistance = 1000;
 
       auto *shtcmp = e->AddComponent<ShootComponent>();
-      shtcmp->bulletFireRate = 2.f;
+      shtcmp->bulletFireRate = 5.f;
       shtcmp->bulletKnockbackForce = 800;
       shtcmp->bulletSpeed = 1000.f;
 
