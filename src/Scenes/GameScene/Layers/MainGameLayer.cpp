@@ -42,7 +42,7 @@ void MainGameLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 
 void MainGameLayer::Update(float dt)
 {
-  // _waveManager.SpawnWaves(dt, _owner->GetCameraManager());
+  _waveManager.SpawnWaves(dt, _owner->GetCameraManager());
 }
 
 void MainGameLayer::Render()
