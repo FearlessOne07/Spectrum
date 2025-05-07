@@ -4,7 +4,6 @@
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
 #include <base/game/Game.hpp>
-#include <base/systems/CameraSystem.hpp>
 #include <base/systems/EntityCollisionSystem.hpp>
 #include <base/systems/InputSystem.hpp>
 #include <base/systems/MoveSystem.hpp>
@@ -24,7 +23,6 @@ int main(void)
   game.RegisterSystem<Base::InputSystem>();
   game.RegisterSystem<Base::MoveSystem>();
   game.RegisterSystem<Base::EntityCollisionSystem>();
-  game.RegisterSystem<Base::CameraSystem>();
 
   game.RegisterSystem<BulletSystem>();
   game.RegisterSystem<TransformEffectsSystem>();

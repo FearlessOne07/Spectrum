@@ -6,6 +6,7 @@
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
 #include "Components/TransformEffects.hpp"
+#include "base/camera/CameraManager.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
@@ -35,7 +36,10 @@ int Spawner::GetToSpawnCount() const
   return _toSpawn.size();
 }
 
-size_t Spawner::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManager *assetManager, Vector2 position)
+size_t Spawner::SpawnPlayer( //
+  Base::EntityManager *entityManager, Base::AssetManager *assetManager, Base::CameraManager *camManager,
+  Vector2 position //
+)
 {
   Base::Entity *e = entityManager->AddEntity();
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
@@ -47,8 +51,8 @@ size_t Spawner::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManag
   transfxcmp->targetAngularVelocity = 180;
   transfxcmp->angularAcceleration = 1;
   transfxcmp->bind = true;
-  transfxcmp->bindMin = GetScreenToWorld2D({0, 0}, rd->camera);
-  transfxcmp->bindMax = GetScreenToWorld2D({rd->gameWidth, rd->gameHeight}, rd->camera);
+  transfxcmp->bindMin = camManager->GetScreenToWorld({0, 0});
+  transfxcmp->bindMax = camManager->GetScreenToWorld({rd->gameWidth, rd->gameHeight});
 
   auto *mvcmp = e->AddComponent<Base::MoveComponent>();
   mvcmp->driveForce = 3000;
@@ -87,10 +91,10 @@ size_t Spawner::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManag
   inpcmp->BindKeyReleased(KEY_S, [rbcmp]() { rbcmp->direction.y = 0; });
   inpcmp->BindKeyReleased(KEY_W, [rbcmp]() { rbcmp->direction.y = 0; });
 
-  inpcmp->BindMouseButtonDown(MOUSE_BUTTON_LEFT, [shtcmp]() {
+  inpcmp->BindMouseButtonDown(MOUSE_BUTTON_LEFT, [shtcmp, camManager]() {
     const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
     shtcmp->IsFiring = true;
-    shtcmp->target = GetScreenToWorld2D(rd->mousePosition, rd->camera);
+    shtcmp->target = camManager->GetScreenToWorld(rd->mousePosition);
   });
   inpcmp->BindMouseButtonReleased(MOUSE_BUTTON_LEFT, [shtcmp]() { shtcmp->IsFiring = false; });
 
@@ -103,9 +107,8 @@ size_t Spawner::SpawnPlayer(Base::EntityManager *entityManager, Base::AssetManag
   return _playerID;
 }
 
-void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, size_t playerID)
+void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, Base::CameraManager *camManager, size_t playerID)
 {
-
   if (_spawnTimer >= _spawnDuration && !_toSpawn.empty())
   {
     _spawnTimer = 0.f;
@@ -131,19 +134,19 @@ void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, size_t pla
     {
     case 1: // Right
       ypos = std::uniform_real_distribution<float>(min.y, max.y)(gen);
-      position = GetScreenToWorld2D({max.x, ypos}, rctx->camera);
+      position = camManager->GetScreenToWorld({max.x, ypos});
       break;
     case 2: // Left
       ypos = std::uniform_real_distribution<float>(min.y, max.y)(gen);
-      position = GetScreenToWorld2D({min.x, ypos}, rctx->camera);
+      position = camManager->GetScreenToWorld({min.x, ypos});
       break;
     case 3: // Up
       xpos = std::uniform_real_distribution<float>(min.x, max.x)(gen);
-      position = GetScreenToWorld2D({xpos, min.y}, rctx->camera);
+      position = camManager->GetScreenToWorld({xpos, min.y});
       break;
     case 4: // Down
       xpos = std::uniform_real_distribution<float>(min.x, max.x)(gen);
-      position = GetScreenToWorld2D({xpos, max.y}, rctx->camera);
+      position = camManager->GetScreenToWorld({xpos, max.y});
       break;
     }
 
@@ -203,8 +206,8 @@ void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, size_t pla
       shtcmp->bulletKnockbackForce = 800;
       shtcmp->bulletSpeed = 1000.f;
 
-      transfxcmp->bindMin = GetScreenToWorld2D({0, 0}, rctx->camera);
-      transfxcmp->bindMax = GetScreenToWorld2D({rctx->gameWidth, rctx->gameHeight}, rctx->camera);
+      transfxcmp->bindMin = camManager->GetScreenToWorld({0, 0});
+      transfxcmp->bindMax = camManager->GetScreenToWorld({rctx->gameWidth, rctx->gameHeight});
       break;
     }
   }

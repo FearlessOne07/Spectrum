@@ -41,9 +41,10 @@ void ParticleLayer::Update(float dt)
 void ParticleLayer::Render()
 {
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  BeginMode2D(rd->camera);
+  auto camManager = _owner->GetCameraManager();
+  camManager->BeginCameraMode();
   _owner->GetParticleManager()->Render();
-  EndMode2D();
+  camManager->EndCameraMode();
 }
 
 void ParticleLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
@@ -57,7 +58,7 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
     auto e = signal->entity;
     auto shpcmp = e->GetComponent<Base::ShapeComponent>();
     auto transcmp = e->GetComponent<Base::TransformComponent>();
-    std::uniform_real_distribution<float> lifeRange(0.5, 1);
+    std::uniform_real_distribution<float> lifeRange(0.5, 2);
     std::uniform_real_distribution<float> radiusRange(0.3 * shpcmp->radius, 0.6 * shpcmp->radius);
     std::uniform_real_distribution<float> angleDist(0, 360);
     std::uniform_real_distribution<float> speedDist(0, 700);

@@ -1,6 +1,7 @@
 #include "WaveManager.hpp"
 #include "Components/Tags/EnemyTag.hpp"
 #include "Spawner/Spawner.hpp"
+#include "base/camera/CameraManager.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
 #include <random>
@@ -108,7 +109,7 @@ void WaveManager::GenerateWave()
   _currentWave++;
 }
 
-void WaveManager::SpawnWaves(float dt)
+void WaveManager::SpawnWaves(float dt, Base::CameraManager *camManager)
 {
   int count = _entityMan->Query<EnemyTag>().size();
   if (_waveTimer >= _waveTime && (count == 0 && _spawner.GetToSpawnCount() == 0))
@@ -120,10 +121,10 @@ void WaveManager::SpawnWaves(float dt)
   {
     _waveTimer += dt;
   }
-  _spawner.SpawnWave(dt, _entityMan, _playerID);
+  _spawner.SpawnWave(dt, _entityMan, camManager, _playerID);
 }
 
-void WaveManager::SpawnPlayer(Base::AssetManager *assetManager)
+void WaveManager::SpawnPlayer(Base::AssetManager *assetManager, Base::CameraManager *camManager)
 {
-  _playerID = _spawner.SpawnPlayer(_entityMan, assetManager, {0, 0});
+  _playerID = _spawner.SpawnPlayer(_entityMan, assetManager, camManager, {0, 0});
 }

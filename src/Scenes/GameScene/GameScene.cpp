@@ -5,6 +5,7 @@
 #include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
+#include "base/camera/CameraModes.hpp"
 #include "base/signals/SignalManager.hpp"
 #include <base/game/RenderContext.hpp>
 #include <base/game/RenderContextSingleton.hpp>
@@ -22,10 +23,12 @@ void GameScene::Enter(Base::SceneData sceneData)
 
   // Init Camera
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  rd->camera.offset = {rd->gameWidth / 2, rd->gameHeight / 2};
-  rd->camera.zoom = 1;
-  rd->camera.target = {0, 0};
-  rd->camera.rotation = 0.f;
+  auto camManager = GetCameraManager();
+  camManager->SetCameraOffset({rd->gameWidth / 2, rd->gameHeight / 2});
+  camManager->SetCameraZoom(1);
+  camManager->SetCameraTarget({0, 0});
+  camManager->SetCameraRotation(0);
+  camManager->SetCameraMode(Base::Camera2DExtMode::STATIC);
 
   Base::SystemManager *systemManager = GetSystemManager();
 
