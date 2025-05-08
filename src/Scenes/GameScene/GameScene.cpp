@@ -49,17 +49,6 @@ void GameScene::Enter(Base::SceneData sceneData)
   GetLayerStack().AttachLayer<ParticleLayer>();
 }
 
-void GameScene::Update(float dt)
-{
-  GetLayerStack().Update(dt);
-}
-
-void GameScene::Render()
-{
-  DrawText(TextFormat("FPS: %i", GetFPS()), 0, 0, 40, WHITE);
-  GetLayerStack().Render();
-}
-
 void GameScene::Exit()
 {
   GetSystemManager()->DeactivateActiveSystems();

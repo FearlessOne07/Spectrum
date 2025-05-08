@@ -9,7 +9,6 @@
 #include <base/components/RigidBodyComponent.hpp>
 #include <base/signals/EntityCollisionSignal.hpp>
 #include <base/signals/SignalManager.hpp>
-#include <iostream>
 #include <raylib.h>
 #include <raymath.h>
 
@@ -26,7 +25,6 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
 
   auto attack = collEvent->hittBoxEntity;
   auto defence = collEvent->hurtBoxEntity;
-  std::cout << "col\n";
 
   if (defence->HasComponent<PlayerTag>())
   {

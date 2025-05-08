@@ -10,8 +10,6 @@ private:
   WaveManager _waveManager = WaveManager();
 
 public:
-  void Update(float dt) override;
   void Enter(Base::SceneData sceneData = Base::SceneData()) override;
-  void Render() override;
   void Exit() override;
 };
