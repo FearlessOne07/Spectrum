@@ -3,6 +3,8 @@ set(SOURCES
   "./Scenes/GameScene/GameScene.cpp"
   "./Scenes/GameScene/Layers/MainGameLayer.cpp"
   "./Scenes/GameScene/Layers/ParticleLayer.cpp"
+  "./Scenes/PauseMenu/PauseMenu.cpp"
+  "./Scenes/PauseMenu/Layers/MainPauseLayer.cpp"
 
   "./Systems/BulletSystem/BulletSystem.cpp"
   "./Systems/TrackingSystem/TrackingSystem.cpp"

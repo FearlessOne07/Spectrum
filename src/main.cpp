@@ -1,4 +1,5 @@
 #include "Scenes/GameScene/GameScene.hpp"
+#include "Scenes/PauseMenu/PauseMenu.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
@@ -15,7 +16,8 @@ int main(void)
   game.Init(1920, 1080, "Spectrum");
 
   // Register Scenes
-  game.RegisterScene<GameScene>();
+  game.RegisterScene<GameScene>(true);
+  game.RegisterScene<PauseMenu>();
 
   // Register Systems
   game.RegisterSystem<Base::RenderSystem>(true);

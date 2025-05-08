@@ -1,11 +1,14 @@
 #include "GameScene.hpp"
 #include "Layers/MainGameLayer.hpp"
 #include "Layers/ParticleLayer.hpp"
+#include "Scenes/PauseMenu/PauseMenu.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
 #include "base/camera/CameraModes.hpp"
+#include "base/input/Events/KeyEvent.hpp"
+#include "base/scenes/SceneTransition.hpp"
 #include "base/signals/SignalManager.hpp"
 #include <base/game/RenderContext.hpp>
 #include <base/game/RenderContextSingleton.hpp>
@@ -14,6 +17,7 @@
 #include <base/systems/MoveSystem.hpp>
 #include <base/systems/RenderSystem.hpp>
 #include <base/systems/SystemManager.hpp>
+#include <memory>
 #include <raylib.h>
 
 void GameScene::Enter(Base::SceneData sceneData)
@@ -53,3 +57,26 @@ void GameScene::Exit()
 {
   GetSystemManager()->DeactivateActiveSystems();
 }
+
+void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)
+{
+  if (auto keyEvent = std::dynamic_pointer_cast<Base::KeyEvent>(event))
+  {
+    if (keyEvent->key == KEY_ESCAPE && keyEvent->action == Base::InputEvent::Action::PRESSED)
+    {
+      SetSceneTransition<PauseMenu>(Base::SceneRequest::PUSH_NEW_SCENE);
+    }
+  }
+
+  GetLayerStack().OnInputEvent(event);
+}
+
+void GameScene::Suspend()
+{
+  GetSystemManager()->SuspendAllSystems();
+}
+
+void GameScene::Resume()
+{
+  GetSystemManager()->UnsuspendSuspendedSystems();
+};

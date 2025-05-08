@@ -53,7 +53,6 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
     }
     else if (attack->HasComponent<EnemyTag>())
     {
-
       Vector2 attackDir = attack->GetComponent<Base::RigidBodyComponent>()->direction;
       auto *impcmp = defence->GetComponent<Base::ImpulseComponent>();
 

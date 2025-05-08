@@ -37,6 +37,7 @@ void MainGameLayer::Update(float dt)
 
 void MainGameLayer::Render()
 {
+  DrawText(TextFormat("FPS: %i", GetFPS()), 0, 0, 40, WHITE);
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   auto camManager = _owner->GetCameraManager();
   camManager->BeginCameraMode();
