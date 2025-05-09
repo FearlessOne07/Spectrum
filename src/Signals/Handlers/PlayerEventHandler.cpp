@@ -58,7 +58,7 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
 
       if (Vector2Length(collEvent->collisionNormal) > 0)
       {
-        impcmp->direction = collEvent->collisionNormal * -1;
+        impcmp->direction = collEvent->collisionNormal  ;
       }
 
       impcmp->force = attack->GetComponent<Base::MoveComponent>()->driveForce * 2;

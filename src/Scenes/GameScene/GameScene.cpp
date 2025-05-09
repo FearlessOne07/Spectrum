@@ -46,7 +46,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   systemManager->ActivatSystem<HealthSystem>();
   systemManager->ActivatSystem<TransformEffectsSystem>();
 
-  GetAssetManager()->LoadAsset<Texture>("assets/jess.jpg");
+  GetAssetManager()->LoadAsset<Texture>("assets/ship.png");
 
   // Layers
   GetLayerStack().AttachLayer<MainGameLayer>();

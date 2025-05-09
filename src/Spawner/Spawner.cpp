@@ -54,7 +54,7 @@ size_t Spawner::SpawnPlayer( //
   transfxcmp->bind = true;
   transfxcmp->bindMin = camManager->GetScreenToWorld({0, 0});
   transfxcmp->bindMax = camManager->GetScreenToWorld({rd->gameWidth, rd->gameHeight});
-  transfxcmp->rotate = false;
+  transfxcmp->rotate = true;
 
   auto *mvcmp = e->AddComponent<Base::MoveComponent>();
   mvcmp->driveForce = 3000;
@@ -72,13 +72,13 @@ size_t Spawner::SpawnPlayer( //
   shtcmp->bulletSpeed = 1500.f;
 
   auto txtcmp = e->AddComponent<Base::TextureComponent>();
-  txtcmp->texture = assetManager->GetAsset<Texture>("jess");
+  txtcmp->texture = assetManager->GetAsset<Texture>("ship");
+  txtcmp->targetSize = {64, 64};
   txtcmp->source = {0, 0, static_cast<float>(txtcmp->texture->width), static_cast<float>(txtcmp->texture->height)};
 
   auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
-  abbcmp->size = {100, 100};
-  abbcmp->positionOffset = {50, 50};
-  abbcmp->shape = Base::ColliderComponent::Shape::BOX;
+  abbcmp->radius = 32;
+  abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
   abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
 
   auto *inpcmp = e->AddComponent<Base::InputComponent>();
