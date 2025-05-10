@@ -10,8 +10,8 @@
 
 void MainGameLayer::OnAttach()
 {
-  _waveManager = WaveManager(_owner->GetEntityManager());
-  _waveManager.SpawnPlayer(_owner->GetAssetManager(), _owner->GetCameraManager());
+  _waveManager = WaveManager(GetOwner()->GetEntityManager());
+  _waveManager.SpawnPlayer(GetOwner()->GetAssetManager(), GetOwner()->GetCameraManager());
   _playerEVH.Init();
 }
 
@@ -27,20 +27,19 @@ void MainGameLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
     {
     }
   }
-  _owner->GetSystemManager()->OnInputEvent(event);
+  GetOwner()->GetSystemManager()->OnInputEvent(event);
 }
 
 void MainGameLayer::Update(float dt)
 {
-  _waveManager.SpawnWaves(dt, _owner->GetCameraManager());
+  _waveManager.SpawnWaves(dt, GetOwner()->GetCameraManager());
 }
 
 void MainGameLayer::Render()
 {
-  DrawText(TextFormat("FPS: %i", GetFPS()), 0, 0, 40, WHITE);
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  auto camManager = _owner->GetCameraManager();
+  auto camManager = GetOwner()->GetCameraManager();
   camManager->BeginCameraMode();
-  _owner->GetSystemManager()->Render();
+  GetOwner()->GetSystemManager()->Render();
   camManager->EndCameraMode();
 }

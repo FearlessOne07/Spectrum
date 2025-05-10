@@ -1,4 +1,5 @@
 #include "GameScene.hpp"
+#include "Layers/GameUILayer.hpp"
 #include "Layers/MainGameLayer.hpp"
 #include "Layers/ParticleLayer.hpp"
 #include "Scenes/PauseMenu/PauseMenu.hpp"
@@ -49,6 +50,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   GetAssetManager()->LoadAsset<Texture>("assets/ship.png");
 
   // Layers
+  GetLayerStack().AttachLayer<GameUILayer>();
   GetLayerStack().AttachLayer<MainGameLayer>();
   GetLayerStack().AttachLayer<ParticleLayer>();
 }

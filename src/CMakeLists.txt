@@ -5,11 +5,13 @@ set(SOURCES
   "./Scenes/GameScene/Layers/ParticleLayer.cpp"
   "./Scenes/PauseMenu/PauseMenu.cpp"
   "./Scenes/PauseMenu/Layers/MainPauseLayer.cpp"
+  "./Scenes/GameScene/Layers/GameUILayer.cpp"
 
   "./Systems/BulletSystem/BulletSystem.cpp"
   "./Systems/TrackingSystem/TrackingSystem.cpp"
   "./Systems/HealthSystem/HealthSystem.cpp"
   "./Systems/TransformEffectsSystem/TransformEffectsSystem.cpp"
+  
 
   "./Signals/Handlers/PlayerEventHandler.cpp"
 

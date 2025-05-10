@@ -16,7 +16,7 @@ void ParticleLayer::OnAttach()
 {
   auto rctx = Base::RenderContextSingleton::GetInstance();
   _gen = std::mt19937_64(_rd());
-  _emitter = _owner->GetParticleManager()->AddEmitter();
+  _emitter = GetOwner()->GetParticleManager()->AddEmitter();
   _emitter->burst = true;
   _emitter->emissionType = Base::ParticleEmitter::EmissionType::POINT;
   _emitter->particleShape = Base::ParticleEmitter::ParticleShape::POLYGON;
@@ -41,9 +41,9 @@ void ParticleLayer::Update(float dt)
 void ParticleLayer::Render()
 {
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  auto camManager = _owner->GetCameraManager();
+  auto camManager = GetOwner()->GetCameraManager();
   camManager->BeginCameraMode();
-  _owner->GetParticleManager()->Render();
+  GetOwner()->GetParticleManager()->Render();
   camManager->EndCameraMode();
 }
 
@@ -81,9 +81,9 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
     config.trauma = 0.5;
     config.frequency = 50.0f;
     config.shakeMagnitude = 30.0f;
-    config.duration = 1.3;
+    config.duration = 1;
     config.traumaMultiplyer = 2;
-    config.rotationMagnitude = 4;
-    _owner->GetCameraManager()->Shake(config);
+    config.rotationMagnitude = 0;
+    GetOwner()->GetCameraManager()->Shake(config);
   }
 }

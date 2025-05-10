@@ -1,12 +1,8 @@
-#pragma once
-#include "Signals/Handlers/PlayerEventHandler.hpp"
-#include "WaveManager/WaveManager.hpp"
+
 #include <base/scenes/SceneLayer.hpp>
 
-class MainGameLayer : public Base::SceneLayer
+class GameUILayer : public Base::SceneLayer
 {
-  WaveManager _waveManager;
-  PlayerSignalHandler _playerEVH = PlayerSignalHandler();
 
 public:
   void Update(float dt) override;
