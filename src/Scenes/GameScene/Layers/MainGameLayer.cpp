@@ -1,11 +1,9 @@
 #include "MainGameLayer.hpp"
 #include "base/game/RenderContext.hpp"
-#include "base/input/Events/KeyEvent.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/systems/SystemManager.hpp"
 #include <base/game/RenderContextSingleton.hpp>
-#include <iostream>
 #include <memory>
 
 void MainGameLayer::OnAttach()
@@ -26,7 +24,7 @@ void MainGameLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 
 void MainGameLayer::Update(float dt)
 {
-  // _waveManager.SpawnWaves(dt, GetOwner()->GetCameraManager());
+  _waveManager.SpawnWaves(dt, GetOwner()->GetCameraManager());
 }
 
 void MainGameLayer::Render()

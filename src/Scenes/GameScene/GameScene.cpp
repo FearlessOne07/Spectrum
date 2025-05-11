@@ -47,7 +47,8 @@ void GameScene::Enter(Base::SceneData sceneData)
   systemManager->ActivatSystem<HealthSystem>();
   systemManager->ActivatSystem<TransformEffectsSystem>();
 
-  GetAssetManager()->LoadAsset<Texture>("assets/ship.png");
+  GetAssetManager()->LoadAsset<Texture>("assets/textures/ship.png");
+  GetAssetManager()->LoadAsset<Font>("assets/fonts/main-font-normal.otf");
 
   // Layers
   GetLayerStack().AttachLayer<GameUILayer>();
