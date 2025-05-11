@@ -21,18 +21,12 @@ void MainGameLayer::OnDetach()
 
 void MainGameLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {
-  if (auto keyEvent = std::dynamic_pointer_cast<Base::KeyEvent>(event))
-  {
-    if (keyEvent->key == KEY_T && keyEvent->action == Base::InputEvent::Action::PRESSED)
-    {
-    }
-  }
   GetOwner()->GetSystemManager()->OnInputEvent(event);
 }
 
 void MainGameLayer::Update(float dt)
 {
-  _waveManager.SpawnWaves(dt, GetOwner()->GetCameraManager());
+  // _waveManager.SpawnWaves(dt, GetOwner()->GetCameraManager());
 }
 
 void MainGameLayer::Render()

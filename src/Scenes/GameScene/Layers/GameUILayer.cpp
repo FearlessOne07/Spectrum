@@ -1,9 +1,10 @@
 #include "GameUILayer.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/ui/UILayer.hpp"
+#include "base/ui/elements/UIButton.hpp"
 #include "base/ui/elements/UILabel.hpp"
 #include "raylib.h"
-#include <sstream>
+#include <iostream>
 
 void GameUILayer::OnAttach()
 {
@@ -13,6 +14,12 @@ void GameUILayer::OnAttach()
   fpsLabel->SetText("FPS: 0");
   fpsLabel->SetPosition({0, 0});
   fpsLabel->SetFontSize(40);
+
+  auto button = hud.AddElement<Base::UIButton>("noice");
+  button->SetText("Press Me");
+  button->SetPosition({100, 100});
+  button->SetFontSize(35);
+  button->onClick = []() { std::cout << "Noice\n"; };
 }
 
 void GameUILayer::OnDetach()
@@ -21,6 +28,7 @@ void GameUILayer::OnDetach()
 
 void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {
+  GetOwner()->GetUIManager()->OnInputEvent(event);
 }
 
 void GameUILayer::Update(float dt)
