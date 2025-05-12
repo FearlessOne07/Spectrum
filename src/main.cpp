@@ -1,3 +1,4 @@
+#include "Scenes/DeathScreen/DeathScreen.hpp"
 #include "Scenes/GameScene/GameScene.hpp"
 #include "Scenes/PauseMenu/PauseMenu.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
@@ -18,6 +19,7 @@ int main(void)
   // Register Scenes
   game.RegisterScene<GameScene>(true);
   game.RegisterScene<PauseMenu>();
+  game.RegisterScene<DeathScreen>();
 
   // Register Systems
   game.RegisterSystem<Base::RenderSystem>(true);

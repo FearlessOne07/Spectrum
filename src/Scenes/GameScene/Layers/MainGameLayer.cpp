@@ -10,7 +10,7 @@ void MainGameLayer::OnAttach()
 {
   _waveManager = WaveManager(GetOwner()->GetEntityManager());
   _waveManager.SpawnPlayer(GetOwner()->GetAssetManager(), GetOwner()->GetCameraManager());
-  _playerEVH.Init();
+  _playerEVH.Init(GetOwner());
 }
 
 void MainGameLayer::OnDetach()

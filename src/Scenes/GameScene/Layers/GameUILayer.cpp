@@ -1,18 +1,37 @@
 #include "GameUILayer.hpp"
+#include "Components/HealthComponent.hpp"
+#include "Components/Tags/PlayerTag.hpp"
+#include "Signals/EntityDamagedSignal.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/scenes/Scene.hpp"
+#include "base/signals/SignalManager.hpp"
 #include "base/ui/UILayer.hpp"
 #include "base/ui/elements/UILabel.hpp"
 #include "raylib.h"
+#include <memory>
 
 void GameUILayer::OnAttach()
 {
+
+  // Register Event
+  auto bus = Base::SignalManager::GetInstance();
+  bus->SubscribeSignal<EntityDamagedSignal>([this](std::shared_ptr<Base::Signal> signal) {
+    this->OnPlayerDamaged(signal); //
+  });
+
+  // Init UI
   Base::UILayer &hud = GetOwner()->GetUIManager()->AddLayer("hud");
   auto fpsLabel = hud.AddElement<Base::UILabel>("fps");
   fpsLabel->SetFont(GetOwner()->GetAssetManager()->GetAsset<Font>("main-font-normal"));
   fpsLabel->SetText("FPS: 0");
   fpsLabel->SetPosition({0, 0});
   fpsLabel->SetFontSize(40);
+
+  auto playerHealth = hud.AddElement<Base::UILabel>("player-health");
+  playerHealth->SetFont(GetOwner()->GetAssetManager()->GetAsset<Font>("main-font-normal"));
+  playerHealth->SetText("Health: 10");
+  playerHealth->SetPosition({0, fpsLabel->GetSize().y});
+  playerHealth->SetFontSize(40);
 }
 
 void GameUILayer::OnDetach()
@@ -34,4 +53,17 @@ void GameUILayer::Update(float dt)
 void GameUILayer::Render()
 {
   GetOwner()->GetUIManager()->RenderLayer("hud");
+}
+
+void GameUILayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
+{
+  if (auto entityDamg = std::dynamic_pointer_cast<EntityDamagedSignal>(signal))
+  {
+    if (entityDamg->entity->HasComponent<PlayerTag>())
+    {
+      auto playerHealth = GetOwner()->GetUIManager()->GetLayer("hud").GetElement<Base::UILabel>("player-health");
+      int health = (int)entityDamg->entity->GetComponent<HealthComponent>()->health;
+      playerHealth->SetText(TextFormat("Health: %i", health));
+    }
+  }
 }

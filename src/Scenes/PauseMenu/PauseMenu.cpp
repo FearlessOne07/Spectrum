@@ -1,6 +1,5 @@
 #include "PauseMenu.hpp"
 #include "Layers/MainPauseLayer.hpp"
-#include "base/input/Events/KeyEvent.hpp"
 
 void PauseMenu::OnInputEvent(std::shared_ptr<Base::InputEvent> event)
 {

@@ -1,12 +1,8 @@
-
-#include "base/signals/Signal.hpp"
+#pragma once
 #include <base/scenes/SceneLayer.hpp>
-#include <memory>
 
-class GameUILayer : public Base::SceneLayer
+class MainLayer : public Base::SceneLayer
 {
-private:
-  void OnPlayerDamaged(std::shared_ptr<Base::Signal>);
 
 public:
   void Update(float dt) override;
