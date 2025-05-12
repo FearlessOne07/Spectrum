@@ -6,8 +6,10 @@
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
 #include "Components/TransformEffects.hpp"
+#include "Signals/PlayerSpawnedSignal.hpp"
 #include "base/camera/CameraManager.hpp"
 #include "base/components/TextureComponent.hpp"
+#include "base/signals/SignalBus.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
@@ -21,6 +23,7 @@
 #include <base/game/RenderContext.hpp>
 #include <base/game/RenderContextSingleton.hpp>
 #include <cstddef>
+#include <memory>
 #include <random>
 #include <raylib.h>
 
@@ -66,7 +69,7 @@ size_t Spawner::SpawnPlayer( //
   rbcmp->drag = 3;
 
   auto hlthcmp = e->AddComponent<HealthComponent>();
-  hlthcmp->health = 10;
+  hlthcmp->health = 20;
 
   auto *shtcmp = e->AddComponent<ShootComponent>();
   shtcmp->bulletFireRate = 0.6;
@@ -108,6 +111,11 @@ size_t Spawner::SpawnPlayer( //
   e->AddComponent<PlayerTag>();
 
   _playerID = e->GetID();
+
+  auto bus = Base::SignalBus::GetInstance();
+  std::shared_ptr<PlayerSpawnedSignal> sig = std::make_shared<PlayerSpawnedSignal>();
+  sig->player = e;
+  bus->BroadCastSignal(sig);
   return _playerID;
 }
 

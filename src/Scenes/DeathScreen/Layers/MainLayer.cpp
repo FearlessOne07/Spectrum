@@ -1,4 +1,5 @@
 #include "MainLayer.hpp"
+#include "base/assets/AssetManager.hpp"
 #include "base/game/RenderContext.hpp"
 #include "base/game/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
@@ -7,9 +8,10 @@
 void MainLayer::OnAttach()
 {
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  auto mainLayer = GetOwner()->GetUIManager()->AddLayer("main-layer");
+  auto &mainLayer = GetOwner()->GetUIManager()->AddLayer("main-layer");
   auto deathLabel = mainLayer.AddElement<Base::UILabel>("death-label");
   deathLabel->SetText("YOU DIED!");
+  deathLabel->SetFont(GetOwner()->GetAssetManager()->GetAsset<Font>("main-font-normal"));
   deathLabel->SetTextColor(RED);
   deathLabel->SetFontSize(70);
   deathLabel->SetPosition({

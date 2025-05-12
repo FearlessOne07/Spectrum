@@ -13,7 +13,7 @@
 #include <base/components/MoveComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
 #include <base/signals/EntityCollisionSignal.hpp>
-#include <base/signals/SignalManager.hpp>
+#include <base/signals/SignalBus.hpp>
 #include <iostream>
 #include <memory>
 #include <raylib.h>
@@ -22,7 +22,7 @@
 void PlayerSignalHandler::Init(Base::Scene *scene)
 {
   _scene = scene;
-  auto signalManager = Base::SignalManager::GetInstance();
+  auto signalManager = Base::SignalBus::GetInstance();
 
   signalManager->SubscribeSignal<Base::EntityCollisionSignal>(
     [this](const std::shared_ptr<Base::Signal> &signal) { this->PlayerEnemyCollisionHandler(signal); });

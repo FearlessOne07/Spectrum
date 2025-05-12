@@ -2,7 +2,7 @@
 #include "Components/HealthComponent.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
 #include "Signals/EntityDiedSignal.hpp"
-#include "base/signals/SignalManager.hpp"
+#include "base/signals/SignalBus.hpp"
 #include <base/entities/EntityManager.hpp>
 #include <memory>
 #include <vector>
@@ -10,7 +10,7 @@
 void HealthSystem::Update(float dt, Base::EntityManager *entityManager)
 {
   std::vector<std::shared_ptr<Base::Entity>> entities = entityManager->Query<HealthComponent>();
-  auto *bus = Base::SignalManager::GetInstance();
+  auto *bus = Base::SignalBus::GetInstance();
 
   for (auto &e : entities)
   {

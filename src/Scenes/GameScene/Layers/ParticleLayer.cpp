@@ -6,7 +6,7 @@
 #include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleEmitter.hpp"
 #include "base/scenes/Scene.hpp"
-#include "base/signals/SignalManager.hpp"
+#include "base/signals/SignalBus.hpp"
 #include "raylib.h"
 #include <base/game/RenderContext.hpp>
 #include <memory>
@@ -24,7 +24,7 @@ void ParticleLayer::OnAttach()
   _emitter->particleRotationSpeed = 180;
   _emitter->isEmitting = false;
 
-  auto *bus = Base::SignalManager::GetInstance();
+  auto *bus = Base::SignalBus::GetInstance();
   bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {
     this->OnEntityDiedSignal(std::static_pointer_cast<EntityDiedSignal>(sig));
   });

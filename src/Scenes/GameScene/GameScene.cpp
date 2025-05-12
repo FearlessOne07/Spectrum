@@ -10,7 +10,7 @@
 #include "base/camera/CameraModes.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/scenes/SceneTransition.hpp"
-#include "base/signals/SignalManager.hpp"
+#include "base/signals/SignalBus.hpp"
 #include <base/game/RenderContext.hpp>
 #include <base/game/RenderContextSingleton.hpp>
 #include <base/systems/EntityCollisionSystem.hpp>
@@ -24,7 +24,7 @@
 void GameScene::Enter(Base::SceneData sceneData)
 {
   // Register Events
-  auto bus = Base::SignalManager::GetInstance();
+  auto bus = Base::SignalBus::GetInstance();
 
   // Init Camera
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();

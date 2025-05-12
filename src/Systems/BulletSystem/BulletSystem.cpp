@@ -15,14 +15,14 @@
 #include <base/entities/EntityManager.hpp>
 #include <base/signals/EntityCollisionSignal.hpp>
 #include <base/signals/Signal.hpp>
-#include <base/signals/SignalManager.hpp>
+#include <base/signals/SignalBus.hpp>
 #include <memory>
 #include <raymath.h>
 #include <vector>
 
 void BulletSystem::Start()
 {
-  Base::SignalManager::GetInstance()->SubscribeSignal<Base::EntityCollisionSignal>(
+  Base::SignalBus::GetInstance()->SubscribeSignal<Base::EntityCollisionSignal>(
     [this](const std::shared_ptr<Base::Signal> &event) -> void { this->EntityCollisionHandler(event); } //
   );
 }
