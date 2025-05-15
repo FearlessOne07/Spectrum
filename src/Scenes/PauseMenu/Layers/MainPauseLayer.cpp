@@ -27,7 +27,7 @@ void MainPauseLayer::OnAttach()
   resumeButton->SetPosition( //
     {
       rd->gameWidth / 2,
-      (rd->gameHeight / 2) - 100,
+      (rd->gameHeight / 2) - 50,
     } //
   );
   resumeButton->onClick = [this]() { GetOwner()->SetSceneTransition(Base::SceneRequest::POP_CURRENT_SCENE); };
@@ -51,7 +51,7 @@ void MainPauseLayer::OnAttach()
   exitButton->SetPosition( //
     {
       rd->gameWidth / 2,
-      rd->gameHeight / 2,
+      (rd->gameHeight / 2) + 50,
     } //
   );
   exitButton->onClick = [this]() { GetOwner()->SetSceneTransition(Base::SceneRequest::QUIT); };

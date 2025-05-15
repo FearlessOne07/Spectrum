@@ -41,8 +41,8 @@ int Spawner::GetToSpawnCount() const
 }
 
 size_t Spawner::SpawnPlayer( //
-    Base::EntityManager *entityManager, Base::AssetManager *assetManager, Base::CameraManager *camManager,
-    Vector2 position //
+  Base::EntityManager *entityManager, Base::AssetManager *assetManager, Base::CameraManager *camManager,
+  Vector2 position //
 )
 {
   Base::Entity *e = entityManager->AddEntity();
@@ -69,7 +69,7 @@ size_t Spawner::SpawnPlayer( //
   rbcmp->drag = 3;
 
   auto hlthcmp = e->AddComponent<HealthComponent>();
-  hlthcmp->health = 1;
+  hlthcmp->health = 20;
 
   auto *shtcmp = e->AddComponent<ShootComponent>();
   shtcmp->bulletFireRate = 0.6;
@@ -88,31 +88,22 @@ size_t Spawner::SpawnPlayer( //
   abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
 
   auto *inpcmp = e->AddComponent<Base::InputComponent>();
-  inpcmp->BindKeyDown(KEY_A, [rbcmp]()
-                      { rbcmp->direction.x = -1; });
-  inpcmp->BindKeyDown(KEY_D, [rbcmp]()
-                      { rbcmp->direction.x = 1; });
-  inpcmp->BindKeyDown(KEY_W, [rbcmp]()
-                      { rbcmp->direction.y = -1; });
-  inpcmp->BindKeyDown(KEY_S, [rbcmp]()
-                      { rbcmp->direction.y = 1; });
+  inpcmp->BindKeyDown(KEY_A, [rbcmp]() { rbcmp->direction.x = -1; });
+  inpcmp->BindKeyDown(KEY_D, [rbcmp]() { rbcmp->direction.x = 1; });
+  inpcmp->BindKeyDown(KEY_W, [rbcmp]() { rbcmp->direction.y = -1; });
+  inpcmp->BindKeyDown(KEY_S, [rbcmp]() { rbcmp->direction.y = 1; });
 
-  inpcmp->BindKeyReleased(KEY_A, [rbcmp]()
-                          { rbcmp->direction.x = 0; });
-  inpcmp->BindKeyReleased(KEY_D, [rbcmp]()
-                          { rbcmp->direction.x = 0; });
-  inpcmp->BindKeyReleased(KEY_S, [rbcmp]()
-                          { rbcmp->direction.y = 0; });
-  inpcmp->BindKeyReleased(KEY_W, [rbcmp]()
-                          { rbcmp->direction.y = 0; });
+  inpcmp->BindKeyReleased(KEY_A, [rbcmp]() { rbcmp->direction.x = 0; });
+  inpcmp->BindKeyReleased(KEY_D, [rbcmp]() { rbcmp->direction.x = 0; });
+  inpcmp->BindKeyReleased(KEY_S, [rbcmp]() { rbcmp->direction.y = 0; });
+  inpcmp->BindKeyReleased(KEY_W, [rbcmp]() { rbcmp->direction.y = 0; });
 
-  inpcmp->BindMouseButtonDown(MOUSE_BUTTON_LEFT, [shtcmp, camManager]()
-                              {
+  inpcmp->BindMouseButtonDown(MOUSE_BUTTON_LEFT, [shtcmp, camManager]() {
     const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
     shtcmp->IsFiring = true;
-    shtcmp->target = camManager->GetScreenToWorld(rd->mousePosition); });
-  inpcmp->BindMouseButtonReleased(MOUSE_BUTTON_LEFT, [shtcmp]()
-                                  { shtcmp->IsFiring = false; });
+    shtcmp->target = camManager->GetScreenToWorld(rd->mousePosition);
+  });
+  inpcmp->BindMouseButtonReleased(MOUSE_BUTTON_LEFT, [shtcmp]() { shtcmp->IsFiring = false; });
 
   auto dmgcmp = e->AddComponent<DamageComponent>();
   dmgcmp->damage = 2;

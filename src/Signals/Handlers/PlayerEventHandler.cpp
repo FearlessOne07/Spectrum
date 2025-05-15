@@ -40,15 +40,20 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
 
   if (defence->HasComponent<PlayerTag>())
   {
-    if (attack->HasComponent<DamageComponent>())
-    {
-    }
+    Base::CameraManager::CameraShakeConfig config;
+    config.trauma = 0.5;
+    config.frequency = 120.0f;
+    config.shakeMagnitude = 10.0f;
+    config.duration = 1;
+    config.traumaMultiplyer = 2;
+    config.rotationMagnitude = 4;
 
     if (                                                                        //
       attack->HasComponent<BulletComponent>() &&                                //
       attack->GetComponent<BulletComponent>()->sender->HasComponent<EnemyTag>() //
     )
     {
+      _scene->GetCameraManager()->Shake(config);
       auto dmgcmp = attack->GetComponent<DamageComponent>();
       auto *hlthcmp = defence->GetComponent<HealthComponent>();
 
@@ -56,7 +61,6 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
       {
         hlthcmp->hasPendingSickness = true;
         hlthcmp->sickness += dmgcmp->damage;
-        std::cout << "Damage taken: " << dmgcmp->damage << "\n";
       }
 
       auto bulcmp = attack->GetComponent<BulletComponent>();
@@ -77,6 +81,7 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
     }
     else if (attack->HasComponent<EnemyTag>())
     {
+      _scene->GetCameraManager()->Shake(config);
       auto dmgcmp = attack->GetComponent<DamageComponent>();
       auto *hlthcmp = defence->GetComponent<HealthComponent>();
 
@@ -84,7 +89,6 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
       {
         hlthcmp->hasPendingSickness = true;
         hlthcmp->sickness += dmgcmp->damage;
-        std::cout << "Damage taken: " << dmgcmp->damage << "\n";
       }
 
       Vector2 attackDir = attack->GetComponent<Base::RigidBodyComponent>()->direction;
@@ -106,7 +110,6 @@ void PlayerSignalHandler::PlayerDeathHandler(const std::shared_ptr<Base::Signal>
   {
     if (entityDiedSig->entity->HasComponent<PlayerTag>())
     {
-      std::cout << "PLayer Died!\n";
       _scene->SetSceneTransition<DeathScreen>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
     }
   }

@@ -23,6 +23,7 @@ void ParticleLayer::OnAttach()
   _emitter->burstEmissionCount = 60;
   _emitter->particleRotationSpeed = 180;
   _emitter->isEmitting = false;
+  _emitter->particleEndColor = GetOwner()->GetClearColor();
 
   auto *bus = Base::SignalBus::GetInstance();
   bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {
@@ -83,7 +84,7 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
     config.shakeMagnitude = 30.0f;
     config.duration = 1;
     config.traumaMultiplyer = 2;
-    config.rotationMagnitude = 0;
+    config.rotationMagnitude = 1.4;
     GetOwner()->GetCameraManager()->Shake(config);
   }
 }

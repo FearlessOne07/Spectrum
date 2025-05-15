@@ -50,10 +50,13 @@ void GameScene::Enter(Base::SceneData sceneData)
   GetAssetManager()->LoadAsset<Texture>("assets/textures/ship.png");
   GetAssetManager()->LoadAsset<Font>("assets/fonts/main-font-normal.otf");
 
+  SetClearColor({23, 26, 33, 255});
+
   // Layers
   GetLayerStack().AttachLayer<GameUILayer>();
   GetLayerStack().AttachLayer<MainGameLayer>();
   GetLayerStack().AttachLayer<ParticleLayer>();
+
 }
 
 void GameScene::Exit()
