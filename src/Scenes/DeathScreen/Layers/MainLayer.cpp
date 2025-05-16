@@ -17,16 +17,16 @@ void MainLayer::OnAttach()
   deathLabel->SetTextColor(RED);
   deathLabel->SetFontSize(80);
   deathLabel->SetAnchorPoint(Base::UIElement::AnchorPoint::CENTER);
-  deathLabel->SetPosition({
-    rd->gameWidth / 2,
-    rd->gameHeight / 2,
-  });
+  deathLabel->SetPosition({rd->gameWidth / 2, rd->gameHeight / 2});
 
   GetOwner()->GetTweenManager()->AddTween<unsigned char>(
-    deathLabel.get() + 1, [=](unsigned char alpha) { deathLabel->SetTextColor({255, 0, 0, alpha}); }, 0, 255, 1);
+    {deathLabel.get(), "alpha"}, [=](unsigned char alpha) { deathLabel->SetTextColor({255, 0, 0, alpha}); }, 0, 255,
+    1.5,
+    Base::TweenManager::EasingType::EASE_IN_OUT //
+  );
   GetOwner()->GetTweenManager()->AddTween<float>(
-    deathLabel.get() + 2, [=](float pos) { deathLabel->SetPosition({rd->gameWidth / 2, pos}); },
-    (rd->gameHeight / 2) - 200, rd->gameHeight / 2, 1 //
+    {deathLabel.get(), "font-size"}, [=](float pos) { deathLabel->SetPosition({rd->gameWidth / 2, pos}); },
+    (rd->gameHeight / 2) - 200, rd->gameHeight / 2, 1.5, Base::TweenManager::EasingType::EASE_IN_OUT //
   );
 }
 

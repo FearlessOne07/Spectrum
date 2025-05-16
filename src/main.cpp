@@ -23,9 +23,8 @@ int main(void)
 
   // Register Systems
   game.RegisterSystem<Base::RenderSystem>(true);
-
-  game.RegisterSystem<Base::InputSystem>();
   game.RegisterSystem<Base::MoveSystem>();
+  game.RegisterSystem<Base::InputSystem>();
   game.RegisterSystem<Base::EntityCollisionSystem>();
 
   game.RegisterSystem<BulletSystem>();

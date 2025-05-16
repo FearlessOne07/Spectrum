@@ -41,22 +41,22 @@ void GameScene::Enter(Base::SceneData sceneData)
   systemManager->ActivatSystem<Base::RenderSystem>();
   systemManager->ActivatSystem<Base::MoveSystem>();
   systemManager->ActivatSystem<Base::InputSystem>();
-  systemManager->ActivatSystem<BulletSystem>();
-  systemManager->ActivatSystem<TrackingSystem>();
   systemManager->ActivatSystem<Base::EntityCollisionSystem>();
+
+  systemManager->ActivatSystem<TrackingSystem>();
+  systemManager->ActivatSystem<BulletSystem>();
   systemManager->ActivatSystem<HealthSystem>();
   systemManager->ActivatSystem<TransformEffectsSystem>();
 
   GetAssetManager()->LoadAsset<Texture>("assets/textures/ship.png");
   GetAssetManager()->LoadAsset<Font>("assets/fonts/main-font-normal.otf");
 
-  SetClearColor({23, 26, 33, 255});
+  SetClearColor({7, 7, 20, 255});
 
   // Layers
   GetLayerStack().AttachLayer<GameUILayer>();
   GetLayerStack().AttachLayer<MainGameLayer>();
   GetLayerStack().AttachLayer<ParticleLayer>();
-
 }
 
 void GameScene::Exit()

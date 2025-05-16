@@ -34,11 +34,16 @@ void MainPauseLayer::OnAttach()
   resumeButton->onHover = {
     [=, this]() { //
       GetOwner()->GetTweenManager()->AddTween<float>(
-        resumeButton.get(), [=](float size) { resumeButton->SetFontSize(size); }, 40, 45, 0.1);
+        {resumeButton.get(), "font-size"}, [=](float size) { resumeButton->SetFontSize(size); }, 40, 45, 0.1,
+        Base::TweenManager::EasingType::EASE_IN_OUT //
+      );
     },
     [=, this]() { //
       GetOwner()->GetTweenManager()->AddTween<float>(
-        resumeButton.get(), [=](float size) { resumeButton->SetFontSize(size); }, resumeButton->GetFontSize(), 40, 0.1);
+        {resumeButton.get(), "font-size"}, [=](float size) { resumeButton->SetFontSize(size); },
+        resumeButton->GetFontSize(), 40, 0.1,
+        Base::TweenManager::EasingType::EASE_IN_OUT //
+      );
     },
   };
 
@@ -58,11 +63,16 @@ void MainPauseLayer::OnAttach()
   exitButton->onHover = {
     [=, this]() { //
       GetOwner()->GetTweenManager()->AddTween<float>(
-        exitButton.get(), [=](float size) { exitButton->SetFontSize(size); }, 40, 45, 0.1);
+        {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetFontSize(size); }, 40, 45, 0.1,
+        Base::TweenManager::EasingType::EASE_IN_OUT //
+      );
     },
     [=, this]() { //
       GetOwner()->GetTweenManager()->AddTween<float>(
-        exitButton.get(), [=](float size) { exitButton->SetFontSize(size); }, exitButton->GetFontSize(), 40, 0.1);
+        {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetFontSize(size); }, exitButton->GetFontSize(),
+        40, 0.1,
+        Base::TweenManager::EasingType::EASE_IN_OUT //
+      );
     },
   };
 }
