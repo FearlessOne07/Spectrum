@@ -31,7 +31,10 @@ public:
     Base::EntityManager *entityManager, Base::AssetManager *assetManager, Base::CameraManager *camManager,
     Vector2 position //
   );
-  void SpawnWave(float dt, Base::EntityManager *entityManager, Base::CameraManager *camManager, size_t playerID);
+  void SpawnWave( //
+    float dt, Base::EntityManager *entityManager, Base::AssetManager *assetManager, Base::CameraManager *camManager,
+    size_t playerID //
+  );
   int GetToSpawnCount() const;
   void SetToSpawn(std::vector<EnemyType> toSpawn);
 };

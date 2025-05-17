@@ -119,7 +119,10 @@ size_t Spawner::SpawnPlayer( //
   return _playerID;
 }
 
-void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, Base::CameraManager *camManager, size_t playerID)
+void Spawner::SpawnWave( //
+  float dt, Base::EntityManager *entityManager, Base::AssetManager *assetManager, Base::CameraManager *camManager,
+  size_t playerID //
+)
 {
   if (_spawnTimer >= _spawnDuration && !_toSpawn.empty())
   {
@@ -178,14 +181,11 @@ void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, Base::Came
     rbcmp->drag = 3;
     rbcmp->mass = 1;
 
-    auto *shpcmp = e->AddComponent<Base::ShapeComponent>();
-    shpcmp->fill = true;
-    shpcmp->fillOutline = true;
-    shpcmp->outlineColor = WHITE;
-    shpcmp->radius = 30;
+    auto *txtcmp = e->AddComponent<Base::TextureComponent>();
+    txtcmp->targetSize = {64, 64};
 
     auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
-    abbcmp->radius = shpcmp->radius;
+    abbcmp->radius = txtcmp->targetSize.x / 2;
     abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
@@ -205,13 +205,13 @@ void Spawner::SpawnWave(float dt, Base::EntityManager *entityManager, Base::Came
     switch (type)
     {
     case EnemyType::CHASER:
-      shpcmp->points = 3;
-      shpcmp->color = RED;
+      txtcmp->texture = assetManager->GetAsset<Texture>("chaser");
+      txtcmp->source = {0, 0, static_cast<float>(txtcmp->texture->width), static_cast<float>(txtcmp->texture->height)};
       break;
     case EnemyType::SHOOTER:
-      shpcmp->points = 6;
-      shpcmp->color = BLUE;
+      txtcmp->texture = assetManager->GetAsset<Texture>("shooter");
       trckcmp->trackingDistance = 1000;
+      txtcmp->source = {0, 0, static_cast<float>(txtcmp->texture->width), static_cast<float>(txtcmp->texture->height)};
 
       auto *shtcmp = e->AddComponent<ShootComponent>();
       shtcmp->bulletFireRate = 5.f;

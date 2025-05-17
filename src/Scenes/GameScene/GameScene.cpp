@@ -49,9 +49,11 @@ void GameScene::Enter(Base::SceneData sceneData)
   systemManager->ActivatSystem<TransformEffectsSystem>();
 
   GetAssetManager()->LoadAsset<Texture>("assets/textures/ship.png");
+  GetAssetManager()->LoadAsset<Texture>("assets/textures/chaser.png");
+  GetAssetManager()->LoadAsset<Texture>("assets/textures/shooter.png");
   GetAssetManager()->LoadAsset<Font>("assets/fonts/main-font-normal.otf");
 
-  SetClearColor({7, 7, 20, 255});
+  SetClearColor({7, 7, 15, 255});
 
   // Layers
   GetLayerStack().AttachLayer<GameUILayer>();
@@ -62,6 +64,10 @@ void GameScene::Enter(Base::SceneData sceneData)
 void GameScene::Exit()
 {
   GetSystemManager()->DeactivateActiveSystems();
+  GetAssetManager()->UnloadAsset<Texture>("assets/textures/ship.png");
+  GetAssetManager()->UnloadAsset<Texture>("assets/textures/chaser.png");
+  GetAssetManager()->UnloadAsset<Texture>("assets/textures/shooter.png");
+  GetAssetManager()->UnloadAsset<Font>("assets/fonts/main-font-normal.otf");
 }
 
 void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)

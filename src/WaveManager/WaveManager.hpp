@@ -49,5 +49,5 @@ public:
   WaveManager() = default;
   WaveManager(Base::EntityManager *entityManager);
   void SpawnPlayer(Base::AssetManager *assetManager, Base::CameraManager *camManager);
-  void SpawnWaves(float dt, Base::CameraManager *camManager);
+  void SpawnWaves(float dt, Base::CameraManager *camManager, Base::AssetManager *assetManager);
 };

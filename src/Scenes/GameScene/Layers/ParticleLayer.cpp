@@ -2,6 +2,7 @@
 #include "Components/Tags/EnemyTag.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/components/ShapeComponent.hpp"
+#include "base/components/TextureComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/game/RenderContextSingleton.hpp"
 #include "base/input/InputEvent.hpp"
@@ -20,7 +21,7 @@ void ParticleLayer::OnAttach()
   _emitter = GetOwner()->GetParticleManager()->AddEmitter();
   _emitter->burst = true;
   _emitter->emissionType = Base::ParticleEmitter::EmissionType::POINT;
-  _emitter->particleShape = Base::ParticleEmitter::ParticleShape::POLYGON;
+  _emitter->particleShape = Base::ParticleEmitter::ParticleShape::TEXTURE;
   _emitter->burstEmissionCount = 60;
   _emitter->particleRotationSpeed = 180;
   _emitter->isEmitting = false;
@@ -59,21 +60,27 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
   if (signal->entity->HasComponent<EnemyTag>())
   {
     auto e = signal->entity;
-    auto shpcmp = e->GetComponent<Base::ShapeComponent>();
+    auto txtcmp = e->GetComponent<Base::TextureComponent>();
     auto transcmp = e->GetComponent<Base::TransformComponent>();
     std::uniform_real_distribution<float> lifeRange(0.5, 2);
-    std::uniform_real_distribution<float> radiusRange(0.3 * shpcmp->radius, 0.6 * shpcmp->radius);
+    std::uniform_real_distribution<float> radiusRange(0.2 * txtcmp->targetSize.x, 0.3 * txtcmp->targetSize.x);
     std::uniform_real_distribution<float> angleDist(0, 360);
     std::uniform_real_distribution<float> speedDist(0, 700);
 
     _emitter->isEmitting = true;
-    _emitter->particleSideNumber = shpcmp->points;
-    _emitter->particleStartColor = shpcmp->color;
     _emitter->initialisationFunction = [=, this](Base::ParticleEmitter &emitter) mutable {
+      emitter.particleTexture = txtcmp->texture;
+      emitter.particleTextureSource = {
+        0,
+        0,
+        static_cast<float>(_emitter->particleTexture->width),
+        static_cast<float>(_emitter->particleTexture->height),
+      };
       emitter.particleLifeTime = lifeRange(_gen);
-      emitter.particleStartRadius = radiusRange(_gen);
-      emitter.particleEndRadius = 0;
+      float size = radiusRange(_gen) * 2;
+      emitter.particleStartSize = {size, size};
       emitter.particleStartSpeed = speedDist(_gen);
+
       float angle = angleDist(_gen);
       emitter.particleDirection = {static_cast<float>(sin(angle * DEG2RAD)), static_cast<float>(cos(angle * DEG2RAD))};
       emitter.emissionPoint = transcmp->position;
