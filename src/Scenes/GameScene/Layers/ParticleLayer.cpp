@@ -1,5 +1,6 @@
 #include "ParticleLayer.hpp"
 #include "Components/Tags/EnemyTag.hpp"
+#include "base/assets/AssetManager.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/game/RenderContextSingleton.hpp"
@@ -23,7 +24,8 @@ void ParticleLayer::OnAttach()
   _emitter->burstEmissionCount = 60;
   _emitter->particleRotationSpeed = 180;
   _emitter->isEmitting = false;
-  _emitter->particleEndColor = GetOwner()->GetClearColor();
+  Color color = GetOwner()->GetClearColor();
+  _emitter->particleEndColor = {color.r, color.g, color.b, 0};
 
   auto *bus = Base::SignalBus::GetInstance();
   bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {
@@ -65,14 +67,13 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
     std::uniform_real_distribution<float> speedDist(0, 700);
 
     _emitter->isEmitting = true;
-    _emitter->particleStartColor = shpcmp->color;
     _emitter->particleSideNumber = shpcmp->points;
+    _emitter->particleStartColor = shpcmp->color;
     _emitter->initialisationFunction = [=, this](Base::ParticleEmitter &emitter) mutable {
       emitter.particleLifeTime = lifeRange(_gen);
       emitter.particleStartRadius = radiusRange(_gen);
       emitter.particleEndRadius = 0;
       emitter.particleStartSpeed = speedDist(_gen);
-
       float angle = angleDist(_gen);
       emitter.particleDirection = {static_cast<float>(sin(angle * DEG2RAD)), static_cast<float>(cos(angle * DEG2RAD))};
       emitter.emissionPoint = transcmp->position;
