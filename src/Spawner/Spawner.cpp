@@ -69,7 +69,7 @@ size_t Spawner::SpawnPlayer( //
   rbcmp->drag = 3;
 
   auto hlthcmp = e->AddComponent<HealthComponent>();
-  hlthcmp->health = 20;
+  hlthcmp->health = 200;
 
   auto *shtcmp = e->AddComponent<ShootComponent>();
   shtcmp->bulletFireRate = 0.6;
@@ -78,12 +78,12 @@ size_t Spawner::SpawnPlayer( //
   shtcmp->bulletSpeed = 1500.f;
 
   auto txtcmp = e->AddComponent<Base::TextureComponent>();
-  txtcmp->texture = assetManager->GetAsset<Texture>("ship");
   txtcmp->targetSize = {64, 64};
+  txtcmp->texture = assetManager->GetAsset<Texture>("ship");
   txtcmp->source = {0, 0, static_cast<float>(txtcmp->texture->width), static_cast<float>(txtcmp->texture->height)};
 
   auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
-  abbcmp->radius = 32;
+  abbcmp->radius = ((txtcmp->texture->width - 10) / 2.f) * (txtcmp->targetSize.x / txtcmp->source.width);
   abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
   abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
 
@@ -185,7 +185,6 @@ void Spawner::SpawnWave( //
     txtcmp->targetSize = {64, 64};
 
     auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
-    abbcmp->radius = txtcmp->targetSize.x / 2;
     abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
@@ -206,12 +205,10 @@ void Spawner::SpawnWave( //
     {
     case EnemyType::CHASER:
       txtcmp->texture = assetManager->GetAsset<Texture>("chaser");
-      txtcmp->source = {0, 0, static_cast<float>(txtcmp->texture->width), static_cast<float>(txtcmp->texture->height)};
       break;
     case EnemyType::SHOOTER:
       txtcmp->texture = assetManager->GetAsset<Texture>("shooter");
       trckcmp->trackingDistance = 1000;
-      txtcmp->source = {0, 0, static_cast<float>(txtcmp->texture->width), static_cast<float>(txtcmp->texture->height)};
 
       auto *shtcmp = e->AddComponent<ShootComponent>();
       shtcmp->bulletFireRate = 5.f;
@@ -222,6 +219,8 @@ void Spawner::SpawnWave( //
       transfxcmp->bindMax = camManager->GetScreenToWorld({rctx->gameWidth, rctx->gameHeight});
       break;
     }
+    txtcmp->source = {0, 0, static_cast<float>(txtcmp->texture->width), static_cast<float>(txtcmp->texture->height)};
+    abbcmp->radius = ((txtcmp->texture->width - 10) / 2.f) * (txtcmp->targetSize.x / txtcmp->source.width);
   }
   else
   {

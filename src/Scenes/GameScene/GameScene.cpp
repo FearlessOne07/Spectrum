@@ -64,10 +64,10 @@ void GameScene::Enter(Base::SceneData sceneData)
 void GameScene::Exit()
 {
   GetSystemManager()->DeactivateActiveSystems();
-  GetAssetManager()->UnloadAsset<Texture>("assets/textures/ship.png");
-  GetAssetManager()->UnloadAsset<Texture>("assets/textures/chaser.png");
-  GetAssetManager()->UnloadAsset<Texture>("assets/textures/shooter.png");
-  GetAssetManager()->UnloadAsset<Font>("assets/fonts/main-font-normal.otf");
+  GetAssetManager()->UnloadAsset<Texture>("ship");
+  GetAssetManager()->UnloadAsset<Texture>("chaser");
+  GetAssetManager()->UnloadAsset<Texture>("shooter");
+  GetAssetManager()->UnloadAsset<Font>("main-font-normal");
 }
 
 void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)
