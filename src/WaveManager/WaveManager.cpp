@@ -112,7 +112,7 @@ void WaveManager::GenerateWave()
 void WaveManager::SpawnWaves(float dt, Base::CameraManager *camManager, Base::AssetManager *assetManager)
 {
   int count = _entityMan->Query<EnemyTag>().size();
-  if (_waveTimer >= _waveTime && (count == 0 && _spawner.GetToSpawnCount() == 0))
+  if (_waveTimer >= _waveTime || (count == 0 && _spawner.GetToSpawnCount() == 0))
   {
     _waveTimer = 0;
     GenerateWave();

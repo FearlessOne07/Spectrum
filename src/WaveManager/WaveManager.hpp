@@ -30,7 +30,7 @@ private:
   unsigned _currentWave = 1;
   int _wavePoints = 0;
   int _baseWavePoints = 5;
-  float _waveTime = 20;
+  float _waveTime = 45;
   float _waveTimer = _waveTime;
 
   // EntityManager

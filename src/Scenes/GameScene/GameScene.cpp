@@ -69,8 +69,8 @@ void GameScene::Exit()
   GetAssetManager()->UnloadAsset<Texture>("ship");
   GetAssetManager()->UnloadAsset<Texture>("chaser");
   GetAssetManager()->UnloadAsset<Texture>("shooter");
-  GetAssetManager()->UnloadAsset<Texture>("shooter-bullet.png");
-  GetAssetManager()->UnloadAsset<Texture>("player-bullet.png");
+  GetAssetManager()->UnloadAsset<Texture>("shooter-bullet");
+  GetAssetManager()->UnloadAsset<Texture>("player-bullet");
   GetAssetManager()->UnloadAsset<Font>("main-font-normal");
 }
 
