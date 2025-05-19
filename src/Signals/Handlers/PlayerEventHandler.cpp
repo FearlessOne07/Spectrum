@@ -7,8 +7,10 @@
 #include "Components/Tags/PlayerTag.hpp"
 #include "Scenes/DeathScreen/DeathScreen.hpp"
 #include "Signals/EntityDiedSignal.hpp"
+#include "base/components/TransformComponent.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneTransition.hpp"
+#include "base/systems/MoveSystem.hpp"
 #include <base/components/ImpulseComponent.hpp>
 #include <base/components/MoveComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
@@ -48,6 +50,22 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
     config.traumaMultiplyer = 2;
     config.rotationMagnitude = 4;
 
+    Vector2 knockBackDir = {0, 0};
+    auto *transAtt = attack->GetComponent<Base::TransformComponent>();
+    auto *transDef = defence->GetComponent<Base::TransformComponent>();
+
+    auto impcmp = defence->GetComponent<Base::ImpulseComponent>();
+
+    if (auto rb = attack->GetComponent<Base::RigidBodyComponent>(); Vector2LengthSqr(rb->velocity) != 0)
+    {
+      knockBackDir = Vector2Normalize(transDef->position - transAtt->position);
+    }
+    else
+    {
+      knockBackDir = Vector2Normalize(transAtt->position - transDef->position);
+    }
+    impcmp->direction = knockBackDir;
+
     if (                                                                        //
       attack->HasComponent<BulletComponent>() &&                                //
       attack->GetComponent<BulletComponent>()->sender->HasComponent<EnemyTag>() //
@@ -56,32 +74,21 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
       _scene->GetCameraManager()->Shake(config);
       auto dmgcmp = attack->GetComponent<DamageComponent>();
       auto *hlthcmp = defence->GetComponent<HealthComponent>();
+      auto *bulcmp = attack->GetComponent<BulletComponent>();
 
       if (!hlthcmp->hasPendingSickness)
       {
         hlthcmp->hasPendingSickness = true;
         hlthcmp->sickness += dmgcmp->damage;
       }
-
-      auto bulcmp = attack->GetComponent<BulletComponent>();
       auto rbcmp = attack->GetComponent<Base::RigidBodyComponent>();
+      impcmp->force = bulcmp->sender->GetComponent<ShootComponent>()->bulletKnockbackForce * 2;
       attack->SetDead();
-
-      auto *impcmp = defence->GetComponent<Base::ImpulseComponent>();
-      impcmp->force = bulcmp->sender->GetComponent<ShootComponent>()->bulletKnockbackForce;
-
-      if (Vector2Length(collEvent->collisionNormal) > 0)
-      {
-        impcmp->direction = collEvent->collisionNormal * -1;
-      }
-      else
-      {
-        impcmp->direction = rbcmp->direction;
-      }
     }
     else if (attack->HasComponent<EnemyTag>())
     {
       _scene->GetCameraManager()->Shake(config);
+      auto *mvcmpAtt = attack->GetComponent<Base::MoveComponent>();
       auto dmgcmp = attack->GetComponent<DamageComponent>();
       auto *hlthcmp = defence->GetComponent<HealthComponent>();
 
@@ -90,16 +97,7 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
         hlthcmp->hasPendingSickness = true;
         hlthcmp->sickness += dmgcmp->damage;
       }
-
-      Vector2 attackDir = attack->GetComponent<Base::RigidBodyComponent>()->direction;
-      auto *impcmp = defence->GetComponent<Base::ImpulseComponent>();
-
-      if (Vector2Length(collEvent->collisionNormal) > 0)
-      {
-        impcmp->direction = collEvent->collisionNormal;
-      }
-
-      impcmp->force = attack->GetComponent<Base::MoveComponent>()->driveForce * 2;
+      impcmp->force = mvcmpAtt->driveForce * 2;
     }
   }
 }

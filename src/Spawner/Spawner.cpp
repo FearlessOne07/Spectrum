@@ -76,6 +76,7 @@ size_t Spawner::SpawnPlayer( //
   shtcmp->bulletLifetime = 3;
   shtcmp->bulletFireTimer = 1;
   shtcmp->bulletSpeed = 1500.f;
+  shtcmp->bulletTexture = assetManager->GetAsset<Texture>("player-bullet");
 
   auto txtcmp = e->AddComponent<Base::TextureComponent>();
   txtcmp->targetSize = {64, 64};
@@ -214,6 +215,7 @@ void Spawner::SpawnWave( //
       shtcmp->bulletFireRate = 5.f;
       shtcmp->bulletKnockbackForce = 800;
       shtcmp->bulletSpeed = 1000.f;
+      shtcmp->bulletTexture = assetManager->GetAsset<Texture>("shooter-bullet");
 
       transfxcmp->bindMin = camManager->GetScreenToWorld({0, 0});
       transfxcmp->bindMax = camManager->GetScreenToWorld({rctx->gameWidth, rctx->gameHeight});

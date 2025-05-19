@@ -30,7 +30,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   auto camManager = GetCameraManager();
   camManager->SetCameraOffset({rd->gameWidth / 2, rd->gameHeight / 2});
-  camManager->SetCameraZoom(1);
+  camManager->SetCameraZoom(1.3);
   camManager->SetCameraTarget({0, 0});
   camManager->SetCameraRotation(0);
   camManager->SetCameraMode(Base::Camera2DExtMode::STATIC);
@@ -51,6 +51,8 @@ void GameScene::Enter(Base::SceneData sceneData)
   GetAssetManager()->LoadAsset<Texture>("assets/textures/ship.png");
   GetAssetManager()->LoadAsset<Texture>("assets/textures/chaser.png");
   GetAssetManager()->LoadAsset<Texture>("assets/textures/shooter.png");
+  GetAssetManager()->LoadAsset<Texture>("assets/textures/shooter-bullet.png");
+  GetAssetManager()->LoadAsset<Texture>("assets/textures/player-bullet.png");
   GetAssetManager()->LoadAsset<Font>("assets/fonts/main-font-normal.otf");
 
   SetClearColor({7, 7, 15, 255});
@@ -67,6 +69,8 @@ void GameScene::Exit()
   GetAssetManager()->UnloadAsset<Texture>("ship");
   GetAssetManager()->UnloadAsset<Texture>("chaser");
   GetAssetManager()->UnloadAsset<Texture>("shooter");
+  GetAssetManager()->UnloadAsset<Texture>("shooter-bullet.png");
+  GetAssetManager()->UnloadAsset<Texture>("player-bullet.png");
   GetAssetManager()->UnloadAsset<Font>("main-font-normal");
 }
 

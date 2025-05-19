@@ -13,4 +13,5 @@ struct ShootComponent : public Base::Component
   float bulletKnockbackForce = 0.f;
   float bulletLifetime = 5;
   float bulletSpeed = 0.f;
+  std::shared_ptr<Texture> bulletTexture = nullptr;
 };

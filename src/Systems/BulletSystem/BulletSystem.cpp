@@ -5,6 +5,7 @@
 #include "Components/ShootComponent.hpp"
 #include "Components/Tags/EnemyTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
+#include "base/components/TextureComponent.hpp"
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
 #include <base/components/MoveComponent.hpp>
@@ -54,11 +55,15 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
 
         auto *mvcmp = bullet->AddComponent<Base::MoveComponent>();
 
-        auto *shpcmp = bullet->AddComponent<Base::ShapeComponent>();
-        shpcmp->points = 50;
-        shpcmp->color = WHITE;
-        shpcmp->radius = 20;
-        shpcmp->fill = true;
+        auto txtcmp = bullet->AddComponent<Base::TextureComponent>();
+        txtcmp->targetSize = {32, 32};
+        txtcmp->texture = shtcmp->bulletTexture;
+        txtcmp->source = {
+          0,
+          0,
+          static_cast<float>(txtcmp->texture->width),
+          static_cast<float>(txtcmp->texture->height),
+        };
 
         auto bulcmp = bullet->AddComponent<BulletComponent>();
         bulcmp->lifeTime = shtcmp->bulletLifetime;
@@ -66,7 +71,7 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
         bulcmp->sender = shtcmp->GetOwner();
 
         auto abbcmp = bullet->AddComponent<Base::ColliderComponent>();
-        abbcmp->radius = shpcmp->radius;
+        abbcmp->radius = ((txtcmp->texture->width - 10) / 2.f) * (txtcmp->targetSize.x / txtcmp->source.width);
         abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
         abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
 
