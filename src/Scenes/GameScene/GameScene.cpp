@@ -59,6 +59,7 @@ void GameScene::Enter(Base::SceneData sceneData)
 
   GetAssetManager()->LoadAsset<Base::Sound>("assets/sounds/bullet-fire.wav");
   GetAssetManager()->LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
+  GetAssetManager()->LoadAsset<Base::Sound>("assets/sounds/player-hit.wav");
 
   SetClearColor({7, 7, 15, 255});
 
@@ -80,6 +81,7 @@ void GameScene::Exit()
 
   GetAssetManager()->UnloadAsset<Base::Sound>("bullet-fire");
   GetAssetManager()->UnloadAsset<Base::Sound>("enemy-die");
+  GetAssetManager()->UnloadAsset<Base::Sound>("player-hit");
 }
 
 void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)

@@ -83,6 +83,7 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
         auto bus = Base::SignalBus::GetInstance();
         std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
         sig->soundName = "bullet-fire";
+        sig->soundVolume = 0.5;
         bus->BroadCastSignal(sig);
       }
     }

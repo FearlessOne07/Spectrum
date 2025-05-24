@@ -10,6 +10,7 @@
 #include "base/components/TransformComponent.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneTransition.hpp"
+#include <base/audio/signals/PlaySoundSignal.hpp>
 #include <base/components/ImpulseComponent.hpp>
 #include <base/components/MoveComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
@@ -54,7 +55,12 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
 
     auto impcmp = defence->GetComponent<Base::ImpulseComponent>();
 
-    if (auto rb = attack->GetComponent<Base::RigidBodyComponent>(); Vector2LengthSqr(rb->velocity) != 0)
+    auto bus = Base::SignalBus::GetInstance();
+    std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
+    sig->soundName = "player-hit";
+    sig->soundVolume = 0.75;
+
+    if (auto rb = attack->GetComponent<Base::RigidBodyComponent>(); Vector2LengthSqr(rb->direction) != 0)
     {
       knockBackDir = Vector2Normalize(transDef->position - transAtt->position);
     }
@@ -76,6 +82,7 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
 
       if (!hlthcmp->hasPendingSickness)
       {
+        bus->BroadCastSignal(sig);
         hlthcmp->hasPendingSickness = true;
         hlthcmp->sickness += dmgcmp->damage;
       }
@@ -92,6 +99,7 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
 
       if (!hlthcmp->hasPendingSickness)
       {
+        bus->BroadCastSignal(sig);
         hlthcmp->hasPendingSickness = true;
         hlthcmp->sickness += dmgcmp->damage;
       }
