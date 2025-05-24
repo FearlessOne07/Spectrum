@@ -10,13 +10,11 @@
 #include "base/components/TransformComponent.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneTransition.hpp"
-#include "base/systems/MoveSystem.hpp"
 #include <base/components/ImpulseComponent.hpp>
 #include <base/components/MoveComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
-#include <base/signals/EntityCollisionSignal.hpp>
+#include <base/entities/signals/EntityCollisionSignal.hpp>
 #include <base/signals/SignalBus.hpp>
-#include <iostream>
 #include <memory>
 #include <raylib.h>
 #include <raymath.h>

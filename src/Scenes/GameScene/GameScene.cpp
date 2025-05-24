@@ -7,6 +7,7 @@
 #include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
+#include "base/audio/Sound.hpp"
 #include "base/camera/CameraModes.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/scenes/SceneTransition.hpp"
@@ -53,7 +54,11 @@ void GameScene::Enter(Base::SceneData sceneData)
   GetAssetManager()->LoadAsset<Texture>("assets/textures/shooter.png");
   GetAssetManager()->LoadAsset<Texture>("assets/textures/shooter-bullet.png");
   GetAssetManager()->LoadAsset<Texture>("assets/textures/player-bullet.png");
+
   GetAssetManager()->LoadAsset<Font>("assets/fonts/main-font-normal.otf");
+
+  GetAssetManager()->LoadAsset<Base::Sound>("assets/sounds/bullet-fire.wav");
+  GetAssetManager()->LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
 
   SetClearColor({7, 7, 15, 255});
 
@@ -72,6 +77,9 @@ void GameScene::Exit()
   GetAssetManager()->UnloadAsset<Texture>("shooter-bullet");
   GetAssetManager()->UnloadAsset<Texture>("player-bullet");
   GetAssetManager()->UnloadAsset<Font>("main-font-normal");
+
+  GetAssetManager()->UnloadAsset<Base::Sound>("bullet-fire");
+  GetAssetManager()->UnloadAsset<Base::Sound>("enemy-die");
 }
 
 void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)

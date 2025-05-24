@@ -1,5 +1,4 @@
 #pragma once
-#include "base/camera/CameraManager.hpp"
 #include "base/scenes/Scene.hpp"
 #include <base/signals/Signal.hpp>
 #include <memory>

@@ -1,7 +1,5 @@
 #include "ParticleLayer.hpp"
 #include "Components/Tags/EnemyTag.hpp"
-#include "base/assets/AssetManager.hpp"
-#include "base/components/ShapeComponent.hpp"
 #include "base/components/TextureComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/game/RenderContextSingleton.hpp"
@@ -10,6 +8,7 @@
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "raylib.h"
+#include <base/audio/signals/PlaySoundSignal.hpp>
 #include <base/game/RenderContext.hpp>
 #include <memory>
 #include <random>
@@ -94,5 +93,10 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
     config.traumaMultiplyer = 2;
     config.rotationMagnitude = 0.5;
     GetOwner()->GetCameraManager()->Shake(config);
+
+    auto bus = Base::SignalBus::GetInstance();
+    std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
+    sig->soundName = "enemy-die";
+    bus->BroadCastSignal(sig);
   }
 }

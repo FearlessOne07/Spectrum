@@ -6,6 +6,7 @@
 #include "Components/Tags/EnemyTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "base/components/TextureComponent.hpp"
+#include <base/audio/signals/PlaySoundSignal.hpp>
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
 #include <base/components/MoveComponent.hpp>
@@ -14,7 +15,7 @@
 #include <base/components/TransformComponent.hpp>
 #include <base/entities/Entity.hpp>
 #include <base/entities/EntityManager.hpp>
-#include <base/signals/EntityCollisionSignal.hpp>
+#include <base/entities/signals/EntityCollisionSignal.hpp>
 #include <base/signals/Signal.hpp>
 #include <base/signals/SignalBus.hpp>
 #include <memory>
@@ -77,6 +78,12 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
 
         auto bulDmgcmp = bullet->AddComponent<DamageComponent>();
         bulDmgcmp->damage = dmgcmp->damage;
+
+        // Emmite sound signal
+        auto bus = Base::SignalBus::GetInstance();
+        std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
+        sig->soundName = "bullet-fire";
+        bus->BroadCastSignal(sig);
       }
     }
     else
