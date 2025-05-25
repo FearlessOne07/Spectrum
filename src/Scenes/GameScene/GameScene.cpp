@@ -8,6 +8,7 @@
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
 #include "base/audio/Sound.hpp"
+#include "base/audio/signals/PlayAudioStreamSignal.hpp"
 #include "base/camera/CameraModes.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/scenes/SceneTransition.hpp"
@@ -61,12 +62,21 @@ void GameScene::Enter(Base::SceneData sceneData)
   GetAssetManager()->LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
   GetAssetManager()->LoadAsset<Base::Sound>("assets/sounds/player-hit.wav");
 
+  GetAssetManager()->LoadAsset<Base::AudioStream>("assets/music/main-track.mp3");
+
   SetClearColor({7, 7, 15, 255});
 
   // Layers
   GetLayerStack().AttachLayer<GameUILayer>();
   GetLayerStack().AttachLayer<MainGameLayer>();
   GetLayerStack().AttachLayer<ParticleLayer>();
+
+  std::shared_ptr<Base::PlayAudioStreamSignal> sig = std::make_shared<Base::PlayAudioStreamSignal>();
+  sig->streamName = "main-track";
+  sig->streamPan = 0.5;
+  sig->streamVolume = 0.3;
+  sig->loopStream = true;
+  bus->BroadCastSignal(sig);
 }
 
 void GameScene::Exit()
@@ -82,6 +92,7 @@ void GameScene::Exit()
   GetAssetManager()->UnloadAsset<Base::Sound>("bullet-fire");
   GetAssetManager()->UnloadAsset<Base::Sound>("enemy-die");
   GetAssetManager()->UnloadAsset<Base::Sound>("player-hit");
+
 }
 
 void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)
