@@ -69,7 +69,7 @@ size_t Spawner::SpawnPlayer( //
   rbcmp->drag = 3;
 
   auto hlthcmp = e->AddComponent<HealthComponent>();
-  hlthcmp->health = 200;
+  hlthcmp->health = 10;
 
   auto *shtcmp = e->AddComponent<ShootComponent>();
   shtcmp->bulletFireRate = 0.6;
@@ -171,6 +171,8 @@ void Spawner::SpawnWave( //
     auto *transcmp = e->GetComponent<Base::TransformComponent>();
     transcmp->position = position;
 
+    e->AddComponent<Base::ImpulseComponent>();
+
     auto *trckcmp = e->AddComponent<TrackingComponent>();
     trckcmp->targetEntityID = playerID;
 
@@ -194,7 +196,7 @@ void Spawner::SpawnWave( //
     hlthcmp->health = 8;
 
     auto dmgcmp = e->AddComponent<DamageComponent>();
-    dmgcmp->damage = 2;
+    dmgcmp->damage = 1;
 
     auto transfxcmp = e->AddComponent<TransformEffectsComponent>();
     transfxcmp->rotate = true;

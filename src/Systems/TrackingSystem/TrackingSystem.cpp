@@ -58,13 +58,17 @@ void TrackingSystem::Update(float dt, Base::EntityManager *entityManager)
     bool isInBoundsY = (positionMin.y > transfxcmp->bindMin.y) && (positionMax.y < transfxcmp->bindMax.y);
     bool isInRange = Vector2Distance(targetPos, transcomp->position) < trckcomp->trackingDistance;
 
+    trckcomp->targetDirection = Vector2Subtract( //
+      targetPos, transcomp->position             //
+    );
+
+    trckcomp->targetDirection = Vector2Normalize(trckcomp->targetDirection);
+
     if ( //
       trckcomp->trackingDistance == 0.f || !isInRange || !(isInBoundsX && isInBoundsY))
     {
       trckcomp->isTracking = true;
-      rbcmp->direction = Vector2Subtract( //
-        targetPos, transcomp->position    //
-      );
+      rbcmp->direction = trckcomp->targetDirection;
     }
     else
     {
