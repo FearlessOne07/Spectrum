@@ -1,12 +1,12 @@
 #include "MainPauseLayer.hpp"
 #include "base/assets/AssetManager.hpp"
-#include "base/game/RenderContextSingleton.hpp"
+#include "base/renderer/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/UILayer.hpp"
 #include "base/ui/elements/UIButton.hpp"
 #include "raylib.h"
-#include <base/game/RenderContext.hpp>
+#include <base/renderer/RenderContext.hpp>
 
 void MainPauseLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {

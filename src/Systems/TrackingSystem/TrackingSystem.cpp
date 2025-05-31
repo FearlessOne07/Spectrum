@@ -7,8 +7,8 @@
 #include <base/components/TransformComponent.hpp>
 #include <base/entities/Entity.hpp>
 #include <base/entities/EntityManager.hpp>
-#include <base/game/RenderContext.hpp>
-#include <base/game/RenderContextSingleton.hpp>
+#include <base/renderer/RenderContext.hpp>
+#include <base/renderer/RenderContextSingleton.hpp>
 #include <memory>
 #include <raylib.h>
 #include <raymath.h>

@@ -1,9 +1,9 @@
 #include "MainGameLayer.hpp"
-#include "base/game/RenderContext.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/systems/SystemManager.hpp"
-#include <base/game/RenderContextSingleton.hpp>
+#include <base/renderer/RenderContext.hpp>
+#include <base/renderer/RenderContextSingleton.hpp>
 #include <memory>
 
 void MainGameLayer::OnAttach()
@@ -11,6 +11,8 @@ void MainGameLayer::OnAttach()
   _waveManager = WaveManager(GetOwner()->GetEntityManager());
   _waveManager.SpawnPlayer(GetOwner()->GetAssetManager(), GetOwner()->GetCameraManager());
   _playerEVH.Init(GetOwner());
+
+  GetRenderLayer()->SetShaderChain({GetOwner()->GetAssetManager()->GetAsset<Shader>("pixalization")});
 }
 
 void MainGameLayer::OnDetach()

@@ -1,21 +1,21 @@
 #include "ParticleLayer.hpp"
 #include "Components/Tags/EnemyTag.hpp"
+#include "base/assets/AssetManager.hpp"
 #include "base/components/TextureComponent.hpp"
 #include "base/components/TransformComponent.hpp"
-#include "base/game/RenderContextSingleton.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleEmitter.hpp"
+#include "base/renderer/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "raylib.h"
 #include <base/audio/signals/PlaySoundSignal.hpp>
-#include <base/game/RenderContext.hpp>
+#include <base/renderer/RenderContext.hpp>
 #include <memory>
 #include <random>
 
 void ParticleLayer::OnAttach()
 {
-  auto rctx = Base::RenderContextSingleton::GetInstance();
   _gen = std::mt19937_64(_rd());
   _emitter = GetOwner()->GetParticleManager()->AddEmitter();
   _emitter->burst = true;
@@ -31,6 +31,8 @@ void ParticleLayer::OnAttach()
   bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {
     this->OnEntityDiedSignal(std::static_pointer_cast<EntityDiedSignal>(sig));
   });
+
+  GetRenderLayer()->SetShaderChain({GetOwner()->GetAssetManager()->GetAsset<Shader>("pixalization")});
 }
 
 void ParticleLayer::OnDetach()

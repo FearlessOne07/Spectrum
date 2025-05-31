@@ -20,8 +20,8 @@
 #include <base/components/TransformComponent.hpp>
 #include <base/entities/Entity.hpp>
 #include <base/entities/EntityManager.hpp>
-#include <base/game/RenderContext.hpp>
-#include <base/game/RenderContextSingleton.hpp>
+#include <base/renderer/RenderContext.hpp>
+#include <base/renderer/RenderContextSingleton.hpp>
 #include <cstddef>
 #include <memory>
 #include <random>
@@ -69,7 +69,7 @@ size_t Spawner::SpawnPlayer( //
   rbcmp->drag = 3;
 
   auto hlthcmp = e->AddComponent<HealthComponent>();
-  hlthcmp->health = 10;
+  hlthcmp->health = 200;
 
   auto *shtcmp = e->AddComponent<ShootComponent>();
   shtcmp->bulletFireRate = 0.6;

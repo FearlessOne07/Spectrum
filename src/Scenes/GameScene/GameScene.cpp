@@ -13,8 +13,8 @@
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/scenes/SceneTransition.hpp"
 #include "base/signals/SignalBus.hpp"
-#include <base/game/RenderContext.hpp>
-#include <base/game/RenderContextSingleton.hpp>
+#include <base/renderer/RenderContext.hpp>
+#include <base/renderer/RenderContextSingleton.hpp>
 #include <base/systems/EntityCollisionSystem.hpp>
 #include <base/systems/InputSystem.hpp>
 #include <base/systems/MoveSystem.hpp>
@@ -64,6 +64,8 @@ void GameScene::Enter(Base::SceneData sceneData)
 
   GetAssetManager()->LoadAsset<Base::AudioStream>("assets/music/main-track.mp3");
 
+  GetAssetManager()->LoadAsset<Shader>("assets/shaders/pixalization.frag");
+
   SetClearColor({7, 7, 15, 255});
 
   // Layers
@@ -92,7 +94,6 @@ void GameScene::Exit()
   GetAssetManager()->UnloadAsset<Base::Sound>("bullet-fire");
   GetAssetManager()->UnloadAsset<Base::Sound>("enemy-die");
   GetAssetManager()->UnloadAsset<Base::Sound>("player-hit");
-
 }
 
 void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)
