@@ -94,6 +94,10 @@ void GameScene::Exit()
   GetAssetManager()->UnloadAsset<Base::Sound>("bullet-fire");
   GetAssetManager()->UnloadAsset<Base::Sound>("enemy-die");
   GetAssetManager()->UnloadAsset<Base::Sound>("player-hit");
+
+  GetAssetManager()->UnloadAsset<Base::AudioStream>("main-track");
+
+  GetAssetManager()->UnloadAsset<Shader>("pixalization");
 }
 
 void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)

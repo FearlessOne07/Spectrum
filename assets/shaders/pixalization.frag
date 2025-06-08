@@ -1,32 +1,36 @@
-#version 330
+#version 430 core
 
-// Input vertex attributes (from vertex shader)
 in vec2 fragTexCoord;
 in vec4 fragColor;
 
-// Input uniform values
-uniform sampler2D texture0;
-uniform vec4 colDiffuse;
+uniform sampler2D texture0; // Texture from raylib
+vec2 u_resolution = vec2(1920, 1080); // Screen resolution (should be passed as uniform)
 
-// Output fragment color
 out vec4 finalColor;
 
-// NOTE: Add your custom variables here
-
-// NOTE: Render size values must be passed from code
-const float renderWidth = 1920;
-const float renderHeight = 1080;
-
-uniform float pixelWidth = 4.0;
-uniform float pixelHeight = 4.0;
-
 void main() {
-    float dx = pixelWidth * (1.0 / renderWidth);
-    float dy = pixelHeight * (1.0 / renderHeight);
+    vec2 uv = fragTexCoord;
 
-    vec2 coord = vec2(dx * floor(fragTexCoord.x / dx), dy * floor(fragTexCoord.y / dy));
+    // Center the coordinates
+    vec2 centered = uv - 0.5;
 
-    vec4 tc = texture(texture0, coord);
+    // Apply aspect ratio correction
+    centered.x *= u_resolution.x / u_resolution.y;
 
-    finalColor = tc;
+    // Calculate distance from center
+    float dist = length(centered);
+
+    // Create vignette effect
+    // Inner radius: 0.4, Outer radius: 0.8 (adjust these for size)
+    float vignette = smoothstep(0.6, 1, dist);
+
+    // Sample the original texture
+    vec4 texColor = texture(texture0, uv);
+
+    // Mix original color with red tint based on vignette
+    float finalAlpha = max(texColor.a, vignette * 0.95);
+    vec3 redTint = mix(texColor.rgb, vec3(1.0, 0.0, 0.0), vignette * 0.5); // Added multiplier for subtlety
+
+    // Output final color
+    finalColor = vec4(redTint, finalAlpha) * fragColor;
 }

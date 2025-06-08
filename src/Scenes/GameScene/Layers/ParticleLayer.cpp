@@ -31,8 +31,6 @@ void ParticleLayer::OnAttach()
   bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {
     this->OnEntityDiedSignal(std::static_pointer_cast<EntityDiedSignal>(sig));
   });
-
-  GetRenderLayer()->SetShaderChain({GetOwner()->GetAssetManager()->GetAsset<Shader>("pixalization")});
 }
 
 void ParticleLayer::OnDetach()

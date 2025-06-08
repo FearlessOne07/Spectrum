@@ -12,7 +12,7 @@ void MainGameLayer::OnAttach()
   _waveManager.SpawnPlayer(GetOwner()->GetAssetManager(), GetOwner()->GetCameraManager());
   _playerEVH.Init(GetOwner());
 
-  GetRenderLayer()->SetShaderChain({GetOwner()->GetAssetManager()->GetAsset<Shader>("pixalization")});
+  GetRenderLayer()->SetShaderChain({"pixalization"});
 }
 
 void MainGameLayer::OnDetach()
