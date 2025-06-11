@@ -12,7 +12,9 @@ void MainGameLayer::OnAttach()
   _waveManager.SpawnPlayer(GetOwner()->GetAssetManager(), GetOwner()->GetCameraManager());
   _playerEVH.Init(GetOwner());
 
-  GetRenderLayer()->SetShaderChain({"pixalization"});
+  auto shaderChain = GetRenderLayer()->GetShaderChain();
+  shaderChain->AddShaderPass("pixalization");
+  shaderChain->SetShaderUniform("pixalization", "u_resolution", Vector2{1920, 1080});
 }
 
 void MainGameLayer::OnDetach()

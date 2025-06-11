@@ -3,8 +3,8 @@
 in vec2 fragTexCoord;
 in vec4 fragColor;
 
-uniform sampler2D texture0; // Texture from raylib
-vec2 u_resolution = vec2(1920, 1080); // Screen resolution (should be passed as uniform)
+uniform sampler2D texture0;
+uniform vec2 u_resolution;
 
 out vec4 finalColor;
 
@@ -22,7 +22,7 @@ void main() {
 
     // Create vignette effect
     // Inner radius: 0.4, Outer radius: 0.8 (adjust these for size)
-    float vignette = smoothstep(0.6, 1, dist);
+    float vignette = smoothstep(1, 1, dist);
 
     // Sample the original texture
     vec4 texColor = texture(texture0, uv);
