@@ -8,6 +8,8 @@ class MainGameLayer : public Base::SceneLayer
   WaveManager _waveManager;
   PlayerSignalHandler _playerEVH = PlayerSignalHandler();
 
+  void OnPlayerDamaged(std::shared_ptr<Base::Signal>);
+
 public:
   void Update(float dt) override;
   void Render() override;

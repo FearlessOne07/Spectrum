@@ -64,7 +64,7 @@ void GameScene::Enter(Base::SceneData sceneData)
 
   GetAssetManager()->LoadAsset<Base::AudioStream>("assets/music/main-track.mp3");
 
-  GetAssetManager()->LoadAsset<Shader>("assets/shaders/pixalization.frag");
+  GetAssetManager()->LoadAsset<Shader>("assets/shaders/vignette.frag");
 
   SetClearColor({7, 7, 15, 255});
 
@@ -97,7 +97,7 @@ void GameScene::Exit()
 
   GetAssetManager()->UnloadAsset<Base::AudioStream>("main-track");
 
-  GetAssetManager()->UnloadAsset<Shader>("pixalization");
+  GetAssetManager()->UnloadAsset<Shader>("vignette");
 }
 
 void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)

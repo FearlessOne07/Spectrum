@@ -69,7 +69,8 @@ size_t Spawner::SpawnPlayer( //
   rbcmp->drag = 3;
 
   auto hlthcmp = e->AddComponent<HealthComponent>();
-  hlthcmp->health = 200;
+  hlthcmp->maxHealth = 20;
+  hlthcmp->health = hlthcmp->maxHealth;
 
   auto *shtcmp = e->AddComponent<ShootComponent>();
   shtcmp->bulletFireRate = 0.6;
