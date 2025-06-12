@@ -8,7 +8,9 @@ void PauseMenu::OnInputEvent(std::shared_ptr<Base::InputEvent> event)
 
 void PauseMenu::Enter(Base::SceneData sceneData)
 {
-  GetLayerStack().AttachLayer<MainPauseLayer>();
+  
+  auto mainLayer = GetRenderer()->InitLayer(this, {0, 0}, {1920, 1080});
+  GetLayerStack().AttachLayer<MainPauseLayer>()->SetRenderLayer(mainLayer);
 }
 
 void PauseMenu::Exit()

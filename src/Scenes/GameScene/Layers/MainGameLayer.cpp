@@ -18,11 +18,6 @@ void MainGameLayer::OnAttach()
   _waveManager.SpawnPlayer(GetOwner()->GetAssetManager(), GetOwner()->GetCameraManager());
   _playerEVH.Init(GetOwner());
 
-  auto shaderChain = GetRenderLayer()->GetShaderChain();
-  shaderChain->AddShaderPass("vignette");
-  shaderChain->SetShaderUniform("vignette", "u_resolution", Vector2{1920, 1080});
-  std::cout << "ShaderChain address: " << GetRenderLayer()->GetShaderChain() << std::endl;
-
   auto bus = Base::SignalBus::GetInstance();
   bus->SubscribeSignal<EntityDamagedSignal>([this](std::shared_ptr<Base::Signal> signal) {
     this->OnPlayerDamaged(signal); //
@@ -61,7 +56,6 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
       float health = entityDamg->entity->GetComponent<HealthComponent>()->health;
       float maxHealth = entityDamg->entity->GetComponent<HealthComponent>()->maxHealth;
 
-      std::cout << "ShaderChain address: " << GetRenderLayer()->GetShaderChain() << std::endl;
       GetRenderLayer()->GetShaderChain()->SetShaderUniform(                              //
         "vignette", "u_vignetteStrength", float(std::pow((1.f - health / maxHealth), 2)) //
       );

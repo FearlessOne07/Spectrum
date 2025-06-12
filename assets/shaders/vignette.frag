@@ -23,7 +23,7 @@ void main() {
 
     // Create vignette effect
     // Inner radius: 0.4, Outer radius: 0.8 (adjust these for size)
-    float vignette = smoothstep(0.1, 1, dist);
+    float vignette = smoothstep(0.4, 1.0, dist);
 
     // Sample the original texture
     vec4 texColor = texture(texture0, uv);
