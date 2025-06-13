@@ -1,0 +1,11 @@
+INPUT = ./src ./include ./vendor/Base/src ./vendor/Base/include/
+RECURSIVE = YES
+HAVE_DOT = YES
+DOT_PATH =             # (only if 'dot' isn't in your PATH)
+CALL_GRAPH = YES
+CALLER_GRAPH = YES
+CLASS_DIAGRAMS = YES
+COLLABORATION_GRAPH = YES
+INCLUDE_GRAPH = YES
+INCLUDED_BY_GRAPH = YES
+EXTRACT_ALL = YES

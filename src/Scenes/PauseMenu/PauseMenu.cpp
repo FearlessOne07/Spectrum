@@ -8,9 +8,10 @@ void PauseMenu::OnInputEvent(std::shared_ptr<Base::InputEvent> event)
 
 void PauseMenu::Enter(Base::SceneData sceneData)
 {
-  
-  auto mainLayer = GetRenderer()->InitLayer(this, {0, 0}, {1920, 1080});
-  GetLayerStack().AttachLayer<MainPauseLayer>()->SetRenderLayer(mainLayer);
+  auto mainLayer = AddRenderLayer({1920, 1080});
+  LoadAsset<Base::BaseFont>("assets/fonts/main-font-normal.otf");
+
+  GetLayerStack().AttachLayer<MainPauseLayer>(mainLayer);
 }
 
 void PauseMenu::Exit()

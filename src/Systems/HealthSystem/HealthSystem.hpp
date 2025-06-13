@@ -4,5 +4,5 @@
 class HealthSystem : public Base::System
 {
 public:
-  void Update(float dt, Base::EntityManager *entityManager) override;
+  void Update(float dt, Base::EntityManager *entityManager,const Base::Scene * currentScene) override;
 };

@@ -109,7 +109,7 @@ void WaveManager::GenerateWave()
   _currentWave++;
 }
 
-void WaveManager::SpawnWaves(float dt, Base::CameraManager *camManager, Base::AssetManager *assetManager)
+void WaveManager::SpawnWaves(float dt, Base::CameraManager *camManager, const Base::Scene *currentScene)
 {
   int count = _entityMan->Query<EnemyTag>().size();
   if (_waveTimer >= _waveTime || (count == 0 && _spawner.GetToSpawnCount() == 0))
@@ -121,10 +121,10 @@ void WaveManager::SpawnWaves(float dt, Base::CameraManager *camManager, Base::As
   {
     _waveTimer += dt;
   }
-  _spawner.SpawnWave(dt, _entityMan, assetManager, camManager, _playerID);
+  _spawner.SpawnWave(dt, _entityMan, currentScene, camManager, _playerID);
 }
 
-void WaveManager::SpawnPlayer(Base::AssetManager *assetManager, Base::CameraManager *camManager)
+void WaveManager::SpawnPlayer(const Base::Scene *currentScene, Base::CameraManager *camManager)
 {
-  _playerID = _spawner.SpawnPlayer(_entityMan, assetManager, camManager, {0, 0});
+  _playerID = _spawner.SpawnPlayer(_entityMan, currentScene, camManager, {0, 0});
 }

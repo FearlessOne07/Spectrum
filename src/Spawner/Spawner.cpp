@@ -41,7 +41,7 @@ int Spawner::GetToSpawnCount() const
 }
 
 size_t Spawner::SpawnPlayer( //
-  Base::EntityManager *entityManager, Base::AssetManager *assetManager, Base::CameraManager *camManager,
+  Base::EntityManager *entityManager, const Base::Scene *currentScene, Base::CameraManager *camManager,
   Vector2 position //
 )
 {
@@ -77,15 +77,21 @@ size_t Spawner::SpawnPlayer( //
   shtcmp->bulletLifetime = 3;
   shtcmp->bulletFireTimer = 1;
   shtcmp->bulletSpeed = 1500.f;
-  shtcmp->bulletTexture = assetManager->GetAsset<Texture>("player-bullet");
+  shtcmp->bulletTexture = currentScene->GetAsset<Base::Texture>("player-bullet");
 
   auto txtcmp = e->AddComponent<Base::TextureComponent>();
   txtcmp->targetSize = {64, 64};
-  txtcmp->texture = assetManager->GetAsset<Texture>("ship");
-  txtcmp->source = {0, 0, static_cast<float>(txtcmp->texture->width), static_cast<float>(txtcmp->texture->height)};
+  txtcmp->texture = currentScene->GetAsset<Base::Texture>("ship");
+  txtcmp->source = {
+    0,
+    0,
+    static_cast<float>(txtcmp->texture.Get()->GetRaylibTexture()->width),
+    static_cast<float>(txtcmp->texture.Get()->GetRaylibTexture()->height),
+  };
 
   auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
-  abbcmp->radius = ((txtcmp->texture->width - 10) / 2.f) * (txtcmp->targetSize.x / txtcmp->source.width);
+  abbcmp->radius =
+    ((txtcmp->texture.Get()->GetRaylibTexture()->width - 10) / 2.f) * (txtcmp->targetSize.x / txtcmp->source.width);
   abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
   abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
 
@@ -122,7 +128,7 @@ size_t Spawner::SpawnPlayer( //
 }
 
 void Spawner::SpawnWave( //
-  float dt, Base::EntityManager *entityManager, Base::AssetManager *assetManager, Base::CameraManager *camManager,
+  float dt, Base::EntityManager *entityManager, const Base::Scene *currentScene, Base::CameraManager *camManager,
   size_t playerID //
 )
 {
@@ -208,24 +214,30 @@ void Spawner::SpawnWave( //
     switch (type)
     {
     case EnemyType::CHASER:
-      txtcmp->texture = assetManager->GetAsset<Texture>("chaser");
+      txtcmp->texture = currentScene->GetAsset<Base::Texture>("chaser");
       break;
     case EnemyType::SHOOTER:
-      txtcmp->texture = assetManager->GetAsset<Texture>("shooter");
+      txtcmp->texture = currentScene->GetAsset<Base::Texture>("shooter");
       trckcmp->trackingDistance = 1000;
 
       auto *shtcmp = e->AddComponent<ShootComponent>();
       shtcmp->bulletFireRate = 5.f;
       shtcmp->bulletKnockbackForce = 800;
       shtcmp->bulletSpeed = 1000.f;
-      shtcmp->bulletTexture = assetManager->GetAsset<Texture>("shooter-bullet");
+      shtcmp->bulletTexture = currentScene->GetAsset<Base::Texture>("shooter-bullet");
 
       transfxcmp->bindMin = camManager->GetScreenToWorld({0, 0});
       transfxcmp->bindMax = camManager->GetScreenToWorld({rctx->gameWidth, rctx->gameHeight});
       break;
     }
-    txtcmp->source = {0, 0, static_cast<float>(txtcmp->texture->width), static_cast<float>(txtcmp->texture->height)};
-    abbcmp->radius = ((txtcmp->texture->width - 10) / 2.f) * (txtcmp->targetSize.x / txtcmp->source.width);
+    txtcmp->source = {
+      0,
+      0,
+      static_cast<float>(txtcmp->texture.Get()->GetRaylibTexture()->width),
+      static_cast<float>(txtcmp->texture.Get()->GetRaylibTexture()->height),
+    };
+    abbcmp->radius =
+      ((txtcmp->texture.Get()->GetRaylibTexture()->width - 10) / 2.f) * (txtcmp->targetSize.x / txtcmp->source.width);
   }
   else
   {

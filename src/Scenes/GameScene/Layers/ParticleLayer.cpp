@@ -72,8 +72,8 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
       emitter.particleTextureSource = {
         0,
         0,
-        static_cast<float>(_emitter->particleTexture->width),
-        static_cast<float>(_emitter->particleTexture->height),
+        static_cast<float>(_emitter->particleTexture.Get()->GetRaylibTexture()->width),
+        static_cast<float>(_emitter->particleTexture.Get()->GetRaylibTexture()->height),
       };
       emitter.particleLifeTime = lifeRange(_gen);
       float size = radiusRange(_gen) * 2;
@@ -96,7 +96,7 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
 
     auto bus = Base::SignalBus::GetInstance();
     std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
-    sig->soundName = "enemy-die";
+    sig->soundHandle = GetOwner()->GetAsset<Base::Sound>("enemy-die");
     bus->BroadCastSignal(sig);
   }
 }

@@ -10,7 +10,7 @@
 #include <raymath.h>
 #include <vector>
 
-void TransformEffectsSystem::Update(float dt, Base::EntityManager *entityManager)
+void TransformEffectsSystem::Update(float dt, Base::EntityManager *entityManager, const Base::Scene *currentScene)
 {
   std::vector<std::shared_ptr<Base::Entity>> entities = entityManager->Query<TransformEffectsComponent>();
 

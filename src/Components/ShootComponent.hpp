@@ -1,4 +1,6 @@
 #pragma once
+#include "base/assets/AssetHandle.hpp"
+#include "base/textures/Texture.hpp"
 #include <base/components/Component.hpp>
 #include <raylib.h>
 
@@ -13,5 +15,5 @@ struct ShootComponent : public Base::Component
   float bulletKnockbackForce = 0.f;
   float bulletLifetime = 5;
   float bulletSpeed = 0.f;
-  std::shared_ptr<Texture> bulletTexture = nullptr;
+  Base::AssetHandle<Base::Texture> bulletTexture;
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "base/camera/CameraManager.hpp"
+#include "base/scenes/Scene.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
 #include <cstddef>
@@ -28,11 +29,11 @@ private:
 
 public:
   size_t SpawnPlayer( //
-    Base::EntityManager *entityManager, Base::AssetManager *assetManager, Base::CameraManager *camManager,
+    Base::EntityManager *entityManager, const Base::Scene *currentScene, Base::CameraManager *camManager,
     Vector2 position //
   );
   void SpawnWave( //
-    float dt, Base::EntityManager *entityManager, Base::AssetManager *assetManager, Base::CameraManager *camManager,
+    float dt, Base::EntityManager *entityManager, const Base::Scene *currentScene, Base::CameraManager *camManager,
     size_t playerID //
   );
   int GetToSpawnCount() const;

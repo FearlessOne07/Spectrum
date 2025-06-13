@@ -8,6 +8,7 @@
 #include "Components/TrackingComponent.hpp"
 #include "Scenes/DeathScreen/DeathScreen.hpp"
 #include "Signals/EntityDiedSignal.hpp"
+#include "base/audio/Sound.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneTransition.hpp"
@@ -58,7 +59,7 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
 
     auto bus = Base::SignalBus::GetInstance();
     std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
-    sig->soundName = "player-hit";
+    sig->soundHandle = _scene->GetAsset<Base::Sound>("player-hit");
     sig->soundVolume = 0.75;
 
     if (                                                                        //

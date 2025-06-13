@@ -1,3 +1,4 @@
+#include "base/scenes/Scene.hpp"
 #include <base/signals/Signal.hpp>
 #include <base/systems/System.hpp>
 #include <memory>
@@ -11,5 +12,5 @@ private: // Hanlders
   void EntityCollisionHandler(const std::shared_ptr<Base::Signal> &);
 
 public:
-  virtual void Update(float dt, Base::EntityManager *entityManager) override;
+  virtual void Update(float dt, Base::EntityManager *entityManager, const Base::Scene *) override;
 };

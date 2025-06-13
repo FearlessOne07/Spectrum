@@ -16,13 +16,13 @@ void GameUILayer::OnAttach()
   // Init UI
   Base::UILayer &hud = GetOwner()->GetUIManager()->AddLayer("hud");
   auto fpsLabel = hud.AddElement<Base::UILabel>("fps");
-  fpsLabel->SetFont(GetOwner()->GetAssetManager()->GetAsset<Font>("main-font-normal"));
+  fpsLabel->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
   fpsLabel->SetText("FPS: 0");
   fpsLabel->SetPosition({0, 0});
   fpsLabel->SetFontSize(40);
 
   auto playerHealth = hud.AddElement<Base::UILabel>("player-health");
-  playerHealth->SetFont(GetOwner()->GetAssetManager()->GetAsset<Font>("main-font-normal"));
+  playerHealth->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
   playerHealth->SetPosition({0, fpsLabel->GetSize().y});
   playerHealth->SetFontSize(40);
 

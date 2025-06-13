@@ -16,7 +16,7 @@ void MainLayer::OnAttach()
 
   auto deathLabel = mainLayer.AddElement<Base::UILabel>("death-label");
   deathLabel->SetText("YOU DIED!");
-  deathLabel->SetFont(GetOwner()->GetAssetManager()->GetAsset<Font>("main-font-normal"));
+  deathLabel->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
   deathLabel->SetTextColor(RED);
   deathLabel->SetFontSize(80);
   deathLabel->SetAnchorPoint(Base::UIElement::AnchorPoint::CENTER);

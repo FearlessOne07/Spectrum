@@ -5,7 +5,6 @@
 #include "base/ui/UIElement.hpp"
 #include "base/ui/UILayer.hpp"
 #include "base/ui/elements/UIButton.hpp"
-#include "raylib.h"
 #include <base/renderer/RenderContext.hpp>
 
 void MainPauseLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
@@ -20,7 +19,7 @@ void MainPauseLayer::OnAttach()
 
   // Resume Button
   auto resumeButton = mainLayer.AddElement<Base::UIButton>("resume-button");
-  resumeButton->SetFont(GetOwner()->GetAssetManager()->GetAsset<Font>("main-font-normal"));
+  resumeButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
   resumeButton->SetText("Resume");
   resumeButton->SetFontSize(40);
   resumeButton->SetAnchorPoint(Base::UIElement::AnchorPoint::CENTER);
@@ -49,7 +48,7 @@ void MainPauseLayer::OnAttach()
 
   // Exit Button
   auto exitButton = mainLayer.AddElement<Base::UIButton>("exit-button");
-  exitButton->SetFont(GetOwner()->GetAssetManager()->GetAsset<Font>("main-font-normal"));
+  exitButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
   exitButton->SetText("Exit");
   exitButton->SetFontSize(40);
   exitButton->SetAnchorPoint(Base::UIElement::AnchorPoint::CENTER);

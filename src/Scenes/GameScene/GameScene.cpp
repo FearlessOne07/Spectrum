@@ -10,8 +10,8 @@
 #include "base/audio/Sound.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
 #include "base/camera/CameraModes.hpp"
-#include "base/input/Events/KeyEvent.hpp"
 #include "base/scenes/SceneTransition.hpp"
+#include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
 #include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
@@ -52,31 +52,32 @@ void GameScene::Enter(Base::SceneData sceneData)
   systemManager->ActivatSystem<HealthSystem>();
   systemManager->ActivatSystem<TransformEffectsSystem>();
 
-  GetAssetManager()->LoadAsset<Texture>("assets/textures/ship.png");
-  GetAssetManager()->LoadAsset<Texture>("assets/textures/chaser.png");
-  GetAssetManager()->LoadAsset<Texture>("assets/textures/shooter.png");
-  GetAssetManager()->LoadAsset<Texture>("assets/textures/shooter-bullet.png");
-  GetAssetManager()->LoadAsset<Texture>("assets/textures/player-bullet.png");
-  GetAssetManager()->LoadAsset<Font>("assets/fonts/main-font-normal.otf");
-  GetAssetManager()->LoadAsset<Base::Sound>("assets/sounds/bullet-fire.wav");
-  GetAssetManager()->LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
-  GetAssetManager()->LoadAsset<Base::Sound>("assets/sounds/player-hit.wav");
-  GetAssetManager()->LoadAsset<Base::AudioStream>("assets/music/main-track.mp3");
-  GetAssetManager()->LoadAsset<Shader>("assets/shaders/vignette.frag");
+  LoadAsset<Base::Texture>("assets/textures/ship.png");
+  LoadAsset<Base::Texture>("assets/textures/chaser.png");
+  LoadAsset<Base::Texture>("assets/textures/shooter.png");
+  LoadAsset<Base::Texture>("assets/textures/shooter-bullet.png");
+  LoadAsset<Base::Texture>("assets/textures/player-bullet.png");
+  LoadAsset<Base::BaseFont>("assets/fonts/main-font-normal.otf");
+  LoadAsset<Base::Sound>("assets/sounds/bullet-fire.wav");
+  LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
+  LoadAsset<Base::Sound>("assets/sounds/player-hit.wav");
+  LoadAsset<Base::AudioStream>("assets/music/main-track.mp3");
+  LoadAsset<Base::BaseShader>("assets/shaders/vignette.frag");
+
+  auto uiLayer = AddRenderLayer({1920, 1080});
+  GetLayerStack().AttachLayer<GameUILayer>(uiLayer);
 
   // MainRenderLayer
-  auto uiLayer = GetRenderer()->InitLayer(this, {0, 0}, {1920, 1080});
-  GetLayerStack().AttachLayer<GameUILayer>()->SetRenderLayer(uiLayer);
-
-  auto mainLayer = GetRenderer()->InitLayer(this, {0, 0}, {1920, 1080});
+  auto mainLayer = AddRenderLayer({1920, 1080});
   auto shaderChain = mainLayer->GetShaderChain();
-  shaderChain->AddShaderPass("vignette");
-  shaderChain->SetShaderUniform("vignette", "u_resolution", Vector2{1920, 1080});
-  GetLayerStack().AttachLayer<MainGameLayer>()->SetRenderLayer(mainLayer);
-  GetLayerStack().AttachLayer<ParticleLayer>()->SetRenderLayer(mainLayer);
+  auto vignetteShader = GetAsset<Base::BaseShader>("vignette");
+  shaderChain->AddShaderPass(vignetteShader);
+  shaderChain->SetShaderUniform(vignetteShader, "u_resolution", Vector2{1920, 1080});
+  GetLayerStack().AttachLayer<MainGameLayer>(mainLayer);
+  GetLayerStack().AttachLayer<ParticleLayer>(mainLayer);
 
   std::shared_ptr<Base::PlayAudioStreamSignal> sig = std::make_shared<Base::PlayAudioStreamSignal>();
-  sig->streamName = "main-track";
+  sig->streamHandle = GetAsset<Base::AudioStream>("main-track");
   sig->streamPan = 0.5;
   sig->streamVolume = 0.3;
   sig->loopStream = true;
@@ -86,17 +87,6 @@ void GameScene::Enter(Base::SceneData sceneData)
 void GameScene::Exit()
 {
   GetSystemManager()->DeactivateActiveSystems();
-  GetAssetManager()->UnloadAsset<Texture>("ship");
-  GetAssetManager()->UnloadAsset<Texture>("chaser");
-  GetAssetManager()->UnloadAsset<Texture>("shooter");
-  GetAssetManager()->UnloadAsset<Texture>("shooter-bullet");
-  GetAssetManager()->UnloadAsset<Texture>("player-bullet");
-  GetAssetManager()->UnloadAsset<Font>("main-font-normal");
-  GetAssetManager()->UnloadAsset<Base::Sound>("bullet-fire");
-  GetAssetManager()->UnloadAsset<Base::Sound>("enemy-die");
-  GetAssetManager()->UnloadAsset<Base::Sound>("player-hit");
-  GetAssetManager()->UnloadAsset<Base::AudioStream>("main-track");
-  GetAssetManager()->UnloadAsset<Shader>("vignette");
 }
 
 void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)

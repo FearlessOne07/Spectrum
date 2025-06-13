@@ -8,14 +8,12 @@
 #include "base/systems/SystemManager.hpp"
 #include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
-#include <cmath>
-#include <iostream>
 #include <memory>
 
 void MainGameLayer::OnAttach()
 {
   _waveManager = WaveManager(GetOwner()->GetEntityManager());
-  _waveManager.SpawnPlayer(GetOwner()->GetAssetManager(), GetOwner()->GetCameraManager());
+  _waveManager.SpawnPlayer(GetOwner(), GetOwner()->GetCameraManager());
   _playerEVH.Init(GetOwner());
 
   auto bus = Base::SignalBus::GetInstance();
@@ -35,7 +33,7 @@ void MainGameLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 
 void MainGameLayer::Update(float dt)
 {
-  _waveManager.SpawnWaves(dt, GetOwner()->GetCameraManager(), GetOwner()->GetAssetManager());
+  _waveManager.SpawnWaves(dt, GetOwner()->GetCameraManager(), GetOwner());
 }
 
 void MainGameLayer::Render()
@@ -56,8 +54,9 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
       float health = entityDamg->entity->GetComponent<HealthComponent>()->health;
       float maxHealth = entityDamg->entity->GetComponent<HealthComponent>()->maxHealth;
 
-      GetRenderLayer()->GetShaderChain()->SetShaderUniform(                              //
-        "vignette", "u_vignetteStrength", float(std::pow((1.f - health / maxHealth), 2)) //
+      GetRenderLayer()->GetShaderChain()->SetShaderUniform( //
+        GetOwner()->GetAsset<Base::BaseShader>("vignette"), "u_vignetteStrength",
+        float(std::pow((1.f - health / maxHealth), 2)) //
       );
     }
   }

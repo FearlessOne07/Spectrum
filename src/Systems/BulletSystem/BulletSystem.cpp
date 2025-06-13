@@ -6,6 +6,7 @@
 #include "Components/Tags/EnemyTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "base/components/TextureComponent.hpp"
+#include "base/scenes/Scene.hpp"
 #include <base/audio/signals/PlaySoundSignal.hpp>
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
@@ -29,7 +30,7 @@ void BulletSystem::Start()
   );
 }
 
-void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
+void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Base::Scene *currentScene)
 {
   std::vector<std::shared_ptr<Base::Entity>> entities_shtcmp = entityManager->Query<ShootComponent>();
 
@@ -62,8 +63,8 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
         txtcmp->source = {
           0,
           0,
-          static_cast<float>(txtcmp->texture->width),
-          static_cast<float>(txtcmp->texture->height),
+          static_cast<float>(txtcmp->texture.Get()->GetRaylibTexture()->width),
+          static_cast<float>(txtcmp->texture.Get()->GetRaylibTexture()->height),
         };
 
         auto bulcmp = bullet->AddComponent<BulletComponent>();
@@ -72,17 +73,18 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager)
         bulcmp->sender = shtcmp->GetOwner();
 
         auto abbcmp = bullet->AddComponent<Base::ColliderComponent>();
-        abbcmp->radius = ((txtcmp->texture->width - 10) / 2.f) * (txtcmp->targetSize.x / txtcmp->source.width);
+        abbcmp->radius = ((txtcmp->texture.Get()->GetRaylibTexture()->width - 10) / 2.f) *
+                         (txtcmp->targetSize.x / txtcmp->source.width);
         abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
         abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
 
         auto bulDmgcmp = bullet->AddComponent<DamageComponent>();
         bulDmgcmp->damage = dmgcmp->damage;
 
-        // Emmite sound signal
+        // Emmit sound signal
         auto bus = Base::SignalBus::GetInstance();
         std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
-        sig->soundName = "bullet-fire";
+        sig->soundHandle = currentScene->GetAsset<Base::Sound>("bullet-fire");
         sig->soundVolume = 0.5;
         bus->BroadCastSignal(sig);
       }

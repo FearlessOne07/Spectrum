@@ -14,7 +14,9 @@
 int main(void)
 {
   Base::Game game;
-  game.Init(1920, 1080, "Spectrum");
+  game.Init({
+    .Title = "Spectrume",
+  });
 
   // Register Scenes
   game.RegisterScene<GameScene>(true);

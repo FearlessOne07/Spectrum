@@ -7,7 +7,7 @@
 #include <memory>
 #include <vector>
 
-void HealthSystem::Update(float dt, Base::EntityManager *entityManager)
+void HealthSystem::Update(float dt, Base::EntityManager *entityManager,const Base::Scene * currentScene)
 {
   std::vector<std::shared_ptr<Base::Entity>> entities = entityManager->Query<HealthComponent>();
   auto *bus = Base::SignalBus::GetInstance();
