@@ -15,7 +15,12 @@ int main(void)
 {
   Base::Game game;
   game.Init({
-    .Title = "Spectrume",
+    .Title = "Spectrum",
+    .globalAssets =
+      {
+        {"font", "assets/fonts/main-font-normal.otf"},
+        {"audio-stream", "assets/music/main-track.mp3"},
+      },
   });
 
   // Register Scenes

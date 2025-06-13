@@ -52,17 +52,15 @@ void GameScene::Enter(Base::SceneData sceneData)
   systemManager->ActivatSystem<HealthSystem>();
   systemManager->ActivatSystem<TransformEffectsSystem>();
 
+  LoadAsset<Base::BaseShader>("assets/shaders/vignette.frag");
   LoadAsset<Base::Texture>("assets/textures/ship.png");
   LoadAsset<Base::Texture>("assets/textures/chaser.png");
   LoadAsset<Base::Texture>("assets/textures/shooter.png");
   LoadAsset<Base::Texture>("assets/textures/shooter-bullet.png");
   LoadAsset<Base::Texture>("assets/textures/player-bullet.png");
-  LoadAsset<Base::BaseFont>("assets/fonts/main-font-normal.otf");
   LoadAsset<Base::Sound>("assets/sounds/bullet-fire.wav");
   LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
   LoadAsset<Base::Sound>("assets/sounds/player-hit.wav");
-  LoadAsset<Base::AudioStream>("assets/music/main-track.mp3");
-  LoadAsset<Base::BaseShader>("assets/shaders/vignette.frag");
 
   auto uiLayer = AddRenderLayer({1920, 1080});
   GetLayerStack().AttachLayer<GameUILayer>(uiLayer);

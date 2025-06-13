@@ -8,7 +8,6 @@ void DeathScreen::OnInputEvent(std::shared_ptr<Base::InputEvent> event)
 
 void DeathScreen::Enter(Base::SceneData sceneData)
 {
-  LoadAsset<Base::BaseFont>("assets/fonts/main-font-normal.otf");
   GetLayerStack().AttachLayer<MainLayer>(AddRenderLayer({1920, 1080}));
 }
 
