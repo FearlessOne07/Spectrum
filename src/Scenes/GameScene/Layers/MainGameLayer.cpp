@@ -12,9 +12,9 @@
 
 void MainGameLayer::OnAttach()
 {
-  _waveManager = WaveManager(GetOwner()->GetEntityManager());
-  _waveManager.SpawnPlayer(GetOwner(), GetOwner()->GetCameraManager());
-  _playerEVH.Init(GetOwner());
+  _waveManager = WaveManager(this, GetOwner()->GetEntityManager());
+  _waveManager.SpawnPlayer();
+  _playerEVH.Init(this);
 
   auto bus = Base::SignalBus::GetInstance();
   bus->SubscribeSignal<EntityDamagedSignal>([this](std::shared_ptr<Base::Signal> signal) {
@@ -33,16 +33,15 @@ void MainGameLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 
 void MainGameLayer::Update(float dt)
 {
-  _waveManager.SpawnWaves(dt, GetOwner()->GetCameraManager(), GetOwner());
+  _waveManager.SpawnWaves(dt);
 }
 
 void MainGameLayer::Render()
 {
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  auto camManager = GetOwner()->GetCameraManager();
-  camManager->BeginCameraMode();
+  BeginCamera();
   GetOwner()->GetSystemManager()->Render();
-  camManager->EndCameraMode();
+  EndCamera();
 }
 
 void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
@@ -54,7 +53,7 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
       float health = entityDamg->entity->GetComponent<HealthComponent>()->health;
       float maxHealth = entityDamg->entity->GetComponent<HealthComponent>()->maxHealth;
 
-      GetRenderLayer()->GetShaderChain()->SetShaderUniform( //
+      GetRenderLayer()->SetShaderUniform( //
         GetOwner()->GetAsset<Base::BaseShader>("vignette"), "u_vignetteStrength",
         float(std::pow((1.f - health / maxHealth), 2)) //
       );

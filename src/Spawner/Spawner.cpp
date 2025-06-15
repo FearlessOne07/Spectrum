@@ -7,7 +7,6 @@
 #include "Components/TrackingComponent.hpp"
 #include "Components/TransformEffects.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
-#include "base/camera/CameraManager.hpp"
 #include "base/components/TextureComponent.hpp"
 #include "base/signals/SignalBus.hpp"
 #include <base/assets/AssetManager.hpp>
@@ -22,6 +21,7 @@
 #include <base/entities/EntityManager.hpp>
 #include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
+#include <base/scenes/SceneLayer.inl>
 #include <cstddef>
 #include <memory>
 #include <random>
@@ -35,13 +35,16 @@ void Spawner::SetToSpawn(std::vector<EnemyType> toSpawn)
   }
 }
 
+Spawner::Spawner(const Base::SceneLayer *parentLayer) : _parentLayer(parentLayer)
+{
+}
 int Spawner::GetToSpawnCount() const
 {
   return _toSpawn.size();
 }
 
 size_t Spawner::SpawnPlayer( //
-  Base::EntityManager *entityManager, const Base::Scene *currentScene, Base::CameraManager *camManager,
+  Base::EntityManager *entityManager,
   Vector2 position //
 )
 {
@@ -55,8 +58,8 @@ size_t Spawner::SpawnPlayer( //
   transfxcmp->targetAngularVelocity = 180;
   transfxcmp->angularAcceleration = 1;
   transfxcmp->bind = true;
-  transfxcmp->bindMin = camManager->GetScreenToWorld({0, 0});
-  transfxcmp->bindMax = camManager->GetScreenToWorld({rd->gameWidth, rd->gameHeight});
+  transfxcmp->bindMin = _parentLayer->GetScreenToWorld({0, 0});
+  transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
   transfxcmp->rotate = true;
 
   auto *mvcmp = e->AddComponent<Base::MoveComponent>();
@@ -77,11 +80,11 @@ size_t Spawner::SpawnPlayer( //
   shtcmp->bulletLifetime = 3;
   shtcmp->bulletFireTimer = 1;
   shtcmp->bulletSpeed = 1500.f;
-  shtcmp->bulletTexture = currentScene->GetAsset<Base::Texture>("player-bullet");
+  shtcmp->bulletTexture = _parentLayer->GetAsset<Base::Texture>("player-bullet");
 
   auto txtcmp = e->AddComponent<Base::TextureComponent>();
   txtcmp->targetSize = {64, 64};
-  txtcmp->texture = currentScene->GetAsset<Base::Texture>("ship");
+  txtcmp->texture = _parentLayer->GetAsset<Base::Texture>("ship");
   txtcmp->source = {
     0,
     0,
@@ -106,10 +109,10 @@ size_t Spawner::SpawnPlayer( //
   inpcmp->BindKeyReleased(KEY_S, [rbcmp]() { rbcmp->direction.y = 0; });
   inpcmp->BindKeyReleased(KEY_W, [rbcmp]() { rbcmp->direction.y = 0; });
 
-  inpcmp->BindMouseButtonDown(MOUSE_BUTTON_LEFT, [shtcmp, camManager]() {
+  inpcmp->BindMouseButtonDown(MOUSE_BUTTON_LEFT, [this, shtcmp]() {
     const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
     shtcmp->IsFiring = true;
-    shtcmp->target = camManager->GetScreenToWorld(rd->mousePosition);
+    shtcmp->target = _parentLayer->GetScreenToWorld(_parentLayer->GetLayerMousePosition());
   });
   inpcmp->BindMouseButtonReleased(MOUSE_BUTTON_LEFT, [shtcmp]() { shtcmp->IsFiring = false; });
 
@@ -128,7 +131,7 @@ size_t Spawner::SpawnPlayer( //
 }
 
 void Spawner::SpawnWave( //
-  float dt, Base::EntityManager *entityManager, const Base::Scene *currentScene, Base::CameraManager *camManager,
+  float dt, Base::EntityManager *entityManager,
   size_t playerID //
 )
 {
@@ -147,7 +150,7 @@ void Spawner::SpawnWave( //
     int side = sideDist(gen);
 
     Vector2 min = {-_spawnOffset, -_spawnOffset};
-    Vector2 max = {rctx->gameWidth + _spawnOffset, rctx->gameHeight + _spawnOffset};
+    Vector2 max = {_parentLayer->GetSize().x + _spawnOffset, _parentLayer->GetSize().y + _spawnOffset};
 
     Vector2 position = {0, 0};
     float ypos = 0.f;
@@ -157,19 +160,19 @@ void Spawner::SpawnWave( //
     {
     case 1: // Right
       ypos = std::uniform_real_distribution<float>(min.y, max.y)(gen);
-      position = camManager->GetScreenToWorld({max.x, ypos});
+      position = _parentLayer->GetScreenToWorld({max.x, ypos});
       break;
     case 2: // Left
       ypos = std::uniform_real_distribution<float>(min.y, max.y)(gen);
-      position = camManager->GetScreenToWorld({min.x, ypos});
+      position = _parentLayer->GetScreenToWorld({min.x, ypos});
       break;
     case 3: // Up
       xpos = std::uniform_real_distribution<float>(min.x, max.x)(gen);
-      position = camManager->GetScreenToWorld({xpos, min.y});
+      position = _parentLayer->GetScreenToWorld({xpos, min.y});
       break;
     case 4: // Down
       xpos = std::uniform_real_distribution<float>(min.x, max.x)(gen);
-      position = camManager->GetScreenToWorld({xpos, max.y});
+      position = _parentLayer->GetScreenToWorld({xpos, max.y});
       break;
     }
 
@@ -214,20 +217,20 @@ void Spawner::SpawnWave( //
     switch (type)
     {
     case EnemyType::CHASER:
-      txtcmp->texture = currentScene->GetAsset<Base::Texture>("chaser");
+      txtcmp->texture = _parentLayer->GetAsset<Base::Texture>("chaser");
       break;
     case EnemyType::SHOOTER:
-      txtcmp->texture = currentScene->GetAsset<Base::Texture>("shooter");
+      txtcmp->texture = _parentLayer->GetAsset<Base::Texture>("shooter");
       trckcmp->trackingDistance = 1000;
 
       auto *shtcmp = e->AddComponent<ShootComponent>();
       shtcmp->bulletFireRate = 5.f;
       shtcmp->bulletKnockbackForce = 800;
       shtcmp->bulletSpeed = 1000.f;
-      shtcmp->bulletTexture = currentScene->GetAsset<Base::Texture>("shooter-bullet");
+      shtcmp->bulletTexture = _parentLayer->GetAsset<Base::Texture>("shooter-bullet");
 
-      transfxcmp->bindMin = camManager->GetScreenToWorld({0, 0});
-      transfxcmp->bindMax = camManager->GetScreenToWorld({rctx->gameWidth, rctx->gameHeight});
+      transfxcmp->bindMin = _parentLayer->GetScreenToWorld({0, 0});
+      transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
       break;
     }
     txtcmp->source = {

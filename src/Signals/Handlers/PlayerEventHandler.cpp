@@ -10,7 +10,7 @@
 #include "Signals/EntityDiedSignal.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/components/TransformComponent.hpp"
-#include "base/scenes/Scene.hpp"
+#include "base/scenes/SceneLayer.inl"
 #include "base/scenes/SceneTransition.hpp"
 #include <base/audio/signals/PlaySoundSignal.hpp>
 #include <base/components/ImpulseComponent.hpp>
@@ -22,9 +22,9 @@
 #include <raylib.h>
 #include <raymath.h>
 
-void PlayerSignalHandler::Init(Base::Scene *scene)
+void PlayerSignalHandler::Init(Base::SceneLayer *parentLayer)
 {
-  _scene = scene;
+  _parentLayer = parentLayer;
   auto signalManager = Base::SignalBus::GetInstance();
 
   signalManager->SubscribeSignal<Base::EntityCollisionSignal>(
@@ -43,7 +43,7 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
 
   if (defence->HasComponent<PlayerTag>())
   {
-    Base::CameraManager::CameraShakeConfig config;
+    Base::CameraShakeConfig config;
     config.trauma = 0.5;
     config.frequency = 150.0f;
     config.shakeMagnitude = 20.0f;
@@ -59,7 +59,7 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
 
     auto bus = Base::SignalBus::GetInstance();
     std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
-    sig->soundHandle = _scene->GetAsset<Base::Sound>("player-hit");
+    sig->soundHandle = _parentLayer->GetAsset<Base::Sound>("player-hit");
     sig->soundVolume = 0.75;
 
     if (                                                                        //
@@ -67,7 +67,7 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
       attack->GetComponent<BulletComponent>()->sender->HasComponent<EnemyTag>() //
     )
     {
-      _scene->GetCameraManager()->Shake(config);
+      _parentLayer->ShakeCamera(config);
       auto dmgcmp = attack->GetComponent<DamageComponent>();
       auto *hlthcmp = defence->GetComponent<HealthComponent>();
       auto *bulcmp = attack->GetComponent<BulletComponent>();
@@ -85,7 +85,7 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
     }
     else if (attack->HasComponent<EnemyTag>())
     {
-      _scene->GetCameraManager()->Shake(config);
+      _parentLayer->ShakeCamera(config);
       auto *mvcmpAtt = attack->GetComponent<Base::MoveComponent>();
       auto dmgcmp = attack->GetComponent<DamageComponent>();
       auto *hlthcmp = defence->GetComponent<HealthComponent>();
@@ -112,7 +112,7 @@ void PlayerSignalHandler::PlayerDeathHandler(const std::shared_ptr<Base::Signal>
   {
     if (entityDiedSig->entity->HasComponent<PlayerTag>())
     {
-      _scene->SetSceneTransition<DeathScreen>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
+      _parentLayer->SetSceneTransition<DeathScreen>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
     }
   }
 }

@@ -44,10 +44,9 @@ void ParticleLayer::Update(float dt)
 void ParticleLayer::Render()
 {
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  auto camManager = GetOwner()->GetCameraManager();
-  camManager->BeginCameraMode();
+  BeginCamera();
   GetOwner()->GetParticleManager()->Render();
-  camManager->EndCameraMode();
+  EndCamera();
 }
 
 void ParticleLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
@@ -85,14 +84,14 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
       emitter.emissionPoint = transcmp->position;
     };
 
-    Base::CameraManager::CameraShakeConfig config;
+    Base::CameraShakeConfig config;
     config.trauma = 0.5;
     config.frequency = 50.0f;
     config.shakeMagnitude = 70.0f;
     config.duration = 1;
     config.traumaMultiplyer = 2;
     config.rotationMagnitude = 0.5;
-    GetOwner()->GetCameraManager()->Shake(config);
+    ShakeCamera(config);
 
     auto bus = Base::SignalBus::GetInstance();
     std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();

@@ -9,7 +9,6 @@
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
-#include "base/camera/CameraModes.hpp"
 #include "base/scenes/SceneTransition.hpp"
 #include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
@@ -32,13 +31,7 @@ void GameScene::Enter(Base::SceneData sceneData)
 
   // Init Camera
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  auto camManager = GetCameraManager();
-  camManager->SetCameraOffset({rd->gameWidth / 2, rd->gameHeight / 2});
-  camManager->SetCameraZoom(1.3);
-  camManager->SetCameraTarget({0, 0});
-  camManager->SetCameraRotation(0);
-  camManager->SetCameraMode(Base::Camera2DExtMode::STATIC);
-
+  //
   Base::SystemManager *systemManager = GetSystemManager();
 
   // Activate Systems
@@ -63,16 +56,22 @@ void GameScene::Enter(Base::SceneData sceneData)
   LoadAsset<Base::Sound>("assets/sounds/player-hit.wav");
 
   auto uiLayer = AddRenderLayer({1920, 1080});
-  GetLayerStack().AttachLayer<GameUILayer>(uiLayer);
+  AttachLayer<GameUILayer>(uiLayer);
 
   // MainRenderLayer
-  auto mainLayer = AddRenderLayer({1920, 1080});
-  auto shaderChain = mainLayer->GetShaderChain();
+  auto mainLayer = AddRenderLayer({640, 360});
+  mainLayer->SetCameraOffset({640.f / 2, 360.f / 2});
+  mainLayer->SetCameraZoom(0.5);
+  mainLayer->SetCameraTarget({0, 0});
+  mainLayer->SetCameraRotation(0);
+  mainLayer->SetCameraMode(Base::Camera2DExtMode::STATIC);
+
   auto vignetteShader = GetAsset<Base::BaseShader>("vignette");
-  shaderChain->AddShaderPass(vignetteShader);
-  shaderChain->SetShaderUniform(vignetteShader, "u_resolution", Vector2{1920, 1080});
-  GetLayerStack().AttachLayer<MainGameLayer>(mainLayer);
-  GetLayerStack().AttachLayer<ParticleLayer>(mainLayer);
+  mainLayer->AddShaderPass(vignetteShader);
+  mainLayer->SetShaderUniform(vignetteShader, "u_resolution", Vector2{1920, 1080});
+
+  AttachLayer<MainGameLayer>(mainLayer);
+  AttachLayer<ParticleLayer>(mainLayer);
 
   std::shared_ptr<Base::PlayAudioStreamSignal> sig = std::make_shared<Base::PlayAudioStreamSignal>();
   sig->streamHandle = GetAsset<Base::AudioStream>("main-track");
@@ -94,10 +93,9 @@ void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)
     if (keyEvent->key == KEY_ESCAPE && keyEvent->action == Base::InputEvent::Action::PRESSED)
     {
       SetSceneTransition<PauseMenu>(Base::SceneRequest::PUSH_NEW_SCENE);
+      keyEvent->isHandled = true;
     }
   }
-
-  GetLayerStack().OnInputEvent(event);
 }
 
 void GameScene::Suspend()

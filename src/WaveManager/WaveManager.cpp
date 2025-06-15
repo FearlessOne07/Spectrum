@@ -1,18 +1,19 @@
 #include "WaveManager.hpp"
 #include "Components/Tags/EnemyTag.hpp"
 #include "Spawner/Spawner.hpp"
-#include "base/camera/CameraManager.hpp"
+#include "base/scenes/SceneLayer.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
 #include <random>
 
-WaveManager::WaveManager(Base::EntityManager *entityMan) : _entityMan(entityMan)
+WaveManager::WaveManager(const Base::SceneLayer *parentLayer, Base::EntityManager *entityMan)
+  : _entityMan(entityMan), _parentLayer(parentLayer)
 {
+  _spawner = Spawner(_parentLayer);
 }
 
 void WaveManager::GenerateWave()
 {
-
   // Init Variables
   int aliveCount = _entityMan->Query<EnemyTag>().size();
 
@@ -109,7 +110,7 @@ void WaveManager::GenerateWave()
   _currentWave++;
 }
 
-void WaveManager::SpawnWaves(float dt, Base::CameraManager *camManager, const Base::Scene *currentScene)
+void WaveManager::SpawnWaves(float dt)
 {
   int count = _entityMan->Query<EnemyTag>().size();
   if (_waveTimer >= _waveTime || (count == 0 && _spawner.GetToSpawnCount() == 0))
@@ -121,10 +122,10 @@ void WaveManager::SpawnWaves(float dt, Base::CameraManager *camManager, const Ba
   {
     _waveTimer += dt;
   }
-  _spawner.SpawnWave(dt, _entityMan, currentScene, camManager, _playerID);
+  _spawner.SpawnWave(dt, _entityMan, _playerID);
 }
 
-void WaveManager::SpawnPlayer(const Base::Scene *currentScene, Base::CameraManager *camManager)
+void WaveManager::SpawnPlayer()
 {
-  _playerID = _spawner.SpawnPlayer(_entityMan, currentScene, camManager, {0, 0});
+  _playerID = _spawner.SpawnPlayer(_entityMan, {0, 0});
 }

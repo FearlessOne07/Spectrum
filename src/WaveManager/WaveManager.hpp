@@ -1,5 +1,6 @@
 #pragma once
 #include "Spawner/Spawner.hpp"
+#include "base/scenes/SceneLayer.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
 #include <cstddef>
@@ -45,9 +46,12 @@ private:
   // Player
   size_t _playerID = 0;
 
+  // Layer
+  const Base::SceneLayer *_parentLayer = nullptr;
+
 public:
   WaveManager() = default;
-  WaveManager(Base::EntityManager *entityManager);
-  void SpawnPlayer(const Base::Scene *currentScene, Base::CameraManager *camManager);
-  void SpawnWaves(float dt, Base::CameraManager *camManager, const Base::Scene *);
+  WaveManager(const Base::SceneLayer *parentLayer, Base::EntityManager *entityManager);
+  void SpawnPlayer();
+  void SpawnWaves(float dt);
 };
