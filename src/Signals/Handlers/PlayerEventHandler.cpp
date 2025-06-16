@@ -46,7 +46,7 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
     Base::CameraShakeConfig config;
     config.trauma = 0.5;
     config.frequency = 150.0f;
-    config.shakeMagnitude = 20.0f;
+    config.shakeMagnitude = 6.0f;
     config.duration = 1;
     config.traumaMultiplyer = 2;
     config.rotationMagnitude = 4;

@@ -55,8 +55,8 @@ void GameScene::Enter(Base::SceneData sceneData)
   LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
   LoadAsset<Base::Sound>("assets/sounds/player-hit.wav");
 
-  auto uiLayer = AddRenderLayer({1920, 1080});
-  AttachLayer<GameUILayer>(uiLayer);
+  // auto uiLayer = AddRenderLayer({1920, 1080});
+  // AttachLayer<GameUILayer>(uiLayer);
 
   // MainRenderLayer
   auto mainLayer = AddRenderLayer({640, 360});

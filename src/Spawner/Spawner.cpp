@@ -38,6 +38,7 @@ void Spawner::SetToSpawn(std::vector<EnemyType> toSpawn)
 Spawner::Spawner(const Base::SceneLayer *parentLayer) : _parentLayer(parentLayer)
 {
 }
+
 int Spawner::GetToSpawnCount() const
 {
   return _toSpawn.size();
@@ -63,7 +64,7 @@ size_t Spawner::SpawnPlayer( //
   transfxcmp->rotate = true;
 
   auto *mvcmp = e->AddComponent<Base::MoveComponent>();
-  mvcmp->driveForce = 3000;
+  mvcmp->driveForce = 2000;
   mvcmp->brakeForce = 500.f;
 
   auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
