@@ -31,7 +31,7 @@ void main() {
 
     // Mix original color with red tint based on vignette
     float finalAlpha = max(texColor.a, vignette * 1);
-    vec3 redTint = mix(texColor.rgb, vec3(1.0, 0.3, 0.3), vignette * u_vignetteStrength * abs(sin(u_time * (2 * u_vignetteStrength)))); // Added multiplier for subtlety
+    vec3 redTint = mix(texColor.rgb, vec3(1.0, 0.3, 0.3), vignette * u_vignetteStrength * abs(sin(u_time * 1.5))); // Added multiplier for subtlety
 
     // Output final color
     finalColor = vec4(redTint, finalAlpha) * fragColor;

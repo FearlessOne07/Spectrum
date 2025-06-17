@@ -55,13 +55,13 @@ void GameScene::Enter(Base::SceneData sceneData)
   LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
   LoadAsset<Base::Sound>("assets/sounds/player-hit.wav");
 
-  // auto uiLayer = AddRenderLayer({1920, 1080});
-  // AttachLayer<GameUILayer>(uiLayer);
+  auto uiLayer = AddRenderLayer({1920, 1080});
+  AttachLayer<GameUILayer>(uiLayer);
 
   // MainRenderLayer
   auto mainLayer = AddRenderLayer({640, 360});
   mainLayer->SetCameraOffset({640.f / 2, 360.f / 2});
-  mainLayer->SetCameraZoom(0.5);
+  mainLayer->SetCameraZoom(0.35);
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);
   mainLayer->SetCameraMode(Base::Camera2DExtMode::STATIC);

@@ -19,7 +19,6 @@ void MainLayer::OnAttach()
   deathLabel->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
   deathLabel->SetTextColor(RED);
   deathLabel->SetFontSize(80);
-  deathLabel->SetAnchorPoint(Base::UIElement::AnchorPoint::CENTER);
   deathLabel->SetPosition({rd->gameWidth / 2, rd->gameHeight / 2});
 
   GetOwner()->GetTweenManager()->AddTween<unsigned char>(

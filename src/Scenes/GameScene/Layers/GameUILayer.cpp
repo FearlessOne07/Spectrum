@@ -19,12 +19,12 @@ void GameUILayer::OnAttach()
   fpsLabel->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
   fpsLabel->SetText("FPS: 0");
   fpsLabel->SetPosition({0, 0});
-  fpsLabel->SetFontSize(40);
+  fpsLabel->SetFontSize(50);
 
   auto playerHealth = hud.AddElement<Base::UILabel>("player-health");
   playerHealth->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
   playerHealth->SetPosition({0, fpsLabel->GetSize().y});
-  playerHealth->SetFontSize(40);
+  playerHealth->SetFontSize(50);
 
   // Register Event
   auto bus = Base::SignalBus::GetInstance();
