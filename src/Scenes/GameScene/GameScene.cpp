@@ -4,47 +4,27 @@
 #include "Layers/ParticleLayer.hpp"
 #include "Scenes/PauseMenu/PauseMenu.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
-#include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/PowerUpSystem/PowerUpSystem.hpp"
-#include "Systems/TrackingSystem/TrackingSystem.hpp"
-#include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
-#include "base/scenes/SceneTransition.hpp"
 #include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
 #include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
-#include <base/systems/EntityCollisionSystem.hpp>
-#include <base/systems/InputSystem.hpp>
-#include <base/systems/MoveSystem.hpp>
-#include <base/systems/RenderSystem.hpp>
-#include <base/systems/SystemManager.hpp>
 #include <memory>
 #include <raylib.h>
 
 void GameScene::Enter(Base::SceneData sceneData)
 {
+  StartSystems();
   SetClearColor({7, 7, 15, 255});
 
   // Register Events
   auto bus = Base::SignalBus::GetInstance();
-
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   Base::SystemManager *systemManager = GetSystemManager();
 
   // Activate Systems
-  systemManager->ActivatSystem<Base::RenderSystem>();
-  systemManager->ActivatSystem<Base::MoveSystem>();
-  systemManager->ActivatSystem<Base::InputSystem>();
-  systemManager->ActivatSystem<Base::EntityCollisionSystem>();
-
-  systemManager->ActivatSystem<TrackingSystem>();
-  systemManager->ActivatSystem<BulletSystem>();
-  systemManager->ActivatSystem<HealthSystem>();
-  systemManager->ActivatSystem<TransformEffectsSystem>();
-  systemManager->ActivatSystem<PowerUpSystem>();
-
   LoadAsset<Base::BaseShader>("assets/shaders/vignette.frag");
   LoadAsset<Base::Texture>("assets/textures/ship.png");
   LoadAsset<Base::Texture>("assets/textures/chaser.png");
@@ -83,27 +63,23 @@ void GameScene::Enter(Base::SceneData sceneData)
 
 void GameScene::Exit()
 {
-  GetSystemManager()->DeactivateActiveSystems();
+  StopSystems();
 }
 
 void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)
 {
-  if (auto keyEvent = std::dynamic_pointer_cast<Base::KeyEvent>(event))
-  {
-    if (keyEvent->key == KEY_ESCAPE && keyEvent->action == Base::InputEvent::Action::PRESSED)
-    {
-      SetSceneTransition<PauseMenu>(Base::SceneRequest::PUSH_NEW_SCENE);
-      keyEvent->isHandled = true;
-    }
-  }
 }
 
 void GameScene::Suspend()
 {
-  GetSystemManager()->SuspendAllSystems();
+  SuspendSystems();
 }
 
 void GameScene::Resume()
 {
-  GetSystemManager()->UnsuspendSuspendedSystems();
+  UnsuspendSystems();
 };
+
+void GameScene::InitPauseMenu()
+{
+}

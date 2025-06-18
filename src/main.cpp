@@ -7,10 +7,6 @@
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
 #include <base/game/Game.hpp>
-#include <base/systems/EntityCollisionSystem.hpp>
-#include <base/systems/InputSystem.hpp>
-#include <base/systems/MoveSystem.hpp>
-#include <base/systems/RenderSystem.hpp>
 
 int main(void)
 {
@@ -29,12 +25,7 @@ int main(void)
   game.RegisterScene<PauseMenu>();
   game.RegisterScene<DeathScreen>();
 
-  // Register Systems
-  game.RegisterSystem<Base::RenderSystem>(true);
-  game.RegisterSystem<Base::MoveSystem>();
-  game.RegisterSystem<Base::InputSystem>();
-  game.RegisterSystem<Base::EntityCollisionSystem>();
-
+  // Custom Systems
   game.RegisterSystem<BulletSystem>();
   game.RegisterSystem<TransformEffectsSystem>();
   game.RegisterSystem<TrackingSystem>();

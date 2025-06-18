@@ -8,6 +8,7 @@ class GameScene : public Base::Scene
 {
 private:
   WaveManager _waveManager = WaveManager();
+  void InitPauseMenu();
 
 public:
   void OnInputEvent(std::shared_ptr<Base::InputEvent> event) override;

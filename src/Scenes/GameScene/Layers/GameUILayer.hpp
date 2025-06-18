@@ -1,5 +1,6 @@
 
 #include "base/signals/Signal.hpp"
+#include "base/ui/UILayer.hpp"
 #include <base/scenes/SceneLayer.hpp>
 #include <memory>
 
@@ -7,6 +8,10 @@ class GameUILayer : public Base::SceneLayer
 {
 private:
   void OnPlayerDamaged(std::shared_ptr<Base::Signal>);
+  void InitPauseMenu();
+
+  Base::UILayer *_hud;
+  Base::UILayer *_pauseMenu;
 
 public:
   void Update(float dt) override;

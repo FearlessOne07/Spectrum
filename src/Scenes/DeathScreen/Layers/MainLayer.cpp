@@ -12,9 +12,9 @@ void MainLayer::OnAttach()
 {
 
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  auto &mainLayer = GetOwner()->GetUIManager()->AddLayer("main-layer");
+  auto mainLayer = GetOwner()->GetUIManager()->AddLayer("main-layer");
 
-  auto deathLabel = mainLayer.AddElement<Base::UILabel>("death-label");
+  auto deathLabel = mainLayer->AddElement<Base::UILabel>("death-label");
   deathLabel->SetText("YOU DIED!");
   deathLabel->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
   deathLabel->SetTextColor(RED);
