@@ -1,11 +1,13 @@
 #include "Spawner.hpp"
 #include "Components/DamageComponent.hpp"
 #include "Components/HealthComponent.hpp"
+#include "Components/PowerUpComponent.hpp"
 #include "Components/ShootComponent.hpp"
 #include "Components/Tags/EnemyTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
 #include "Components/TransformEffects.hpp"
+#include "Modifiers/SpeedModifier/SpeedModifier.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
 #include "base/components/TextureComponent.hpp"
 #include "base/signals/SignalBus.hpp"
@@ -99,11 +101,14 @@ size_t Spawner::SpawnPlayer( //
   abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
   abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
 
+  auto pucmp = e->AddComponent<PowerUpComponent>();
+
   auto *inpcmp = e->AddComponent<Base::InputComponent>();
   inpcmp->BindKeyDown(KEY_A, [rbcmp]() { rbcmp->direction.x = -1; });
   inpcmp->BindKeyDown(KEY_D, [rbcmp]() { rbcmp->direction.x = 1; });
   inpcmp->BindKeyDown(KEY_W, [rbcmp]() { rbcmp->direction.y = -1; });
   inpcmp->BindKeyDown(KEY_S, [rbcmp]() { rbcmp->direction.y = 1; });
+  inpcmp->BindKeyPressed(KEY_B, [pucmp]() { pucmp->AddPowerUp<SpeedModifier>(5); });
 
   inpcmp->BindKeyReleased(KEY_A, [rbcmp]() { rbcmp->direction.x = 0; });
   inpcmp->BindKeyReleased(KEY_D, [rbcmp]() { rbcmp->direction.x = 0; });

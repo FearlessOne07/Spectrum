@@ -15,6 +15,7 @@ set(SOURCES
   "./Systems/TrackingSystem/TrackingSystem.cpp"
   "./Systems/HealthSystem/HealthSystem.cpp"
   "./Systems/TransformEffectsSystem/TransformEffectsSystem.cpp"
+  "./Systems/PowerUpSystem/PowerUpSystem.cpp"
 
 
   "./Signals/Handlers/PlayerEventHandler.cpp"
@@ -26,8 +27,8 @@ set(SOURCES
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_include_directories("${PROJECT_NAME}"
-  PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}"
+  PUBLIC
+    "${CMAKE_SOURCE_DIR}/src"
     "${CMAKE_SOURCE_DIR}/vendor/Base/include"
 )
 

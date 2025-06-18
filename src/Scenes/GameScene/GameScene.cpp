@@ -5,6 +5,7 @@
 #include "Scenes/PauseMenu/PauseMenu.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "Systems/HealthSystem/HealthSystem.hpp"
+#include "Systems/PowerUpSystem/PowerUpSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
 #include "base/audio/Sound.hpp"
@@ -29,9 +30,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   // Register Events
   auto bus = Base::SignalBus::GetInstance();
 
-  // Init Camera
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  //
   Base::SystemManager *systemManager = GetSystemManager();
 
   // Activate Systems
@@ -44,6 +43,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   systemManager->ActivatSystem<BulletSystem>();
   systemManager->ActivatSystem<HealthSystem>();
   systemManager->ActivatSystem<TransformEffectsSystem>();
+  systemManager->ActivatSystem<PowerUpSystem>();
 
   LoadAsset<Base::BaseShader>("assets/shaders/vignette.frag");
   LoadAsset<Base::Texture>("assets/textures/ship.png");
@@ -64,7 +64,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   mainLayer->SetCameraZoom(0.35);
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);
-  mainLayer->SetCameraMode(Base::Camera2DExtMode::STATIC);
+  mainLayer->SetCameraMode(Base::Camera2DExtMode::SMOOTH_FOLLOW);
 
   auto vignetteShader = GetAsset<Base::BaseShader>("vignette");
   mainLayer->AddShaderPass(vignetteShader);
