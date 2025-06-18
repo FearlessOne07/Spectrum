@@ -2,7 +2,6 @@
 #include "Layers/GameUILayer.hpp"
 #include "Layers/MainGameLayer.hpp"
 #include "Layers/ParticleLayer.hpp"
-#include "Scenes/PauseMenu/PauseMenu.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "Systems/PowerUpSystem/PowerUpSystem.hpp"
 #include "base/audio/Sound.hpp"
@@ -81,5 +80,13 @@ void GameScene::Resume()
 };
 
 void GameScene::InitPauseMenu()
+{
+}
+
+void GameScene::Pause()
+{
+}
+
+void GameScene::UnPause()
 {
 }

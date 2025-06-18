@@ -1,6 +1,5 @@
 #include "Scenes/DeathScreen/DeathScreen.hpp"
 #include "Scenes/GameScene/GameScene.hpp"
-#include "Scenes/PauseMenu/PauseMenu.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/PowerUpSystem/PowerUpSystem.hpp"
@@ -22,7 +21,6 @@ int main(void)
 
   // Register Scenes
   game.RegisterScene<GameScene>(true);
-  game.RegisterScene<PauseMenu>();
   game.RegisterScene<DeathScreen>();
 
   // Custom Systems

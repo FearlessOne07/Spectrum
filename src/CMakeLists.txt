@@ -3,9 +3,6 @@ set(SOURCES
   "./Scenes/GameScene/GameScene.cpp"
   "./Scenes/GameScene/Layers/MainGameLayer.cpp"
   "./Scenes/GameScene/Layers/ParticleLayer.cpp"
-  "./Scenes/PauseMenu/PauseMenu.cpp"
-
-  "./Scenes/PauseMenu/Layers/MainPauseLayer.cpp"
   "./Scenes/GameScene/Layers/GameUILayer.cpp"
 
   "./Scenes/DeathScreen/Layers/MainLayer.cpp"
@@ -16,7 +13,6 @@ set(SOURCES
   "./Systems/HealthSystem/HealthSystem.cpp"
   "./Systems/TransformEffectsSystem/TransformEffectsSystem.cpp"
   "./Systems/PowerUpSystem/PowerUpSystem.cpp"
-
 
   "./Signals/Handlers/PlayerEventHandler.cpp"
 
