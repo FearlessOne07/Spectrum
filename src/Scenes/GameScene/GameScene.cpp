@@ -55,7 +55,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   std::shared_ptr<Base::PlayAudioStreamSignal> sig = std::make_shared<Base::PlayAudioStreamSignal>();
   sig->streamHandle = GetAsset<Base::AudioStream>("main-track");
   sig->streamPan = 0.5;
-  sig->streamVolume = 0.3;
+  sig->streamVolume = 1;
   sig->loopStream = true;
   bus->BroadCastSignal(sig);
 }
