@@ -1,5 +1,7 @@
 #include "ParticleLayer.hpp"
 #include "Components/Tags/EnemyTag.hpp"
+#include "Scenes/GameScene/Signals/GamePause.hpp"
+#include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/components/TextureComponent.hpp"
 #include "base/components/TransformComponent.hpp"
@@ -24,6 +26,7 @@ void ParticleLayer::OnAttach()
   _emitter->burstEmissionCount = 60;
   _emitter->particleRotationSpeed = 180;
   _emitter->isEmitting = false;
+  _emitter->SetPauseMask(GetPauseMask());
   Color color = GetOwner()->GetClearColor();
   _emitter->particleEndColor = {color.r, color.g, color.b, 0};
 
@@ -31,6 +34,8 @@ void ParticleLayer::OnAttach()
   bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {
     this->OnEntityDiedSignal(std::static_pointer_cast<EntityDiedSignal>(sig));
   });
+  bus->SubscribeSignal<GamePausedSignal>([this](std::shared_ptr<Base::Signal>) { Pause(); });
+  bus->SubscribeSignal<GameResumedSignal>([this](std::shared_ptr<Base::Signal>) { UnPause(); });
 }
 
 void ParticleLayer::OnDetach()

@@ -1,5 +1,4 @@
 #include "Signals/EntityDiedSignal.hpp"
-#include "base/signals/Signal.hpp"
 #include <base/particles/ParticleEmitter.hpp>
 #include <base/scenes/SceneLayer.hpp>
 #include <random>

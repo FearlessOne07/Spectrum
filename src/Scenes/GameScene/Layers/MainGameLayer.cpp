@@ -1,6 +1,8 @@
 #include "MainGameLayer.hpp"
 #include "Components/HealthComponent.hpp"
 #include "Components/Tags/PlayerTag.hpp"
+#include "Scenes/GameScene/Signals/GamePause.hpp"
+#include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/scenes/Scene.hpp"
@@ -20,6 +22,18 @@ void MainGameLayer::OnAttach()
   bus->SubscribeSignal<EntityDamagedSignal>([this](std::shared_ptr<Base::Signal> signal) {
     this->OnPlayerDamaged(signal); //
   });
+
+  bus->SubscribeSignal<GamePausedSignal>([this](std::shared_ptr<Base::Signal>) {
+    Pause();
+    GetOwner()->SuspendSystems();
+  });
+
+  bus->SubscribeSignal<GameResumedSignal>([this](std::shared_ptr<Base::Signal>) {
+    UnPause();
+    GetOwner()->UnsuspendSystems();
+  });
+
+  SetCameraPauseMask();
 }
 
 void MainGameLayer::OnDetach()
@@ -33,7 +47,10 @@ void MainGameLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 
 void MainGameLayer::Update(float dt)
 {
-  _waveManager.SpawnWaves(dt);
+  if (!IsPaused())
+  {
+    _waveManager.SpawnWaves(dt);
+  }
 }
 
 void MainGameLayer::Render()

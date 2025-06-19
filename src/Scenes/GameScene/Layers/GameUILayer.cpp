@@ -1,6 +1,8 @@
 #include "GameUILayer.hpp"
 #include "Components/HealthComponent.hpp"
 #include "Components/Tags/PlayerTag.hpp"
+#include "Scenes/GameScene/Signals/GamePause.hpp"
+#include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
 #include "base/assets/AssetManager.hpp"
@@ -57,16 +59,19 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {
   if (auto keyEvent = std::dynamic_pointer_cast<Base::KeyEvent>(event))
   {
+    auto bus = Base::SignalBus::GetInstance();
+    auto pSig = std::make_shared<GamePausedSignal>();
+    auto rSig = std::make_shared<GameResumedSignal>();
     if (keyEvent->key == KEY_ESCAPE && keyEvent->action == Base::InputEvent::Action::PRESSED)
     {
       if (_pauseMenu->IsVisible())
       {
         _pauseMenu->Hide();
-        GetOwner()->UnsuspendSystems();
+        bus->BroadCastSignal(rSig);
       }
       else
       {
-        GetOwner()->SuspendSystems();
+        bus->BroadCastSignal(pSig);
         _pauseMenu->Show();
       }
       event->isHandled = true;
@@ -102,6 +107,10 @@ void GameUILayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
 
 void GameUILayer::InitPauseMenu()
 {
+  auto bus = Base::SignalBus::GetInstance();
+  auto pSig = std::make_shared<GamePausedSignal>();
+  auto rSig = std::make_shared<GameResumedSignal>();
+
   _pauseMenu = GetOwner()->GetUIManager()->AddLayer("pause-menu");
   auto container = _pauseMenu->AddElement<Base::UIContainer>("pause-menu-container");
   container->SetPosition({GetSize().x / 2, -100});
@@ -128,9 +137,9 @@ void GameUILayer::InitPauseMenu()
   resumeButton->SetText("Resume");
   resumeButton->SetFontSize(50);
   resumeButton->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
-  resumeButton->onClick = [this]() {
+  resumeButton->onClick = [this, bus, rSig]() {
     _pauseMenu->Hide();
-    GetOwner()->UnsuspendSystems();
+    bus->BroadCastSignal(rSig);
   };
   resumeButton->onHover = {
     [=, this]() { //
