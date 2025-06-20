@@ -9,6 +9,7 @@ class GameUILayer : public Base::SceneLayer
 private:
   void OnPlayerDamaged(std::shared_ptr<Base::Signal>);
   void InitPauseMenu();
+  void InitHud();
 
   Base::UILayer *_hud;
   Base::UILayer *_pauseMenu;

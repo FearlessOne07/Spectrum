@@ -20,18 +20,7 @@
 void GameUILayer::OnAttach()
 {
   // Init UI
-  _hud = GetOwner()->GetUIManager()->AddLayer("hud");
-  auto fpsLabel = _hud->AddElement<Base::UILabel>("fps");
-  fpsLabel->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
-  fpsLabel->SetText("FPS: 0");
-  fpsLabel->SetPosition({0, 0});
-  fpsLabel->SetFontSize(50);
-
-  auto playerHealth = _hud->AddElement<Base::UILabel>("player-health");
-  playerHealth->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
-  playerHealth->SetPosition({0, fpsLabel->GetSize().y});
-  playerHealth->SetFontSize(50);
-
+  InitHud();
   InitPauseMenu();
 
   // Register Event
@@ -205,4 +194,19 @@ void GameUILayer::InitPauseMenu()
     );
   };
   _pauseMenu->Hide();
+}
+
+void GameUILayer::InitHud()
+{
+  _hud = GetOwner()->GetUIManager()->AddLayer("hud");
+  auto fpsLabel = _hud->AddElement<Base::UILabel>("fps");
+  fpsLabel->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
+  fpsLabel->SetText("FPS: 0");
+  fpsLabel->SetPosition({0, 0});
+  fpsLabel->SetFontSize(50);
+
+  auto playerHealth = _hud->AddElement<Base::UILabel>("player-health");
+  playerHealth->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
+  playerHealth->SetPosition({0, fpsLabel->GetSize().y});
+  playerHealth->SetFontSize(50);
 }

@@ -26,6 +26,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   // Activate Systems
   LoadAsset<Base::BaseShader>("assets/shaders/vignette.frag");
   LoadAsset<Base::Texture>("assets/textures/ship.png");
+  LoadAsset<Base::Texture>("assets/textures/king.png");
   LoadAsset<Base::Texture>("assets/textures/chaser.png");
   LoadAsset<Base::Texture>("assets/textures/shooter.png");
   LoadAsset<Base::Texture>("assets/textures/shooter-bullet.png");
