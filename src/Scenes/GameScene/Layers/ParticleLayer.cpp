@@ -27,8 +27,7 @@ void ParticleLayer::OnAttach()
   _emitter->particleRotationSpeed = 180;
   _emitter->isEmitting = false;
   _emitter->SetPauseMask(GetPauseMask());
-  Color color = GetOwner()->GetClearColor();
-  _emitter->particleEndColor = {color.r, color.g, color.b, 0};
+  _emitter->particleEndColor = {255, 255, 255, 255};
 
   auto *bus = Base::SignalBus::GetInstance();
   bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {

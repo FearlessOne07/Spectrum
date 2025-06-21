@@ -6,33 +6,34 @@ in vec4 fragColor;
 uniform sampler2D texture0;
 uniform float u_time;
 uniform vec2 u_resolution;
-uniform float u_vignetteStrength;
+uniform float u_vignetteStrength; // 0.0 = no effect, 1.0 = full
 
 out vec4 finalColor;
 
 void main() {
     vec2 uv = fragTexCoord;
 
-    // Center the coordinates
+    // Centered coordinates
     vec2 centered = uv - 0.5;
 
     // Apply aspect ratio correction
     centered.x *= u_resolution.x / u_resolution.y;
 
-    // Calculate distance from center
+    // Distance from center
     float dist = length(centered);
 
-    // Create vignette effect
-    // Inner radius: 0.4, Outer radius: 0.8 (adjust these for size)
-    float vignette = smoothstep(0.1, 1.0, dist);
+    // Vignette strength ramp
+    float vignetteFactor = smoothstep(0.5, 0.85, dist);
 
-    // Sample the original texture
+    // Final vignette mask (0.0 to 1.0)
+    float vignetteAmount = vignetteFactor * u_vignetteStrength;
+
+    // Original color
     vec4 texColor = texture(texture0, uv);
 
-    // Mix original color with red tint based on vignette
-    float finalAlpha = max(texColor.a, vignette * 1);
-    vec3 redTint = mix(texColor.rgb, vec3(1.0, 0.3, 0.3), vignette * u_vignetteStrength * abs(sin(u_time * 1.5))); // Added multiplier for subtlety
+    // Apply vignette by darkening the color
+    vec3 finalRgb = mix(texColor.rgb, vec3(1.0, 0.3, 0.3), vignetteAmount * abs(sin(u_time)));
 
-    // Output final color
-    finalColor = vec4(redTint, finalAlpha) * fragColor;
+    // Keep original alpha
+    finalColor = vec4(finalRgb, texColor.a) * fragColor;
 }

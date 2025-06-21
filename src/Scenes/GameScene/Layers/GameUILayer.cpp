@@ -170,7 +170,7 @@ void GameUILayer::InitPauseMenu()
 
   auto pauseMenuPanel = _pauseMenu->AddElement<Base::UIPanel>("pause-menu-panel");
   pauseMenuPanel->SetPosition({0, 0});
-  Color panelColor = GetOwner()->GetClearColor();
+  Color panelColor = {7, 7, 10, 255};
   panelColor = {panelColor.r, panelColor.g, panelColor.b, 0};
   pauseMenuPanel->SetColor(panelColor);
   pauseMenuPanel->SetSize(GetSize());
