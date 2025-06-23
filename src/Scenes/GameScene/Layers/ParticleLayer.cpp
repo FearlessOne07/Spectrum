@@ -64,7 +64,7 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
     auto e = signal->entity;
     auto txtcmp = e->GetComponent<Base::TextureComponent>();
     auto transcmp = e->GetComponent<Base::TransformComponent>();
-    std::uniform_real_distribution<float> lifeRange(0.5, 2);
+    std::uniform_real_distribution<float> lifeRange(0.5, 1);
     std::uniform_real_distribution<float> radiusRange(0.2 * txtcmp->targetSize.x, 0.3 * txtcmp->targetSize.x);
     std::uniform_real_distribution<float> angleDist(0, 360);
     std::uniform_real_distribution<float> speedDist(0, 700);

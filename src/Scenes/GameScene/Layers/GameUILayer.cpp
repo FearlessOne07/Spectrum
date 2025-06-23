@@ -14,6 +14,7 @@
 #include "base/ui/elements/UIContainer.hpp"
 #include "base/ui/elements/UILabel.hpp"
 #include "base/ui/elements/UIPanel.hpp"
+#include "base/ui/elements/UITextureRect.hpp"
 #include "raylib.h"
 #include <memory>
 
@@ -33,9 +34,10 @@ void GameUILayer::OnAttach()
     auto spawnSignal = std::dynamic_pointer_cast<PlayerSpawnedSignal>(signal);
     if (spawnSignal)
     {
-      auto playerHealth = _hud->GetElement<Base::UILabel>("player-health");
+      auto playerHealth =
+        _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
       int health = (int)spawnSignal->player->GetComponent<HealthComponent>()->health;
-      playerHealth->SetText(TextFormat("Health: %i", health));
+      playerHealth->SetText(TextFormat("%i", health));
     }
   });
 }
@@ -71,8 +73,6 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 
 void GameUILayer::Update(float dt)
 {
-  auto fpsLabel = _hud->GetElement<Base::UILabel>("fps");
-  fpsLabel->SetText(TextFormat("FPS: %i", GetFPS()));
 }
 
 void GameUILayer::Render()
@@ -87,9 +87,10 @@ void GameUILayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
   {
     if (entityDamg->entity->HasComponent<PlayerTag>())
     {
-      auto playerHealth = _hud->GetElement<Base::UILabel>("player-health");
+      auto playerHealth =
+        _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
       int health = (int)entityDamg->entity->GetComponent<HealthComponent>()->health;
-      playerHealth->SetText(TextFormat("Health: %i", health));
+      playerHealth->SetText(TextFormat("%i", health));
     }
   }
 }
@@ -102,20 +103,21 @@ void GameUILayer::InitPauseMenu()
 
   _pauseMenu = GetOwner()->GetUIManager()->AddLayer("pause-menu");
   auto container = _pauseMenu->AddElement<Base::UIContainer>("pause-menu-container");
+  container->SetAnchorPoint(Base::UIContainer::AnchorPoint::CENTER);
   container->SetPosition({GetSize().x / 2, -100});
   container->SetPadding({10, 10});
   container->SetGapSize(15);
   container->_onShow = [this, container]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{container.get(), "pause-menu-container-position"},
-      [container, this](float pos) { container->SetPosition({GetSize().x / 2, pos}); }, container->GetPosition().y,
+      [container, this](float pos) { container->SetPosition({GetSize().x / 2, pos}); }, container->GetBasePosition().y,
       GetSize().y / 2, 0.5 //
     );
   };
   container->_onHide = [this, container]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{container.get(), "pause-menu-container-position"},
-      [container, this](float pos) { container->SetPosition({GetSize().x / 2, pos}); }, container->GetPosition().y,
+      [container, this](float pos) { container->SetPosition({GetSize().x / 2, pos}); }, container->GetBasePosition().y,
       -100, .3, Base::TweenManager::EasingType::EASE_IN //
     );
   };
@@ -133,14 +135,15 @@ void GameUILayer::InitPauseMenu()
   resumeButton->onHover = {
     [=, this]() { //
       GetOwner()->GetTweenManager()->AddTween<float>(
-        {resumeButton.get(), "font-size"}, [=](float size) { resumeButton->SetFontSize(size); }, 50, 55, 0.1,
+        {resumeButton.get(), "font-size"}, [=](float size) { resumeButton->SetFontSize(size, false); },
+        resumeButton->GetFontSize(), 55, 0.1,
         Base::TweenManager::EasingType::EASE_OUT //
       );
     },
     [=, this]() { //
       GetOwner()->GetTweenManager()->AddTween<float>(
-        {resumeButton.get(), "font-size"}, [=](float size) { resumeButton->SetFontSize(size); },
-        resumeButton->GetFontSize(), 50, 0.1,
+        {resumeButton.get(), "font-size"}, [=](float size) { resumeButton->SetFontSize(size, false); },
+        resumeButton->GetFontSize(), resumeButton->GetBaseFontSize(), 0.1,
         Base::TweenManager::EasingType::EASE_OUT //
       );
     },
@@ -151,19 +154,20 @@ void GameUILayer::InitPauseMenu()
   exitButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
   exitButton->SetText("Exit");
   exitButton->SetFontSize(50);
-  exitButton->onClick = [this]() { GetOwner()->SetSceneTransition(Base::SceneRequest::QUIT); };
   exitButton->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
+  exitButton->onClick = [this]() { GetOwner()->SetSceneTransition(Base::SceneRequest::QUIT); };
   exitButton->onHover = {
     [=, this]() { //
       GetOwner()->GetTweenManager()->AddTween<float>(
-        {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetFontSize(size); }, 40, 45, 0.1,
+        {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetFontSize(size, false); },
+        exitButton->GetFontSize(), 55, 0.1,
         Base::TweenManager::EasingType::EASE_OUT //
       );
     },
     [=, this]() { //
       GetOwner()->GetTweenManager()->AddTween<float>(
-        {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetFontSize(size); }, exitButton->GetFontSize(),
-        40, 0.1, Base::TweenManager::EasingType::EASE_OUT //
+        {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetFontSize(size, false); },
+        exitButton->GetFontSize(), exitButton->GetBaseFontSize(), 0.1, Base::TweenManager::EasingType::EASE_OUT //
       );
     },
   };
@@ -199,14 +203,19 @@ void GameUILayer::InitPauseMenu()
 void GameUILayer::InitHud()
 {
   _hud = GetOwner()->GetUIManager()->AddLayer("hud");
-  auto fpsLabel = _hud->AddElement<Base::UILabel>("fps");
-  fpsLabel->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
-  fpsLabel->SetText("FPS: 0");
-  fpsLabel->SetPosition({0, 0});
-  fpsLabel->SetFontSize(50);
+  auto healtContainer = _hud->AddElement<Base::UIContainer>("player-health-container");
+  healtContainer->SetPosition({0, 0});
+  healtContainer->SetLayout(Base::UIContainer::Layout::HORIZONTAL);
+  healtContainer->SetGapSize(20);
 
-  auto playerHealth = _hud->AddElement<Base::UILabel>("player-health");
+  auto heartIcon = healtContainer->AddChild<Base::UITextureRect>("heart-icon");
+  heartIcon->SetTextureHandle(GetOwner()->GetAsset<Base::Texture>("heart-ui"));
+  heartIcon->SetSize({40, 40});
+  heartIcon->SetSourceRect({2 * 8, 0, 8, 8});
+  heartIcon->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+
+  auto playerHealth = healtContainer->AddChild<Base::UILabel>("player-health");
   playerHealth->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
-  playerHealth->SetPosition({0, fpsLabel->GetSize().y});
-  playerHealth->SetFontSize(50);
+  playerHealth->SetFontSize(40);
+  playerHealth->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
 }

@@ -1,6 +1,4 @@
 #include "MainGameLayer.hpp"
-#include "Components/HealthComponent.hpp"
-#include "Components/Tags/PlayerTag.hpp"
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
@@ -63,17 +61,4 @@ void MainGameLayer::Render()
 
 void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
 {
-  if (auto entityDamg = std::dynamic_pointer_cast<EntityDamagedSignal>(signal))
-  {
-    if (entityDamg->entity->HasComponent<PlayerTag>())
-    {
-      float health = entityDamg->entity->GetComponent<HealthComponent>()->health;
-      float maxHealth = entityDamg->entity->GetComponent<HealthComponent>()->maxHealth;
-
-      GetRenderLayer()->SetShaderUniform( //
-        GetOwner()->GetAsset<Base::BaseShader>("vignette"), "u_vignetteStrength",
-        float(std::pow((1.f - health / maxHealth), 2)) //
-      );
-    }
-  }
 }

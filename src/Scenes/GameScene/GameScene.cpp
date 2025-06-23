@@ -26,6 +26,8 @@ void GameScene::Enter(Base::SceneData sceneData)
   // Activate Systems
   LoadAsset<Base::BaseShader>("assets/shaders/vignette.frag");
   LoadAsset<Base::Texture>("assets/textures/ship.png");
+  LoadAsset<Base::Texture>("assets/textures/power-ups.png");
+  LoadAsset<Base::Texture>("assets/textures/heart-ui.png");
   LoadAsset<Base::Texture>("assets/textures/king.png");
   LoadAsset<Base::Texture>("assets/textures/chaser.png");
   LoadAsset<Base::Texture>("assets/textures/shooter.png");
@@ -45,10 +47,6 @@ void GameScene::Enter(Base::SceneData sceneData)
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);
   mainLayer->SetCameraMode(Base::Camera2DExtMode::SMOOTH_FOLLOW);
-
-  auto vignetteShader = GetAsset<Base::BaseShader>("vignette");
-  mainLayer->AddShaderPass(vignetteShader);
-  mainLayer->SetShaderUniform(vignetteShader, "u_resolution", Vector2{1920, 1080});
 
   AttachLayer<MainGameLayer>(mainLayer);
   AttachLayer<ParticleLayer>(mainLayer);
