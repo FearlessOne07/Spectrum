@@ -12,21 +12,21 @@
 #include <memory>
 #include <raylib.h>
 #include <raymath.h>
-#include <vector>
 
-void TrackingSystem::Update(float dt, Base::EntityManager *entityManager,const Base::Scene * currentScene)
+void TrackingSystem::Update(float dt, Base::EntityManager *entityManager, const Base::Scene *currentScene)
 {
-  std::vector<std::shared_ptr<Base::Entity>> entities = entityManager->Query<TrackingComponent>();
+  auto entities = entityManager->Query<TrackingComponent>();
 
-  for (auto &e : entities)
+  for (auto &item : entities)
   {
+    auto e = item->item;
     auto *trckcomp = e->GetComponent<TrackingComponent>();
     auto *transcomp = e->GetComponent<Base::TransformComponent>();
     auto *rbcmp = e->GetComponent<Base::RigidBodyComponent>();
     auto *transfxcmp = e->GetComponent<TransformEffectsComponent>();
     auto *abbcmp = e->GetComponent<Base::ColliderComponent>();
 
-    const Base::Entity *target = entityManager->GetEntity(trckcomp->targetEntityID);
+    auto target = entityManager->GetEntity(trckcomp->targetEntityID);
     Vector2 targetPos = target->GetComponent<Base::TransformComponent>()->position;
 
     Vector2 positionMin = {0, 0};

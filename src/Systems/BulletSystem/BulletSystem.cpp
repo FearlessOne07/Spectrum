@@ -21,7 +21,6 @@
 #include <base/signals/SignalBus.hpp>
 #include <memory>
 #include <raymath.h>
-#include <vector>
 
 void BulletSystem::Start()
 {
@@ -32,10 +31,11 @@ void BulletSystem::Start()
 
 void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Base::Scene *currentScene)
 {
-  std::vector<std::shared_ptr<Base::Entity>> entities_shtcmp = entityManager->Query<ShootComponent>();
+  auto entities_shtcmp = entityManager->Query<ShootComponent>();
 
-  for (auto &e : entities_shtcmp)
+  for (auto &item : entities_shtcmp)
   {
+    auto e = item->item;
     auto *transcmp = e->GetComponent<Base::TransformComponent>();
     auto *shtcmp = e->GetComponent<ShootComponent>();
     auto *dmgcmp = e->GetComponent<DamageComponent>();
@@ -45,7 +45,7 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
       if (shtcmp->IsFiring)
       {
         shtcmp->bulletFireTimer = 0.f;
-        Base::Entity *bullet = entityManager->AddEntity();
+        auto bullet = entityManager->CreateEntity();
 
         auto *bulTranscmp = bullet->GetComponent<Base::TransformComponent>();
         bulTranscmp->position = transcmp->position;
@@ -80,6 +80,7 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
 
         auto bulDmgcmp = bullet->AddComponent<DamageComponent>();
         bulDmgcmp->damage = dmgcmp->damage;
+        entityManager->AddEntity(bullet);
 
         // Emmit sound signal
         auto bus = Base::SignalBus::GetInstance();
@@ -96,10 +97,11 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
   }
 
   // Update Bullets
-  std::vector<std::shared_ptr<Base::Entity>> entities_bulcmp = entityManager->Query<BulletComponent>();
+  auto entities_bulcmp = entityManager->Query<BulletComponent>();
 
-  for (auto &e : entities_bulcmp)
+  for (auto &item : entities_bulcmp)
   {
+    auto e = item->item;
     if (e)
     {
       auto bulcmp = e->GetComponent<BulletComponent>();

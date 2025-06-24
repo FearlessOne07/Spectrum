@@ -8,14 +8,14 @@
 #include <memory>
 #include <raylib.h>
 #include <raymath.h>
-#include <vector>
 
 void TransformEffectsSystem::Update(float dt, Base::EntityManager *entityManager, const Base::Scene *currentScene)
 {
-  std::vector<std::shared_ptr<Base::Entity>> entities = entityManager->Query<TransformEffectsComponent>();
+  auto entities = entityManager->Query<TransformEffectsComponent>();
 
-  for (auto &e : entities)
+  for (auto &item : entities)
   {
+    auto e = item->item;
     auto *transfxcmp = e->GetComponent<TransformEffectsComponent>();
     auto *transcmp = e->GetComponent<Base::TransformComponent>();
 

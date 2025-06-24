@@ -14,7 +14,7 @@ int main(void)
     .Title = "Spectrum",
     .GlobalAssets =
       {
-        {"font", "assets/fonts/main-font-normal.ttf"},
+        {"font", "assets/fonts/main-font.ttf"},
         {"audio-stream", "assets/music/main-track.mp3"},
       },
   });

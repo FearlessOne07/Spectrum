@@ -5,15 +5,15 @@
 #include "base/signals/SignalBus.hpp"
 #include <base/entities/EntityManager.hpp>
 #include <memory>
-#include <vector>
 
-void HealthSystem::Update(float dt, Base::EntityManager *entityManager,const Base::Scene * currentScene)
+void HealthSystem::Update(float dt, Base::EntityManager *entityManager, const Base::Scene *currentScene)
 {
-  std::vector<std::shared_ptr<Base::Entity>> entities = entityManager->Query<HealthComponent>();
+  auto entities = entityManager->Query<HealthComponent>();
   auto *bus = Base::SignalBus::GetInstance();
 
-  for (auto &e : entities)
+  for (auto &item : entities)
   {
+    auto e = item->item;
     auto *hlthcmp = e->GetComponent<HealthComponent>();
 
     if (hlthcmp->hasPendingSickness)

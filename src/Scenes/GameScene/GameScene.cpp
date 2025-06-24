@@ -43,7 +43,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   // MainRenderLayer
   auto mainLayer = AddRenderLayer({640, 360}, GetClearColor());
   mainLayer->SetCameraOffset({640.f / 2, 360.f / 2});
-  mainLayer->SetCameraZoom(0.35);
+  mainLayer->SetCameraZoom(0.4);
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);
   mainLayer->SetCameraMode(Base::Camera2DExtMode::SMOOTH_FOLLOW);
@@ -77,10 +77,6 @@ void GameScene::Resume()
 {
   UnsuspendSystems();
 };
-
-void GameScene::InitPauseMenu()
-{
-}
 
 void GameScene::Pause()
 {

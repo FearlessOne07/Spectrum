@@ -7,7 +7,6 @@
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
 #include "Components/TransformEffects.hpp"
-#include "Modifiers/SpeedModifier/SpeedModifier.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
 #include "base/components/TextureComponent.hpp"
 #include "base/signals/SignalBus.hpp"
@@ -51,7 +50,7 @@ size_t Spawner::SpawnPlayer( //
   Vector2 position //
 )
 {
-  Base::Entity *e = entityManager->AddEntity();
+  auto e = entityManager->CreateEntity();
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
 
   auto *transcmp = e->GetComponent<Base::TransformComponent>();
@@ -108,7 +107,6 @@ size_t Spawner::SpawnPlayer( //
   inpcmp->BindKeyDown(KEY_D, [rbcmp]() { rbcmp->direction.x = 1; });
   inpcmp->BindKeyDown(KEY_W, [rbcmp]() { rbcmp->direction.y = -1; });
   inpcmp->BindKeyDown(KEY_S, [rbcmp]() { rbcmp->direction.y = 1; });
-  inpcmp->BindKeyPressed(KEY_B, [pucmp]() { pucmp->AddPowerUp<SpeedModifier>(5); });
 
   inpcmp->BindKeyReleased(KEY_A, [rbcmp]() { rbcmp->direction.x = 0; });
   inpcmp->BindKeyReleased(KEY_D, [rbcmp]() { rbcmp->direction.x = 0; });
@@ -126,6 +124,7 @@ size_t Spawner::SpawnPlayer( //
   dmgcmp->damage = 2;
   e->AddComponent<Base::ImpulseComponent>();
   e->AddComponent<PlayerTag>();
+  entityManager->AddEntity(e);
 
   _playerID = e->GetID();
 
@@ -182,7 +181,7 @@ void Spawner::SpawnWave( //
       break;
     }
 
-    Base::Entity *e = entityManager->AddEntity();
+    auto e = entityManager->CreateEntity();
     e->AddComponent<EnemyTag>();
     auto *transcmp = e->GetComponent<Base::TransformComponent>();
     transcmp->position = position;
@@ -239,6 +238,7 @@ void Spawner::SpawnWave( //
       transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
       break;
     }
+
     txtcmp->source = {
       0,
       0,
@@ -247,6 +247,7 @@ void Spawner::SpawnWave( //
     };
     abbcmp->radius =
       ((txtcmp->texture.Get()->GetRaylibTexture()->width - 10) / 2.f) * (txtcmp->targetSize.x / txtcmp->source.width);
+    entityManager->AddEntity(e);
   }
   else
   {

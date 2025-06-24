@@ -73,6 +73,8 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 
 void GameUILayer::Update(float dt)
 {
+  auto fpsLabel = _hud->GetElement<Base::UILabel>("fps");
+  fpsLabel->SetText(TextFormat("FPS: %i", GetFPS()));
 }
 
 void GameUILayer::Render()
@@ -124,7 +126,7 @@ void GameUILayer::InitPauseMenu()
 
   // Resume Button
   auto resumeButton = container->AddChild<Base::UIButton>("resume-button");
-  resumeButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
+  resumeButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   resumeButton->SetText("Resume");
   resumeButton->SetFontSize(50);
   resumeButton->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
@@ -151,7 +153,7 @@ void GameUILayer::InitPauseMenu()
 
   // Exit Button
   auto exitButton = container->AddChild<Base::UIButton>("exit-button");
-  exitButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
+  exitButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   exitButton->SetText("Exit");
   exitButton->SetFontSize(50);
   exitButton->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
@@ -207,6 +209,7 @@ void GameUILayer::InitHud()
   healtContainer->SetPosition({0, 0});
   healtContainer->SetLayout(Base::UIContainer::Layout::HORIZONTAL);
   healtContainer->SetGapSize(20);
+  healtContainer->SetPadding({15, 10});
 
   auto heartIcon = healtContainer->AddChild<Base::UITextureRect>("heart-icon");
   heartIcon->SetTextureHandle(GetOwner()->GetAsset<Base::Texture>("heart-ui"));
@@ -215,7 +218,13 @@ void GameUILayer::InitHud()
   heartIcon->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
 
   auto playerHealth = healtContainer->AddChild<Base::UILabel>("player-health");
-  playerHealth->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
+  playerHealth->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   playerHealth->SetFontSize(40);
   playerHealth->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+
+  auto fpsLabel = _hud->AddElement<Base::UILabel>("fps");
+  fpsLabel->SetText(TextFormat("FPS: i%", 0));
+  fpsLabel->SetFontSize(40);
+  fpsLabel->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
+  fpsLabel->SetPosition({0, 60});
 }

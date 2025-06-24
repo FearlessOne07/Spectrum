@@ -6,12 +6,21 @@
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/systems/SystemManager.hpp"
+#include "raylib.h"
 #include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
 #include <memory>
 
 void MainGameLayer::OnAttach()
 {
+  Rectangle worldBounds = {
+    GetScreenToWorld({-200, -200}).x,
+    GetScreenToWorld({-200, -200}).y,
+    GetSize().x + 400,
+    GetSize().y + 400,
+  };
+
+  GetOwner()->GetEntityManager()->SetWorldBounds(worldBounds);
   _waveManager = WaveManager(this, GetOwner()->GetEntityManager());
   _waveManager.SpawnPlayer();
   _playerEVH.Init(this);

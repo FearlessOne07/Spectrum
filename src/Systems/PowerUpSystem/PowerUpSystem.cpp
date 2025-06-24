@@ -4,10 +4,11 @@
 
 void PowerUpSystem::Update(float dt, Base::EntityManager *entityManager, const Base::Scene *)
 {
-  std::vector<std::shared_ptr<Base::Entity>> entities_pucmp = entityManager->Query<PowerUpComponent>();
+  auto entities_pucmp = entityManager->Query<PowerUpComponent>();
 
-  for (auto &e : entities_pucmp)
+  for (auto &item : entities_pucmp)
   {
+    auto e = item->item;
     auto pucmp = e->GetComponent<PowerUpComponent>();
 
     for (auto it = pucmp->GetPowerUps().begin(); it != pucmp->GetPowerUps().end();)

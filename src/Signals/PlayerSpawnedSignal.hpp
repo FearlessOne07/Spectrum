@@ -7,5 +7,5 @@
 class PlayerSpawnedSignal : public Base::Signal
 {
 public:
-  const Base::Entity *player = nullptr;
+  std::shared_ptr<Base::Entity> player = nullptr;
 };
