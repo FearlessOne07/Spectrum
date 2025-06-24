@@ -16,7 +16,7 @@ void MainLayer::OnAttach()
 
   auto deathLabel = mainLayer->AddElement<Base::UILabel>("death-label");
   deathLabel->SetText("YOU DIED!");
-  deathLabel->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font-normal"));
+  deathLabel->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   deathLabel->SetTextColor(RED);
   deathLabel->SetFontSize(80);
   deathLabel->SetPosition({rd->gameWidth / 2, rd->gameHeight / 2});
