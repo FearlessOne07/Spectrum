@@ -1,5 +1,5 @@
 #include "ParticleLayer.hpp"
-#include "Components/Tags/EnemyTag.hpp"
+#include "Components/EnemyComponent.hpp"
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "base/assets/AssetManager.hpp"
@@ -59,7 +59,7 @@ void ParticleLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 
 void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
 {
-  if (signal->entity->HasComponent<EnemyTag>())
+  if (signal->entity->HasComponent<EnemyComponent>())
   {
     auto e = signal->entity;
     auto txtcmp = e->GetComponent<Base::TextureComponent>();

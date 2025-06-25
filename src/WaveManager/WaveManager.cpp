@@ -1,28 +1,44 @@
 #include "WaveManager.hpp"
-#include "Components/Tags/EnemyTag.hpp"
+#include "Components/EnemyComponent.hpp"
+#include "Components/LightComponent.hpp"
 #include "Spawner/Spawner.hpp"
+#include "base/components/ColliderComponent.hpp"
+#include "base/components/ImpulseComponent.hpp"
+#include "base/components/MoveComponent.hpp"
+#include "base/components/RigidBodyComponent.hpp"
+#include "base/components/TextureComponent.hpp"
+#include "base/components/TransformComponent.hpp"
 #include "base/scenes/SceneLayer.hpp"
+#include "base/signals/Signal.hpp"
+#include "base/signals/SignalBus.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
+#include <base/scenes/SceneLayer.inl>
+#include <memory>
 #include <random>
 
-WaveManager::WaveManager(const Base::SceneLayer *parentLayer, Base::EntityManager *entityMan)
-  : _entityMan(entityMan), _parentLayer(parentLayer)
+void WaveManager::Init(const Base::SceneLayer *parentLayer, Base::EntityManager *entityMan)
 {
+  _entityMan = entityMan;
+  _parentLayer = parentLayer;
   _spawner = Spawner(_parentLayer);
+  auto bus = Base::SignalBus::GetInstance();
+  bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {
+    this->SpawnLight(std::static_pointer_cast<EntityDiedSignal>(sig)); //
+  });
 }
 
 void WaveManager::GenerateWave()
 {
+  std::random_device _rd;
+  std::mt19937_64 _gen = std::mt19937_64(_rd());
+
   // Init Variables
-  int aliveCount = _entityMan->Query<EnemyTag>().size();
+  int aliveCount = _entityMan->Query<EnemyComponent>().size();
 
   // Setup
   _enemiesToSpawn.clear();
   _wavePoints = (_baseWavePoints * _currentWave) - (3 * aliveCount);
-  // Random
-  std::random_device rd;
-  std::mt19937_64 gen(rd());
 
   // Create pool of available enemies for this wave
   std::unordered_map<Spawner::EnemyType, EnemySpec> pool = {};
@@ -65,7 +81,7 @@ void WaveManager::GenerateWave()
       break;
     }
 
-    float selectedChance = std::uniform_real_distribution<float>(0, totalChance)(gen);
+    float selectedChance = std::uniform_real_distribution<float>(0, totalChance)(_gen);
     float runningSum = 0;
     bool enemySelected = false;
 
@@ -112,7 +128,7 @@ void WaveManager::GenerateWave()
 
 void WaveManager::SpawnWaves(float dt)
 {
-  int count = _entityMan->Query<EnemyTag>().size();
+  int count = _entityMan->Query<EnemyComponent>().size();
   if (_waveTimer >= _waveTime || (count == 0 && _spawner.GetToSpawnCount() == 0))
   {
     _waveTimer = 0;
@@ -128,4 +144,54 @@ void WaveManager::SpawnWaves(float dt)
 void WaveManager::SpawnPlayer()
 {
   _playerID = _spawner.SpawnPlayer(_entityMan, {0, 0});
+}
+
+void WaveManager::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
+{
+  std::random_device _rd;
+  std::mt19937_64 _gen = std::mt19937_64(_rd());
+
+  if (sig->entity->HasComponent<EnemyComponent>())
+  {
+    int value = sig->entity->GetComponent<EnemyComponent>()->value;
+
+    for (int i = 0; i < value; i++)
+    {
+      auto e = _entityMan->CreateEntity();
+      e->GetComponent<Base::TransformComponent>()->position =
+        sig->entity->GetComponent<Base::TransformComponent>()->position;
+
+      auto colcmp = e->AddComponent<Base::ColliderComponent>();
+      colcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
+      colcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
+      colcmp->radius = 8;
+
+      auto txtcmp = e->AddComponent<Base::TextureComponent>();
+      txtcmp->source = {2 * 8, 1 * 8, 8, 8};
+      txtcmp->texture = _parentLayer->GetAsset<Base::Texture>("power-ups");
+      txtcmp->targetSize = {16, 16};
+
+      auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
+      rbcmp->isKinematic = false;
+      rbcmp->drag = 4;
+      rbcmp->mass = 1;
+
+      auto mvcmp = e->AddComponent<Base::MoveComponent>();
+      mvcmp->driveForce = 0;
+
+      float angle = std::uniform_real_distribution<float>(0, 2 * PI)(_gen);
+      rbcmp->direction = {sin(angle), cos(angle)};
+
+      auto impcmp = e->AddComponent<Base::ImpulseComponent>();
+      impcmp->force = std::uniform_int_distribution<int>(100, 150)(_gen);
+      impcmp->direction = {sin(angle), cos(angle)};
+
+      e->AddComponent<LightComponent>();
+      _entityMan->AddEntity(e);
+    }
+  }
+}
+
+WaveManager::~WaveManager()
+{
 }

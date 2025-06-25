@@ -1,3 +1,4 @@
+#pragma once
 #include "base/entities/Entity.hpp"
 #include "base/signals/Signal.hpp"
 

@@ -1,9 +1,9 @@
 #include "PlayerEventHandler.hpp"
 #include "Components/BulletComponent.hpp"
 #include "Components/DamageComponent.hpp"
+#include "Components/EnemyComponent.hpp"
 #include "Components/HealthComponent.hpp"
 #include "Components/ShootComponent.hpp"
-#include "Components/Tags/EnemyTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
 #include "Scenes/DeathScreen/DeathScreen.hpp"
@@ -62,9 +62,9 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
     sig->soundHandle = _parentLayer->GetAsset<Base::Sound>("player-hit");
     sig->soundVolume = 0.75;
 
-    if (                                                                        //
-      attack->HasComponent<BulletComponent>() &&                                //
-      attack->GetComponent<BulletComponent>()->sender->HasComponent<EnemyTag>() //
+    if (                                                                              //
+      attack->HasComponent<BulletComponent>() &&                                      //
+      attack->GetComponent<BulletComponent>()->sender->HasComponent<EnemyComponent>() //
     )
     {
       _parentLayer->ShakeCamera(config);
@@ -83,7 +83,7 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
       impcmpdef->force = bulcmp->sender->GetComponent<ShootComponent>()->bulletKnockbackForce;
       attack->SetDead();
     }
-    else if (attack->HasComponent<EnemyTag>())
+    else if (attack->HasComponent<EnemyComponent>())
     {
       _parentLayer->ShakeCamera(config);
       auto *mvcmpAtt = attack->GetComponent<Base::MoveComponent>();

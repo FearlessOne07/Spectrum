@@ -21,7 +21,7 @@ void MainGameLayer::OnAttach()
   };
 
   GetOwner()->GetEntityManager()->SetWorldBounds(worldBounds);
-  _waveManager = WaveManager(this, GetOwner()->GetEntityManager());
+  _waveManager.Init(this, GetOwner()->GetEntityManager());
   _waveManager.SpawnPlayer();
   _playerEVH.Init(this);
 

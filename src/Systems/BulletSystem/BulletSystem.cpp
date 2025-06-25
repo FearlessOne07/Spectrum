@@ -1,9 +1,9 @@
 #include "BulletSystem.hpp"
 #include "Components/BulletComponent.hpp"
 #include "Components/DamageComponent.hpp"
+#include "Components/EnemyComponent.hpp"
 #include "Components/HealthComponent.hpp"
 #include "Components/ShootComponent.hpp"
-#include "Components/Tags/EnemyTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "base/components/TextureComponent.hpp"
 #include "base/scenes/Scene.hpp"
@@ -126,7 +126,7 @@ void BulletSystem::EntityCollisionHandler(const std::shared_ptr<Base::Signal> &e
   auto defence = collEvent->hurtBoxEntity;
 
   if ( //
-    attack->HasComponent<BulletComponent>() && defence->HasComponent<EnemyTag>() &&
+    attack->HasComponent<BulletComponent>() && defence->HasComponent<EnemyComponent>() &&
     attack->GetComponent<BulletComponent>()->sender->HasComponent<PlayerTag>() //
   )
   {

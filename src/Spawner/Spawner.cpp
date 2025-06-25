@@ -1,9 +1,9 @@
 #include "Spawner.hpp"
 #include "Components/DamageComponent.hpp"
+#include "Components/EnemyComponent.hpp"
 #include "Components/HealthComponent.hpp"
 #include "Components/PowerUpComponent.hpp"
 #include "Components/ShootComponent.hpp"
-#include "Components/Tags/EnemyTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
 #include "Components/TransformEffects.hpp"
@@ -182,7 +182,7 @@ void Spawner::SpawnWave( //
     }
 
     auto e = entityManager->CreateEntity();
-    e->AddComponent<EnemyTag>();
+    auto enemcmp = e->AddComponent<EnemyComponent>();
     auto *transcmp = e->GetComponent<Base::TransformComponent>();
     transcmp->position = position;
 
@@ -223,10 +223,12 @@ void Spawner::SpawnWave( //
     {
     case EnemyType::CHASER:
       txtcmp->texture = _parentLayer->GetAsset<Base::Texture>("chaser");
+      enemcmp->value = 5;
       break;
     case EnemyType::SHOOTER:
       txtcmp->texture = _parentLayer->GetAsset<Base::Texture>("shooter");
       trckcmp->trackingDistance = 1000;
+      enemcmp->value = 2;
 
       auto *shtcmp = e->AddComponent<ShootComponent>();
       shtcmp->bulletFireRate = 5.f;
@@ -247,6 +249,7 @@ void Spawner::SpawnWave( //
     };
     abbcmp->radius =
       ((txtcmp->texture.Get()->GetRaylibTexture()->width - 10) / 2.f) * (txtcmp->targetSize.x / txtcmp->source.width);
+
     entityManager->AddEntity(e);
   }
   else
