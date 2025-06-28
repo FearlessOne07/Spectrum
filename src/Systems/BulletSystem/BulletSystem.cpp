@@ -5,7 +5,7 @@
 #include "Components/HealthComponent.hpp"
 #include "Components/ShootComponent.hpp"
 #include "Components/Tags/PlayerTag.hpp"
-#include "base/components/TextureComponent.hpp"
+#include "base/components/SpriteComponent.hpp"
 #include "base/scenes/Scene.hpp"
 #include <base/audio/signals/PlaySoundSignal.hpp>
 #include <base/components/ColliderComponent.hpp>
@@ -56,16 +56,9 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
         rbcmp->direction = Vector2Subtract(shtcmp->target, transcmp->position);
 
         auto *mvcmp = bullet->AddComponent<Base::MoveComponent>();
-
-        auto txtcmp = bullet->AddComponent<Base::TextureComponent>();
-        txtcmp->targetSize = {32, 32};
-        txtcmp->texture = shtcmp->bulletTexture;
-        txtcmp->source = {
-          0,
-          0,
-          static_cast<float>(txtcmp->texture.Get()->GetRaylibTexture()->width),
-          static_cast<float>(txtcmp->texture.Get()->GetRaylibTexture()->height),
-        };
+        auto sprtcmp = bullet->AddComponent<Base::SpriteComponent>(                //
+          shtcmp->bulletTexture, Vector2{0, 0}, Vector2{200, 200}, Vector2{32, 32} //
+        );
 
         auto bulcmp = bullet->AddComponent<BulletComponent>();
         bulcmp->lifeTime = shtcmp->bulletLifetime;
@@ -73,8 +66,8 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
         bulcmp->sender = shtcmp->GetOwner();
 
         auto abbcmp = bullet->AddComponent<Base::ColliderComponent>();
-        abbcmp->radius = ((txtcmp->texture.Get()->GetRaylibTexture()->width - 10) / 2.f) *
-                         (txtcmp->targetSize.x / txtcmp->source.width);
+        abbcmp->radius = ((sprtcmp->GetTexture().Get()->GetRaylibTexture()->width - 10) / 2.f) *
+                         (sprtcmp->GetTargetSize().x / sprtcmp->GetTextureSourceRect().width);
         abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
         abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
 

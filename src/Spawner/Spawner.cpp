@@ -2,13 +2,14 @@
 #include "Components/DamageComponent.hpp"
 #include "Components/EnemyComponent.hpp"
 #include "Components/HealthComponent.hpp"
+#include "Components/LightCollectorComponent.hpp"
 #include "Components/PowerUpComponent.hpp"
 #include "Components/ShootComponent.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
 #include "Components/TransformEffects.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
-#include "base/components/TextureComponent.hpp"
+#include "base/components/SpriteComponent.hpp"
 #include "base/signals/SignalBus.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/components/ColliderComponent.hpp>
@@ -84,19 +85,13 @@ size_t Spawner::SpawnPlayer( //
   shtcmp->bulletSpeed = 1500.f;
   shtcmp->bulletTexture = _parentLayer->GetAsset<Base::Texture>("player-bullet");
 
-  auto txtcmp = e->AddComponent<Base::TextureComponent>();
-  txtcmp->targetSize = {64, 64};
-  txtcmp->texture = _parentLayer->GetAsset<Base::Texture>("ship");
-  txtcmp->source = {
-    0,
-    0,
-    static_cast<float>(txtcmp->texture.Get()->GetRaylibTexture()->width),
-    static_cast<float>(txtcmp->texture.Get()->GetRaylibTexture()->height),
-  };
+  auto sprtcmp = e->AddComponent<Base::SpriteComponent>(                                             //
+    _parentLayer->GetAsset<Base::Texture>("ship"), Vector2{0, 0}, Vector2{200, 200}, Vector2{64, 64} //
+  );
 
   auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
-  abbcmp->radius =
-    ((txtcmp->texture.Get()->GetRaylibTexture()->width - 10) / 2.f) * (txtcmp->targetSize.x / txtcmp->source.width);
+  abbcmp->radius = ((sprtcmp->GetTexture().Get()->GetRaylibTexture()->width - 10) / 2.f) *
+                   (sprtcmp->GetTargetSize().x / sprtcmp->GetTextureSourceRect().width);
   abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
   abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
 
@@ -124,6 +119,7 @@ size_t Spawner::SpawnPlayer( //
   dmgcmp->damage = 2;
   e->AddComponent<Base::ImpulseComponent>();
   e->AddComponent<PlayerTag>();
+  e->AddComponent<LightCollectorComponent>();
   entityManager->AddEntity(e);
 
   _playerID = e->GetID();
@@ -199,9 +195,6 @@ void Spawner::SpawnWave( //
     rbcmp->drag = 3;
     rbcmp->mass = 1;
 
-    auto *txtcmp = e->AddComponent<Base::TextureComponent>();
-    txtcmp->targetSize = {64, 64};
-
     auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
     abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
@@ -221,12 +214,22 @@ void Spawner::SpawnWave( //
 
     switch (type)
     {
-    case EnemyType::CHASER:
-      txtcmp->texture = _parentLayer->GetAsset<Base::Texture>("chaser");
+    case EnemyType::CHASER: {
+
+      auto *sprtcmp = e->AddComponent<Base::SpriteComponent>(                                              //
+        _parentLayer->GetAsset<Base::Texture>("chaser"), Vector2{0, 0}, Vector2{200, 200}, Vector2{64, 64} //
+      );
       enemcmp->value = 5;
+
+      abbcmp->radius = ((sprtcmp->GetTexture().Get()->GetRaylibTexture()->width - 10) / 2.f) *
+                       (sprtcmp->GetTargetSize().x / sprtcmp->GetTextureSourceRect().width);
       break;
-    case EnemyType::SHOOTER:
-      txtcmp->texture = _parentLayer->GetAsset<Base::Texture>("shooter");
+    }
+    case EnemyType::SHOOTER: {
+
+      auto *sprtcmp = e->AddComponent<Base::SpriteComponent>(                                               //
+        _parentLayer->GetAsset<Base::Texture>("shooter"), Vector2{0, 0}, Vector2{200, 200}, Vector2{64, 64} //
+      );
       trckcmp->trackingDistance = 1000;
       enemcmp->value = 2;
 
@@ -238,17 +241,11 @@ void Spawner::SpawnWave( //
 
       transfxcmp->bindMin = _parentLayer->GetScreenToWorld({0, 0});
       transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
+      abbcmp->radius = ((sprtcmp->GetTexture().Get()->GetRaylibTexture()->width - 10) / 2.f) *
+                       (sprtcmp->GetTargetSize().x / sprtcmp->GetTextureSourceRect().width);
       break;
     }
-
-    txtcmp->source = {
-      0,
-      0,
-      static_cast<float>(txtcmp->texture.Get()->GetRaylibTexture()->width),
-      static_cast<float>(txtcmp->texture.Get()->GetRaylibTexture()->height),
-    };
-    abbcmp->radius =
-      ((txtcmp->texture.Get()->GetRaylibTexture()->width - 10) / 2.f) * (txtcmp->targetSize.x / txtcmp->source.width);
+    }
 
     entityManager->AddEntity(e);
   }

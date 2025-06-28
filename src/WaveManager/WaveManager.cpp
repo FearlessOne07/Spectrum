@@ -6,7 +6,7 @@
 #include "base/components/ImpulseComponent.hpp"
 #include "base/components/MoveComponent.hpp"
 #include "base/components/RigidBodyComponent.hpp"
-#include "base/components/TextureComponent.hpp"
+#include "base/components/SpriteComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/scenes/SceneLayer.hpp"
 #include "base/signals/Signal.hpp"
@@ -166,10 +166,9 @@ void WaveManager::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
       colcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
       colcmp->radius = 8;
 
-      auto txtcmp = e->AddComponent<Base::TextureComponent>();
-      txtcmp->source = {2 * 8, 1 * 8, 8, 8};
-      txtcmp->texture = _parentLayer->GetAsset<Base::Texture>("power-ups");
-      txtcmp->targetSize = {16, 16};
+      auto sprtcmp = e->AddComponent<Base::SpriteComponent>(                                              //
+        _parentLayer->GetAsset<Base::Texture>("power-ups"), Vector2{2, 1}, Vector2{8, 8}, Vector2{16, 16} //
+      );
 
       auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
       rbcmp->isKinematic = false;
@@ -186,7 +185,7 @@ void WaveManager::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
       impcmp->force = std::uniform_int_distribution<int>(100, 150)(_gen);
       impcmp->direction = {sin(angle), cos(angle)};
 
-      e->AddComponent<LightComponent>();
+      e->AddComponent<LightComponent>()->value = 1;
       _entityMan->AddEntity(e);
     }
   }

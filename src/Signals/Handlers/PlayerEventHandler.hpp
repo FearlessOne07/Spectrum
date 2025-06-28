@@ -7,7 +7,7 @@ class PlayerSignalHandler
 {
 private: // Handlers
   Base::SceneLayer *_parentLayer = nullptr;
-  void PlayerEnemyCollisionHandler(const std::shared_ptr<Base::Signal>);
+  void PlayerEntityCollisionHandler(const std::shared_ptr<Base::Signal>);
   void PlayerDeathHandler(const std::shared_ptr<Base::Signal>);
 
 public:

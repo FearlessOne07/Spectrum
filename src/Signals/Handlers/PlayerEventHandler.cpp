@@ -3,6 +3,8 @@
 #include "Components/DamageComponent.hpp"
 #include "Components/EnemyComponent.hpp"
 #include "Components/HealthComponent.hpp"
+#include "Components/LightCollectorComponent.hpp"
+#include "Components/LightComponent.hpp"
 #include "Components/ShootComponent.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
@@ -10,13 +12,13 @@
 #include "Signals/EntityDiedSignal.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/components/TransformComponent.hpp"
-#include "base/scenes/SceneLayer.inl"
 #include "base/scenes/SceneTransition.hpp"
 #include <base/audio/signals/PlaySoundSignal.hpp>
 #include <base/components/ImpulseComponent.hpp>
 #include <base/components/MoveComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
 #include <base/entities/signals/EntityCollisionSignal.hpp>
+#include <base/scenes/SceneLayer.inl>
 #include <base/signals/SignalBus.hpp>
 #include <memory>
 #include <raylib.h>
@@ -28,13 +30,13 @@ void PlayerSignalHandler::Init(Base::SceneLayer *parentLayer)
   auto signalManager = Base::SignalBus::GetInstance();
 
   signalManager->SubscribeSignal<Base::EntityCollisionSignal>(
-    [this](const std::shared_ptr<Base::Signal> &signal) { this->PlayerEnemyCollisionHandler(signal); });
+    [this](const std::shared_ptr<Base::Signal> &signal) { this->PlayerEntityCollisionHandler(signal); });
 
   signalManager->SubscribeSignal<EntityDiedSignal>(
     [this](const std::shared_ptr<Base::Signal> &signal) { this->PlayerDeathHandler(signal); });
 }
 
-void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base::Signal> event)
+void PlayerSignalHandler::PlayerEntityCollisionHandler(const std::shared_ptr<Base::Signal> event)
 {
   auto collEvent = std::static_pointer_cast<Base::EntityCollisionSignal>(event);
 
@@ -46,7 +48,7 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
     Base::CameraShakeConfig config;
     config.trauma = 0.5;
     config.frequency = 150.0f;
-    config.shakeMagnitude = 6.0f;
+    config.shakeMagnitude = 10.0f;
     config.duration = 1;
     config.traumaMultiplyer = 2;
     config.rotationMagnitude = 4;
@@ -103,6 +105,14 @@ void PlayerSignalHandler::PlayerEnemyCollisionHandler(const std::shared_ptr<Base
       impcmpatt->direction = impcmpdef->direction * -1;
       impcmpatt->force = 0.5 * impcmpdef->force;
     }
+  }
+
+  if (defence->HasComponent<PlayerTag>() && attack->HasComponent<LightComponent>())
+  {
+    auto lightcolcmp = defence->GetComponent<LightCollectorComponent>();
+    auto lightcmp = attack->GetComponent<LightComponent>();
+    lightcolcmp->value += lightcmp->value;
+    attack->SetDead();
   }
 }
 

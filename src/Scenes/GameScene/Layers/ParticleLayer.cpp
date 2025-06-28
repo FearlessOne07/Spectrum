@@ -3,7 +3,7 @@
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "base/assets/AssetManager.hpp"
-#include "base/components/TextureComponent.hpp"
+#include "base/components/SpriteComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleEmitter.hpp"
@@ -62,16 +62,18 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
   if (signal->entity->HasComponent<EnemyComponent>())
   {
     auto e = signal->entity;
-    auto txtcmp = e->GetComponent<Base::TextureComponent>();
+    auto sprtcmp = e->GetComponent<Base::SpriteComponent>();
     auto transcmp = e->GetComponent<Base::TransformComponent>();
     std::uniform_real_distribution<float> lifeRange(0.5, 1);
-    std::uniform_real_distribution<float> radiusRange(0.2 * txtcmp->targetSize.x, 0.3 * txtcmp->targetSize.x);
+    std::uniform_real_distribution<float> radiusRange(                   //
+      0.2 * sprtcmp->GetTargetSize().x, 0.3 * sprtcmp->GetTargetSize().x //
+    );
     std::uniform_real_distribution<float> angleDist(0, 360);
     std::uniform_real_distribution<float> speedDist(0, 700);
 
     _emitter->isEmitting = true;
     _emitter->initialisationFunction = [=, this](Base::ParticleEmitter &emitter) mutable {
-      emitter.particleTexture = txtcmp->texture;
+      emitter.particleTexture = sprtcmp->GetTexture();
       emitter.particleTextureSource = {
         0,
         0,
@@ -91,7 +93,7 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
     Base::CameraShakeConfig config;
     config.trauma = 0.5;
     config.frequency = 50.0f;
-    config.shakeMagnitude = 21.0f;
+    config.shakeMagnitude = 60.0f;
     config.duration = 1;
     config.traumaMultiplyer = 2;
     config.rotationMagnitude = 0.5;

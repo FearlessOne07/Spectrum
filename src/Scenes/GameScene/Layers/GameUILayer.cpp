@@ -1,11 +1,13 @@
 #include "GameUILayer.hpp"
 #include "Components/HealthComponent.hpp"
+#include "Components/LightCollectorComponent.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
 #include "base/assets/AssetManager.hpp"
+#include "base/entities/EntityManager.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
@@ -24,7 +26,7 @@ void GameUILayer::OnAttach()
   InitHud();
   InitPauseMenu();
 
-  // Register Event
+  // Register Events
   auto bus = Base::SignalBus::GetInstance();
   bus->SubscribeSignal<EntityDamagedSignal>([this](std::shared_ptr<Base::Signal> signal) {
     this->OnPlayerDamaged(signal); //
@@ -73,8 +75,11 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 
 void GameUILayer::Update(float dt)
 {
-  auto fpsLabel = _hud->GetElement<Base::UILabel>("fps");
-  fpsLabel->SetText(TextFormat("FPS: %i", GetFPS()));
+  auto player = GetOwner()->GetEntityManager()->Query<PlayerTag>();
+  auto lightcmp = player[0]->item->GetComponent<LightCollectorComponent>();
+
+  auto playerLight = _hud->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
+  playerLight->SetText(TextFormat("%i", lightcmp->value));
 }
 
 void GameUILayer::Render()
@@ -222,9 +227,20 @@ void GameUILayer::InitHud()
   playerHealth->SetFontSize(40);
   playerHealth->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
 
-  auto fpsLabel = _hud->AddElement<Base::UILabel>("fps");
-  fpsLabel->SetText(TextFormat("FPS: i%", 0));
-  fpsLabel->SetFontSize(40);
-  fpsLabel->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
-  fpsLabel->SetPosition({0, 60});
+  auto lightContainer = _hud->AddElement<Base::UIContainer>("light-container");
+  lightContainer->SetLayout(Base::UIContainer::Layout::HORIZONTAL);
+  lightContainer->SetGapSize(20);
+  lightContainer->SetPadding({15, 10});
+  lightContainer->SetPosition({0, 60});
+
+  auto lightIcon = lightContainer->AddChild<Base::UITextureRect>("light-icon");
+  lightIcon->SetSourceRect({2 * 8, 1 * 8, 8, 8});
+  lightIcon->SetTextureHandle(GetAsset<Base::Texture>("power-ups"));
+  lightIcon->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  lightIcon->SetSize({40, 40});
+
+  auto playerLight = lightContainer->AddChild<Base::UILabel>("player-light");
+  playerLight->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
+  playerLight->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  playerLight->SetFontSize(40);
 }
