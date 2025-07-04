@@ -10,9 +10,11 @@ private:
   void OnPlayerDamaged(std::shared_ptr<Base::Signal>);
   void InitPauseMenu();
   void InitHud();
+  void InitBuyMenu();
 
   Base::UILayer *_hud;
   Base::UILayer *_pauseMenu;
+  Base::UILayer *_buyMenu;
 
 public:
   void Update(float dt) override;

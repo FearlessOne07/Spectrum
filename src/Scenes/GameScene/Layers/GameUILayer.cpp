@@ -11,7 +11,9 @@
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/ui/UIElement.hpp"
 #include "base/ui/UILayer.hpp"
+#include "base/ui/UILayoutSettings.hpp"
 #include "base/ui/elements/UIButton.hpp"
 #include "base/ui/elements/UIContainer.hpp"
 #include "base/ui/elements/UILabel.hpp"
@@ -25,6 +27,7 @@ void GameUILayer::OnAttach()
   // Init UI
   InitHud();
   InitPauseMenu();
+  InitBuyMenu();
 
   // Register Events
   auto bus = Base::SignalBus::GetInstance();
@@ -69,6 +72,20 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
       }
       event->isHandled = true;
     }
+    else if (keyEvent->key == KEY_TAB && keyEvent->action == Base::InputEvent::Action::PRESSED)
+    {
+      if (_buyMenu->IsVisible())
+      {
+        _buyMenu->Hide();
+        bus->BroadCastSignal(rSig);
+      }
+      else
+      {
+        bus->BroadCastSignal(pSig);
+        _buyMenu->Show();
+      }
+      event->isHandled = true;
+    }
   }
   GetOwner()->GetUIManager()->OnInputEvent(event);
 }
@@ -76,15 +93,18 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 void GameUILayer::Update(float dt)
 {
   auto player = GetOwner()->GetEntityManager()->Query<PlayerTag>();
-  auto lightcmp = player[0]->item->GetComponent<LightCollectorComponent>();
-
-  auto playerLight = _hud->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
-  playerLight->SetText(TextFormat("%i", lightcmp->value));
+  if (player.size() > 0)
+  {
+    auto lightcmp = player[0]->item->GetComponent<LightCollectorComponent>();
+    auto playerLight = _hud->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
+    playerLight->SetText(TextFormat("%i", lightcmp->value));
+  }
 }
 
 void GameUILayer::Render()
 {
   GetOwner()->GetUIManager()->RenderLayer("hud");
+  GetOwner()->GetUIManager()->RenderLayer("buy-menu");
   GetOwner()->GetUIManager()->RenderLayer("pause-menu");
 }
 
@@ -243,4 +263,51 @@ void GameUILayer::InitHud()
   playerLight->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   playerLight->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
   playerLight->SetFontSize(40);
+}
+
+void GameUILayer::InitBuyMenu()
+{
+  _buyMenu = GetOwner()->GetUIManager()->AddLayer("buy-menu");
+  _buyMenu->Hide();
+
+  auto mainContainer = _buyMenu->AddElement<Base::UIContainer>("main-container");
+  mainContainer->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
+  mainContainer->SetSize(GetSize());
+  mainContainer->SetGapMode(Base::UIContainer::GapMode::AUTO);
+  mainContainer->SetLayout(Base::UIContainer::Layout::HORIZONTAL);
+  mainContainer->SetPadding({200, 300});
+  mainContainer->SetPosition({0, -GetSize().y});
+  mainContainer->_onShow = [this, mainContainer]() {
+    GetOwner()->GetTweenManager()->AddTween<float>( //
+      Base::TweenKey{mainContainer.get(), "buy-menu-container-position"},
+      [mainContainer, this](float pos) { mainContainer->SetPosition({0, pos}); }, //
+      mainContainer->GetBasePosition().y, 0, 0.5                                  //
+    );
+  };
+  mainContainer->_onHide = [this, mainContainer]() {
+    GetOwner()->GetTweenManager()->AddTween<float>( //
+      Base::TweenKey{mainContainer.get(), "buy-menu-container-position"},
+      [mainContainer, this](float pos) { mainContainer->SetPosition({0, pos}); }, mainContainer->GetBasePosition().y,
+      -GetSize().y, .3, Base::TweenManager::EasingType::EASE_IN //
+    );
+  };
+
+  Vector2 cardSize = {350, 500};
+  auto card1 = mainContainer->AddChild<Base::UIContainer>("card1");
+  card1->SetSize(cardSize);
+  card1->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
+  card1->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  // card1->SetColor(WHITE);
+
+  auto card2 = mainContainer->AddChild<Base::UIContainer>("card2");
+  card2->SetSize(cardSize);
+  card2->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
+  card2->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  // card2->SetColor(WHITE);
+
+  auto card3 = mainContainer->AddChild<Base::UIContainer>("card3");
+  card3->SetSize(cardSize);
+  card3->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
+  card3->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  // card3->SetColor(WHITE);
 }
