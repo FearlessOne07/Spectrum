@@ -60,12 +60,17 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
     auto rSig = std::make_shared<GameResumedSignal>();
     if (keyEvent->key == KEY_ESCAPE && keyEvent->action == Base::InputEvent::Action::PRESSED)
     {
-      if (_pauseMenu->IsVisible())
+      if (_buyMenu->IsVisible())
+      {
+        _buyMenu->Hide();
+        bus->BroadCastSignal(rSig);
+      }
+      else if (_pauseMenu->IsVisible())
       {
         _pauseMenu->Hide();
         bus->BroadCastSignal(rSig);
       }
-      else
+      else if (!_pauseMenu->IsVisible())
       {
         bus->BroadCastSignal(pSig);
         _pauseMenu->Show();
@@ -79,7 +84,7 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
         _buyMenu->Hide();
         bus->BroadCastSignal(rSig);
       }
-      else
+      else if (!_buyMenu->IsVisible() && !_pauseMenu->IsVisible())
       {
         bus->BroadCastSignal(pSig);
         _buyMenu->Show();
@@ -134,18 +139,20 @@ void GameUILayer::InitPauseMenu()
   container->SetPosition({GetSize().x / 2, -100});
   container->SetPadding({10, 10});
   container->SetGapSize(15);
-  container->_onShow = [this, container]() {
+
+  float offset = 100 + (GetSize().y / 2);
+  container->_onShow = [this, container, offset]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{container.get(), "pause-menu-container-position"},
-      [container, this](float pos) { container->SetPosition({GetSize().x / 2, pos}); }, container->GetBasePosition().y,
-      GetSize().y / 2, 0.5 //
+      [container, this](float pos) { container->SetPositionalOffset({0, pos}); }, 0, offset, 0.5 //
     );
   };
   container->_onHide = [this, container]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{container.get(), "pause-menu-container-position"},
-      [container, this](float pos) { container->SetPosition({GetSize().x / 2, pos}); }, container->GetBasePosition().y,
-      -100, .3, Base::TweenManager::EasingType::EASE_IN //
+      [container, this](float pos) { container->SetPositionalOffset({0, pos}); }, container->GetPositionalOffset().y, 0,
+      .3,
+      Base::TweenManager::EasingType::EASE_IN //
     );
   };
 
@@ -169,8 +176,10 @@ void GameUILayer::InitPauseMenu()
     },
     [=, this]() { //
       GetOwner()->GetTweenManager()->AddTween<float>(
-        {resumeButton.get(), "font-size"}, [=](float size) { resumeButton->SetFontSize(size, false); },
-        resumeButton->GetFontSize(), resumeButton->GetBaseFontSize(), 0.1,
+        {resumeButton.get(), "font-size"},                           //
+        [=](float size) { resumeButton->SetFontSize(size, false); }, //
+        resumeButton->GetFontSize(),                                 //
+        resumeButton->GetBaseFontSize(), 0.1,
         Base::TweenManager::EasingType::EASE_OUT //
       );
     },
@@ -268,8 +277,6 @@ void GameUILayer::InitHud()
 void GameUILayer::InitBuyMenu()
 {
   _buyMenu = GetOwner()->GetUIManager()->AddLayer("buy-menu");
-  _buyMenu->Hide();
-
   auto mainContainer = _buyMenu->AddElement<Base::UIContainer>("main-container");
   mainContainer->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
   mainContainer->SetSize(GetSize());
@@ -280,34 +287,55 @@ void GameUILayer::InitBuyMenu()
   mainContainer->_onShow = [this, mainContainer]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{mainContainer.get(), "buy-menu-container-position"},
-      [mainContainer, this](float pos) { mainContainer->SetPosition({0, pos}); }, //
-      mainContainer->GetBasePosition().y, 0, 0.5                                  //
+      [mainContainer, this](float pos) { mainContainer->SetPositionalOffset({0, pos}); }, //
+      mainContainer->GetPositionalOffset().y, GetSize().y, 0.5                            //
     );
   };
   mainContainer->_onHide = [this, mainContainer]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{mainContainer.get(), "buy-menu-container-position"},
-      [mainContainer, this](float pos) { mainContainer->SetPosition({0, pos}); }, mainContainer->GetBasePosition().y,
-      -GetSize().y, .3, Base::TweenManager::EasingType::EASE_IN //
+      [mainContainer, this](float pos) { mainContainer->SetPositionalOffset({0, pos}); },
+      mainContainer->GetPositionalOffset().y, 0, .3, Base::TweenManager::EasingType::EASE_IN //
     );
   };
 
   Vector2 cardSize = {350, 500};
   auto card1 = mainContainer->AddChild<Base::UIContainer>("card1");
   card1->SetSize(cardSize);
+  card1->SetBackgroundColor(WHITE);
   card1->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
   card1->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
-  // card1->SetColor(WHITE);
+  card1->onHover = {
+    [=, this]() {
+      GetOwner()->GetTweenManager()->AddTween<float>(
+        {card1.get(), "y-pos-offset"},                            //
+        [=](float pos) { card1->SetPositionalOffset({0, pos}); }, //
+        card1->GetPositionalOffset().y,                           //
+        -50, 0.1,
+        Base::TweenManager::EasingType::EASE_OUT //
+      );
+    },
+    [=, this]() {
+      GetOwner()->GetTweenManager()->AddTween<float>(
+        {card1.get(), "y-pos-offset"},                            //
+        [=](float pos) { card1->SetPositionalOffset({0, pos}); }, //
+        card1->GetPositionalOffset().y,                           //
+        0, 0.1,
+        Base::TweenManager::EasingType::EASE_OUT //
+      );
+    },
+  };
 
   auto card2 = mainContainer->AddChild<Base::UIContainer>("card2");
   card2->SetSize(cardSize);
   card2->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
   card2->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
-  // card2->SetColor(WHITE);
+  card2->SetBackgroundColor(WHITE);
 
   auto card3 = mainContainer->AddChild<Base::UIContainer>("card3");
   card3->SetSize(cardSize);
   card3->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
   card3->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
-  // card3->SetColor(WHITE);
+  card3->SetBackgroundColor(WHITE);
+  _buyMenu->Hide();
 }
