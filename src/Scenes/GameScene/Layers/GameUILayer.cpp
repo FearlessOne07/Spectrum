@@ -166,6 +166,9 @@ void GameUILayer::InitPauseMenu()
     _pauseMenu->Hide();
     bus->BroadCastSignal(rSig);
   };
+  resumeButton->SetSprite(
+    {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
+  );
   resumeButton->onHover = {
     [=, this]() { //
       GetOwner()->GetTweenManager()->AddTween<float>(
@@ -192,6 +195,9 @@ void GameUILayer::InitPauseMenu()
   exitButton->SetFontSize(50);
   exitButton->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
   exitButton->onClick = [this]() { GetOwner()->SetSceneTransition(Base::SceneRequest::QUIT); };
+  exitButton->SetSprite(
+    {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
+  );
   exitButton->onHover = {
     [=, this]() { //
       GetOwner()->GetTweenManager()->AddTween<float>(

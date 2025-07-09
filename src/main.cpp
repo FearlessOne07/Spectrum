@@ -16,6 +16,7 @@ int main(void)
       {
         {"font", "assets/fonts/main-font.ttf"},
         {"audio-stream", "assets/music/main-track.mp3"},
+        {"texture", "assets/textures/button.png"},
       },
   });
 
