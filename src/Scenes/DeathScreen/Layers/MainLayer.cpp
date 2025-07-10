@@ -10,7 +10,6 @@
 
 void MainLayer::OnAttach()
 {
-
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   auto mainLayer = GetOwner()->GetUIManager()->AddLayer("main-layer");
 

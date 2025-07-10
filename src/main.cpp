@@ -1,5 +1,6 @@
 #include "Scenes/DeathScreen/DeathScreen.hpp"
 #include "Scenes/GameScene/GameScene.hpp"
+#include "Scenes/MainMenu/MainMenu.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/PowerUpSystem/PowerUpSystem.hpp"
@@ -15,13 +16,15 @@ int main(void)
     .GlobalAssets =
       {
         {"font", "assets/fonts/main-font.ttf"},
-        {"audio-stream", "assets/music/main-track.mp3"},
+        {"audio-stream", "assets/music/game-track.mp3"},
+        {"audio-stream", "assets/music/main-menu-track.wav"},
         {"texture", "assets/textures/button.png"},
       },
   });
 
   // Register Scenes
-  game.RegisterScene<GameScene>(true);
+  game.RegisterScene<MainMenu>(true);
+  game.RegisterScene<GameScene>();
   game.RegisterScene<DeathScreen>();
 
   // Custom Systems

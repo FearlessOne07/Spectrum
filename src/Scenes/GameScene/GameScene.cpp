@@ -6,6 +6,7 @@
 #include "Systems/PowerUpSystem/PowerUpSystem.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
+#include "base/audio/signals/StopAudioStreamSignal.hpp"
 #include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
 #include <base/renderer/RenderContext.hpp>
@@ -15,6 +16,7 @@
 
 void GameScene::Enter(Base::SceneData sceneData)
 {
+  GetEntityManager()->Clear();
   StartSystems();
   SetClearColor({7, 7, 15, 255});
 
@@ -41,7 +43,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   AttachLayer<GameUILayer>(uiLayer);
 
   // MainRenderLayer
-  auto mainLayer = AddRenderLayer({1920, 1080}, WHITE);
+  auto mainLayer = AddRenderLayer({1920, 1080}, GetClearColor());
   mainLayer->SetCameraOffset({1920.f / 2, 1080.f / 2});
   mainLayer->SetCameraZoom(1.2);
   mainLayer->SetCameraTarget({0, 0});
@@ -52,16 +54,21 @@ void GameScene::Enter(Base::SceneData sceneData)
   AttachLayer<ParticleLayer>(mainLayer);
 
   std::shared_ptr<Base::PlayAudioStreamSignal> sig = std::make_shared<Base::PlayAudioStreamSignal>();
-  sig->streamHandle = GetAsset<Base::AudioStream>("main-track");
+  sig->streamHandle = GetAsset<Base::AudioStream>("game-track");
   sig->streamPan = 0.5;
-  sig->streamVolume = 1;
+  sig->streamVolume = 0.5;
   sig->loopStream = true;
   bus->BroadCastSignal(sig);
 }
 
 void GameScene::Exit()
 {
+  auto bus = Base::SignalBus::GetInstance();
+  std::shared_ptr<Base::StopAudioStreamSignal> sig = std::make_shared<Base::StopAudioStreamSignal>();
+  sig->streamHandle = GetAsset<Base::AudioStream>("game-track");
+  bus->BroadCastSignal(sig);
   StopSystems();
+  GetEntityManager()->Clear();
 }
 
 void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)

@@ -4,6 +4,7 @@
 #include "Components/Tags/PlayerTag.hpp"
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
+#include "Scenes/MainMenu/MainMenu.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
 #include "base/assets/AssetManager.hpp"
@@ -49,6 +50,9 @@ void GameUILayer::OnAttach()
 
 void GameUILayer::OnDetach()
 {
+  GetOwner()->GetUIManager()->RemoveLayer("hud");
+  GetOwner()->GetUIManager()->RemoveLayer("pause-menu");
+  GetOwner()->GetUIManager()->RemoveLayer("buy-menu");
 }
 
 void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
@@ -189,27 +193,30 @@ void GameUILayer::InitPauseMenu()
   };
 
   // Exit Button
-  auto exitButton = container->AddChild<Base::UIButton>("exit-button");
-  exitButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
-  exitButton->SetText("Exit");
-  exitButton->SetFontSize(50);
-  exitButton->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
-  exitButton->onClick = [this]() { GetOwner()->SetSceneTransition(Base::SceneRequest::QUIT); };
-  exitButton->SetSprite(
+  auto mainMenuButton = container->AddChild<Base::UIButton>("main-menu-button");
+  mainMenuButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
+  mainMenuButton->SetText("Main Menu");
+  mainMenuButton->SetFontSize(50);
+  mainMenuButton->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
+  mainMenuButton->onClick = [this]() {
+    GetOwner()->SetSceneTransition<MainMenu>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
+  };
+  mainMenuButton->SetSprite(
     {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
   );
-  exitButton->onHover = {
+  mainMenuButton->onHover = {
     [=, this]() { //
       GetOwner()->GetTweenManager()->AddTween<float>(
-        {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetFontSize(size, false); },
-        exitButton->GetFontSize(), 55, 0.1,
+        {mainMenuButton.get(), "font-size"}, [=](float size) { mainMenuButton->SetFontSize(size, false); },
+        mainMenuButton->GetFontSize(), 55, 0.1,
         Base::TweenManager::EasingType::EASE_OUT //
       );
     },
     [=, this]() { //
       GetOwner()->GetTweenManager()->AddTween<float>(
-        {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetFontSize(size, false); },
-        exitButton->GetFontSize(), exitButton->GetBaseFontSize(), 0.1, Base::TweenManager::EasingType::EASE_OUT //
+        {mainMenuButton.get(), "font-size"}, [=](float size) { mainMenuButton->SetFontSize(size, false); },
+        mainMenuButton->GetFontSize(), mainMenuButton->GetBaseFontSize(), 0.1,
+        Base::TweenManager::EasingType::EASE_OUT //
       );
     },
   };
