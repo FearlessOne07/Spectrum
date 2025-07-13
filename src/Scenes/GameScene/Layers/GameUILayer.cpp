@@ -21,6 +21,7 @@
 #include "base/ui/elements/UIPanel.hpp"
 #include "base/ui/elements/UITextureRect.hpp"
 #include "raylib.h"
+#include <format>
 #include <memory>
 
 void GameUILayer::OnAttach()
@@ -313,42 +314,36 @@ void GameUILayer::InitBuyMenu()
   };
 
   Vector2 cardSize = {350, 500};
-  auto card1 = mainContainer->AddChild<Base::UIContainer>("card1");
-  card1->SetSize(cardSize);
-  card1->SetBackgroundColor(WHITE);
-  card1->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
-  card1->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
-  card1->onHover = {
-    [=, this]() {
-      GetOwner()->GetTweenManager()->AddTween<float>(
-        {card1.get(), "y-pos-offset"},                            //
-        [=](float pos) { card1->SetPositionalOffset({0, pos}); }, //
-        card1->GetPositionalOffset().y,                           //
-        -50, 0.1,
-        Base::TweenManager::EasingType::EASE_OUT //
-      );
-    },
-    [=, this]() {
-      GetOwner()->GetTweenManager()->AddTween<float>(
-        {card1.get(), "y-pos-offset"},                            //
-        [=](float pos) { card1->SetPositionalOffset({0, pos}); }, //
-        card1->GetPositionalOffset().y,                           //
-        0, 0.1,
-        Base::TweenManager::EasingType::EASE_OUT //
-      );
-    },
-  };
-
-  auto card2 = mainContainer->AddChild<Base::UIContainer>("card2");
-  card2->SetSize(cardSize);
-  card2->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
-  card2->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
-  card2->SetBackgroundColor(WHITE);
-
-  auto card3 = mainContainer->AddChild<Base::UIContainer>("card3");
-  card3->SetSize(cardSize);
-  card3->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
-  card3->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
-  card3->SetBackgroundColor(WHITE);
+  for (int i = 0; i < 3; i++)
+  {
+    auto card = mainContainer->AddChild<Base::UIContainer>(std::format("card{0}", i + 1));
+    card->SetSize(cardSize);
+    card->SetBackgroundColor(WHITE);
+    card->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
+    card->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+    card->SetSprite(
+      {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
+    );
+    card->onHover = {
+      [=, this]() {
+        GetOwner()->GetTweenManager()->AddTween<float>(
+          {card.get(), "y-pos-offset"},                            //
+          [=](float pos) { card->SetPositionalOffset({0, pos}); }, //
+          card->GetPositionalOffset().y,                           //
+          -30, 0.1,
+          Base::TweenManager::EasingType::EASE_OUT //
+        );
+      },
+      [=, this]() {
+        GetOwner()->GetTweenManager()->AddTween<float>(
+          {card.get(), "y-pos-offset"},                            //
+          [=](float pos) { card->SetPositionalOffset({0, pos}); }, //
+          card->GetPositionalOffset().y,                           //
+          0, 0.1,
+          Base::TweenManager::EasingType::EASE_OUT //
+        );
+      },
+    };
+  }
   _buyMenu->Hide();
 }
