@@ -215,18 +215,15 @@ void Spawner::SpawnWave( //
     switch (type)
     {
     case EnemyType::CHASER: {
-
       auto *sprtcmp = e->AddComponent<Base::SpriteComponent>(                                              //
         _parentLayer->GetAsset<Base::Texture>("chaser"), Vector2{0, 0}, Vector2{200, 200}, Vector2{64, 64} //
       );
       enemcmp->value = 5;
-
       abbcmp->radius = ((sprtcmp->GetTexture().Get()->GetRaylibTexture()->width - 10) / 2.f) *
                        (sprtcmp->GetTargetSize().x / sprtcmp->GetTextureSourceRect().width);
       break;
     }
     case EnemyType::SHOOTER: {
-
       auto *sprtcmp = e->AddComponent<Base::SpriteComponent>(                                               //
         _parentLayer->GetAsset<Base::Texture>("shooter"), Vector2{0, 0}, Vector2{200, 200}, Vector2{64, 64} //
       );

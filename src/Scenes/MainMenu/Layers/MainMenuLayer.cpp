@@ -30,20 +30,27 @@ void MainMenuLayer::OnAttach()
     {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
   );
   playButton->onHover = {
-    [=, this]() { //
-      GetOwner()->GetTweenManager()->AddTween<float>(
+    [=, this]() {                                     //
+      GetOwner()->GetTweenManager()->AddTween<float>( //
         {playButton.get(), "font-size"}, [=](float size) { playButton->SetFontSize(size, false); },
-        playButton->GetFontSize(), 60, 0.1,
-        Base::TweenManager::EasingType::EASE_OUT //
+        {
+          .startValue = playButton->GetFontSize(),
+          .endValue = 60,
+          .duration = 0.1,
+          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+        } //
       );
     },
-    [=, this]() { //
-      GetOwner()->GetTweenManager()->AddTween<float>(
+    [=, this]() {                                                  //
+      GetOwner()->GetTweenManager()->AddTween<float>(              //
         {playButton.get(), "font-size"},                           //
         [=](float size) { playButton->SetFontSize(size, false); }, //
-        playButton->GetFontSize(),                                 //
-        playButton->GetBaseFontSize(), 0.1,
-        Base::TweenManager::EasingType::EASE_OUT //
+        {
+          .startValue = playButton->GetFontSize(), //
+          .endValue = playButton->GetBaseFontSize(),
+          .duration = 0.1,
+          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+        } //
       );
     },
   };
@@ -59,17 +66,26 @@ void MainMenuLayer::OnAttach()
     {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
   );
   exitButton->onHover = {
-    [=, this]() { //
-      GetOwner()->GetTweenManager()->AddTween<float>(
+    [=, this]() {                                     //
+      GetOwner()->GetTweenManager()->AddTween<float>( //
         {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetFontSize(size, false); },
-        exitButton->GetFontSize(), 60, 0.1,
-        Base::TweenManager::EasingType::EASE_OUT //
+        {
+          .startValue = exitButton->GetFontSize(),
+          .endValue = 60,
+          .duration = 0.1,
+          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+        } //
       );
     },
-    [=, this]() { //
-      GetOwner()->GetTweenManager()->AddTween<float>(
+    [=, this]() {                                     //
+      GetOwner()->GetTweenManager()->AddTween<float>( //
         {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetFontSize(size, false); },
-        exitButton->GetFontSize(), exitButton->GetBaseFontSize(), 0.1, Base::TweenManager::EasingType::EASE_OUT //
+        {
+          .startValue = exitButton->GetFontSize(),
+          .endValue = exitButton->GetBaseFontSize(),
+          .duration = 0.1,
+          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+        } //
       );
     },
   };

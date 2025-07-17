@@ -25,6 +25,10 @@ set(SOURCES
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
+set_target_properties("${PROJECT_NAME}" PROPERTIES
+  VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+)
+
 target_include_directories("${PROJECT_NAME}"
   PUBLIC
     "${CMAKE_SOURCE_DIR}/src"

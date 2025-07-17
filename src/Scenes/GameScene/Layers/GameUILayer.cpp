@@ -7,6 +7,7 @@
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
+#include "UIElements/Card.h"
 #include "base/assets/AssetManager.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/input/Events/KeyEvent.hpp"
@@ -109,6 +110,9 @@ void GameUILayer::Update(float dt)
     auto playerLight = _hud->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
     playerLight->SetText(TextFormat("%i", lightcmp->value));
   }
+
+  auto fps = _hud->GetElement<Base::UIContainer>("fps-container")->GetChild<Base::UILabel>("fps");
+  fps->SetText(std::format("FPS: {0}", GetFPS()));
 }
 
 void GameUILayer::Render()
@@ -149,15 +153,24 @@ void GameUILayer::InitPauseMenu()
   container->_onShow = [this, container, offset]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{container.get(), "pause-menu-container-position"},
-      [container, this](float pos) { container->SetPositionalOffset({0, pos}); }, 0, offset, 0.5 //
+      [container, this](float pos) { container->SetPositionalOffset({0, pos}); },
+      {
+        .startValue = 0,
+        .endValue = offset,
+        .duration = 0.5,
+      } //
     );
   };
+
   container->_onHide = [this, container]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{container.get(), "pause-menu-container-position"},
-      [container, this](float pos) { container->SetPositionalOffset({0, pos}); }, container->GetPositionalOffset().y, 0,
-      .3,
-      Base::TweenManager::EasingType::EASE_IN //
+      [container, this](float pos) { container->SetPositionalOffset({0, pos}); },
+      {.startValue = container->GetPositionalOffset().y,
+       .endValue = 0,
+       .duration = .3,
+       .easingType = Base::TweenManager::EasingType::EASE_IN,
+       .onTweenEnd = [container]() { container->SetVisibilityOff(); }} //
     );
   };
 
@@ -175,20 +188,27 @@ void GameUILayer::InitPauseMenu()
     {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
   );
   resumeButton->onHover = {
-    [=, this]() { //
-      GetOwner()->GetTweenManager()->AddTween<float>(
+    [=, this]() {                                     //
+      GetOwner()->GetTweenManager()->AddTween<float>( //
         {resumeButton.get(), "font-size"}, [=](float size) { resumeButton->SetFontSize(size, false); },
-        resumeButton->GetFontSize(), 55, 0.1,
-        Base::TweenManager::EasingType::EASE_OUT //
+        {
+          .startValue = resumeButton->GetFontSize(),
+          .endValue = 55,
+          .duration = 0.1,
+          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+        } //
       );
     },
-    [=, this]() { //
-      GetOwner()->GetTweenManager()->AddTween<float>(
+    [=, this]() {                                                    //
+      GetOwner()->GetTweenManager()->AddTween<float>(                //
         {resumeButton.get(), "font-size"},                           //
         [=](float size) { resumeButton->SetFontSize(size, false); }, //
-        resumeButton->GetFontSize(),                                 //
-        resumeButton->GetBaseFontSize(), 0.1,
-        Base::TweenManager::EasingType::EASE_OUT //
+        {
+          .startValue = resumeButton->GetFontSize(), //
+          .endValue = resumeButton->GetBaseFontSize(),
+          .duration = 0.1,
+          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+        } //
       );
     },
   };
@@ -206,18 +226,26 @@ void GameUILayer::InitPauseMenu()
     {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
   );
   mainMenuButton->onHover = {
-    [=, this]() { //
-      GetOwner()->GetTweenManager()->AddTween<float>(
+    [=, this]() {                                     //
+      GetOwner()->GetTweenManager()->AddTween<float>( //
         {mainMenuButton.get(), "font-size"}, [=](float size) { mainMenuButton->SetFontSize(size, false); },
-        mainMenuButton->GetFontSize(), 55, 0.1,
-        Base::TweenManager::EasingType::EASE_OUT //
+        {
+          .startValue = mainMenuButton->GetFontSize(),
+          .endValue = 55,
+          .duration = 0.1,
+          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+        } //
       );
     },
-    [=, this]() { //
-      GetOwner()->GetTweenManager()->AddTween<float>(
+    [=, this]() {                                     //
+      GetOwner()->GetTweenManager()->AddTween<float>( //
         {mainMenuButton.get(), "font-size"}, [=](float size) { mainMenuButton->SetFontSize(size, false); },
-        mainMenuButton->GetFontSize(), mainMenuButton->GetBaseFontSize(), 0.1,
-        Base::TweenManager::EasingType::EASE_OUT //
+        {
+          .startValue = mainMenuButton->GetFontSize(),
+          .endValue = mainMenuButton->GetBaseFontSize(),
+          .duration = 0.1,
+          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+        } //
       );
     },
   };
@@ -234,7 +262,10 @@ void GameUILayer::InitPauseMenu()
       [this, pauseMenuPanel, panelColor](unsigned char alpha) {
         pauseMenuPanel->SetColor({panelColor.r, panelColor.g, panelColor.b, alpha});
       },
-      pauseMenuPanel->GetColor().a, 0, 0.3 //
+      {.startValue = pauseMenuPanel->GetColor().a,
+       .endValue = 0,
+       .duration = 0.3,
+       .onTweenEnd = [pauseMenuPanel]() { pauseMenuPanel->SetVisibilityOff(); }} //
     );
   };
 
@@ -244,7 +275,11 @@ void GameUILayer::InitPauseMenu()
       [this, pauseMenuPanel, panelColor](unsigned char alpha) {
         pauseMenuPanel->SetColor({panelColor.r, panelColor.g, panelColor.b, alpha});
       },
-      pauseMenuPanel->GetColor().a, 200, 0.5 //
+      {
+        .startValue = pauseMenuPanel->GetColor().a,
+        .endValue = 200,
+        .duration = 0.5,
+      } //
     );
   };
   _pauseMenu->Hide();
@@ -260,9 +295,8 @@ void GameUILayer::InitHud()
   healtContainer->SetPadding({15, 10});
 
   auto heartIcon = healtContainer->AddChild<Base::UITextureRect>("heart-icon");
-  heartIcon->SetTextureHandle(GetOwner()->GetAsset<Base::Texture>("heart-ui"));
+  heartIcon->SetSprite({GetAsset<Base::Texture>("heart-ui"), {}, {2, 0}, {8, 8}});
   heartIcon->SetSize({40, 40});
-  heartIcon->SetSourceRect({2 * 8, 0, 8, 8});
   heartIcon->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
 
   auto playerHealth = healtContainer->AddChild<Base::UILabel>("player-health");
@@ -277,8 +311,7 @@ void GameUILayer::InitHud()
   lightContainer->SetPosition({0, 60});
 
   auto lightIcon = lightContainer->AddChild<Base::UITextureRect>("light-icon");
-  lightIcon->SetSourceRect({2 * 8, 1 * 8, 8, 8});
-  lightIcon->SetTextureHandle(GetAsset<Base::Texture>("power-ups"));
+  lightIcon->SetSprite({GetAsset<Base::Texture>("power-ups"), {}, {2, 1}, {8, 8}});
   lightIcon->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
   lightIcon->SetSize({40, 40});
 
@@ -286,6 +319,17 @@ void GameUILayer::InitHud()
   playerLight->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   playerLight->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
   playerLight->SetFontSize(40);
+
+  auto fpsContainer = _hud->AddElement<Base::UIContainer>("fps-container");
+  fpsContainer->SetLayout(Base::UIContainer::Layout::HORIZONTAL);
+  fpsContainer->SetGapSize(20);
+  fpsContainer->SetPadding({15, 10});
+  fpsContainer->SetPosition({0, 120});
+
+  auto fps = fpsContainer->AddChild<Base::UILabel>("fps");
+  fps->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
+  fps->SetFontSize(40);
+  fps->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
 }
 
 void GameUILayer::InitBuyMenu()
@@ -302,14 +346,22 @@ void GameUILayer::InitBuyMenu()
     GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{mainContainer.get(), "buy-menu-container-position"},
       [mainContainer, this](float pos) { mainContainer->SetPositionalOffset({0, pos}); }, //
-      mainContainer->GetPositionalOffset().y, GetSize().y, 0.5                            //
+      {
+        .startValue = mainContainer->GetPositionalOffset().y,
+        .endValue = GetSize().y,
+        .duration = 0.5,
+      } //
     );
   };
   mainContainer->_onHide = [this, mainContainer]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{mainContainer.get(), "buy-menu-container-position"},
       [mainContainer, this](float pos) { mainContainer->SetPositionalOffset({0, pos}); },
-      mainContainer->GetPositionalOffset().y, 0, .3, Base::TweenManager::EasingType::EASE_IN //
+      {.startValue = mainContainer->GetPositionalOffset().y,
+       .endValue = 0,
+       .duration = .3,
+       .easingType = Base::TweenManager::EasingType::EASE_IN,
+       .onTweenEnd = [mainContainer]() { mainContainer->SetVisibilityOff(); }} //
     );
   };
 
@@ -321,29 +373,42 @@ void GameUILayer::InitBuyMenu()
     card->SetBackgroundColor(WHITE);
     card->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
     card->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+    card->SetLayout(Base::UIContainer::Layout::VERTICAL);
     card->SetSprite(
       {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
     );
+    card->SetPadding({100, 100});
     card->onHover = {
       [=, this]() {
-        GetOwner()->GetTweenManager()->AddTween<float>(
+        GetOwner()->GetTweenManager()->AddTween<float>(            //
           {card.get(), "y-pos-offset"},                            //
           [=](float pos) { card->SetPositionalOffset({0, pos}); }, //
-          card->GetPositionalOffset().y,                           //
-          -30, 0.1,
-          Base::TweenManager::EasingType::EASE_OUT //
+          {
+            .startValue = card->GetPositionalOffset().y, //
+            .endValue = -30,
+            .duration = 0.1,
+            .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          } //
         );
       },
       [=, this]() {
-        GetOwner()->GetTweenManager()->AddTween<float>(
+        GetOwner()->GetTweenManager()->AddTween<float>(            //
           {card.get(), "y-pos-offset"},                            //
           [=](float pos) { card->SetPositionalOffset({0, pos}); }, //
-          card->GetPositionalOffset().y,                           //
-          0, 0.1,
-          Base::TweenManager::EasingType::EASE_OUT //
+          {
+            .startValue = card->GetPositionalOffset().y, //
+            .endValue = 0,
+            .duration = 0.1,
+            .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          } //
         );
       },
     };
+
+    auto icon = card->AddChild<Base::UITextureRect>("icon");
+    icon->SetSprite({GetAsset<Base::Texture>("heart-ui"), {}, {2, 0}, {8, 8}});
+    icon->SetSize({128, 128});
+    icon->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
   }
   _buyMenu->Hide();
 }
