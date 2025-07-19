@@ -21,7 +21,7 @@ if(MSVC)
   set(CMAKE_EXE_LINKER_FLAGS_DEBUG "/DEBUG")
 else()
   # GCC/Clang flags
-  set(CMAKE_CXX_FLAGS_RELEASE "-Ofast -march=native -flto=auto -DNDEBUG")
+  set(CMAKE_CXX_FLAGS_RELEASE "-O1 -march=native -flto=auto -DNDEBUG")
   set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-flto")
   set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 endif()

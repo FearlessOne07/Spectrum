@@ -7,11 +7,11 @@
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
-#include "UIElements/Card.h"
 #include "base/assets/AssetManager.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/scenes/Scene.hpp"
+#include "base/scenes/SceneLayer.inl"
 #include "base/signals/SignalBus.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/UILayer.hpp"
@@ -108,11 +108,11 @@ void GameUILayer::Update(float dt)
   {
     auto lightcmp = player[0]->item->GetComponent<LightCollectorComponent>();
     auto playerLight = _hud->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
-    playerLight->SetText(TextFormat("%i", lightcmp->value));
+    playerLight->SetText(std::format("{0}", lightcmp->value));
   }
 
   auto fps = _hud->GetElement<Base::UIContainer>("fps-container")->GetChild<Base::UILabel>("fps");
-  fps->SetText(std::format("FPS: {0}", GetFPS()));
+  fps->SetText(std::format("FPS:{0}", GetFPS()));
 }
 
 void GameUILayer::Render()
@@ -131,7 +131,7 @@ void GameUILayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
       auto playerHealth =
         _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
       int health = (int)entityDamg->entity->GetComponent<HealthComponent>()->health;
-      playerHealth->SetText(TextFormat("%i", health));
+      playerHealth->SetText(std::format("{0}", health));
     }
   }
 }
@@ -357,11 +357,13 @@ void GameUILayer::InitBuyMenu()
     GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{mainContainer.get(), "buy-menu-container-position"},
       [mainContainer, this](float pos) { mainContainer->SetPositionalOffset({0, pos}); },
-      {.startValue = mainContainer->GetPositionalOffset().y,
-       .endValue = 0,
-       .duration = .3,
-       .easingType = Base::TweenManager::EasingType::EASE_IN,
-       .onTweenEnd = [mainContainer]() { mainContainer->SetVisibilityOff(); }} //
+      {
+        .startValue = mainContainer->GetPositionalOffset().y,
+        .endValue = 0,
+        .duration = .3,
+        .easingType = Base::TweenManager::EasingType::EASE_IN,
+        .onTweenEnd = [mainContainer]() { mainContainer->SetVisibilityOff(); },
+      } //
     );
   };
 
@@ -371,13 +373,14 @@ void GameUILayer::InitBuyMenu()
     auto card = mainContainer->AddChild<Base::UIContainer>(std::format("card{0}", i + 1));
     card->SetSize(cardSize);
     card->SetBackgroundColor(WHITE);
+    card->SetGapMode(Base::UIContainer::GapMode::AUTO);
     card->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
     card->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
     card->SetLayout(Base::UIContainer::Layout::VERTICAL);
     card->SetSprite(
       {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
     );
-    card->SetPadding({100, 100});
+    card->SetPadding({0, 100});
     card->onHover = {
       [=, this]() {
         GetOwner()->GetTweenManager()->AddTween<float>(            //
@@ -405,10 +408,35 @@ void GameUILayer::InitBuyMenu()
       },
     };
 
+    auto name = card->AddChild<Base::UILabel>("name");
+    name->SetFont(GetAsset<Base::BaseFont>("main-font"));
+    name->SetFontSize(30);
+    name->SetText("Max Health");
+    name->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
+    name->SetTextColor(BLACK);
+
     auto icon = card->AddChild<Base::UITextureRect>("icon");
     icon->SetSprite({GetAsset<Base::Texture>("heart-ui"), {}, {2, 0}, {8, 8}});
     icon->SetSize({128, 128});
     icon->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
+
+    auto price = card->AddChild<Base::UIContainer>("light-container");
+    price->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
+    price->SetLayout(Base::UIContainer::Layout::HORIZONTAL);
+    price->SetGapSize(20);
+    price->SetPadding({15, 10});
+    price->SetPosition({0, 60});
+
+    auto lightIcon = price->AddChild<Base::UITextureRect>("light-icon");
+    lightIcon->SetSprite({GetAsset<Base::Texture>("power-ups"), {}, {2, 1}, {8, 8}});
+    lightIcon->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+    lightIcon->SetSize({32, 32});
+
+    auto light_cost = price->AddChild<Base::UILabel>("light-cost");
+    light_cost->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
+    light_cost->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+    light_cost->SetFontSize(30);
+    light_cost->SetTextColor(BLACK);
   }
   _buyMenu->Hide();
 }

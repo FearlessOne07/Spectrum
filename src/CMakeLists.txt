@@ -21,6 +21,8 @@ set(SOURCES
 
   "./Spawner/Spawner.cpp"
   "./WaveManager/WaveManager.cpp"
+
+  "./Modifiers/SpeedModifier/SpeedModifier.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
