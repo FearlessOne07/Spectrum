@@ -23,6 +23,9 @@ set(SOURCES
   "./WaveManager/WaveManager.cpp"
 
   "./Modifiers/SpeedModifier/SpeedModifier.cpp"
+  "./Modifiers/MaxHealthModifier/MaxHealthModifier.cpp"
+
+  "./Shop/Shop.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

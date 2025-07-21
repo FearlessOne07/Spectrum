@@ -24,13 +24,16 @@
 #include "raylib.h"
 #include <format>
 #include <memory>
+#include <string>
 
 void GameUILayer::OnAttach()
 {
   // Init UI
   InitHud();
   InitPauseMenu();
-  InitBuyMenu();
+  InitShopMenu();
+
+  _shop.Init(this);
 
   // Register Events
   auto bus = Base::SignalBus::GetInstance();
@@ -93,7 +96,7 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
       else if (!_buyMenu->IsVisible() && !_pauseMenu->IsVisible())
       {
         bus->BroadCastSignal(pSig);
-        _buyMenu->Show();
+        OpenShop();
       }
       event->isHandled = true;
     }
@@ -155,7 +158,7 @@ void GameUILayer::InitPauseMenu()
       Base::TweenKey{container.get(), "pause-menu-container-position"},
       [container, this](float pos) { container->SetPositionalOffset({0, pos}); },
       {
-        .startValue = 0,
+        .startValue = container->GetPositionalOffset().y,
         .endValue = offset,
         .duration = 0.5,
       } //
@@ -262,10 +265,12 @@ void GameUILayer::InitPauseMenu()
       [this, pauseMenuPanel, panelColor](unsigned char alpha) {
         pauseMenuPanel->SetColor({panelColor.r, panelColor.g, panelColor.b, alpha});
       },
-      {.startValue = pauseMenuPanel->GetColor().a,
-       .endValue = 0,
-       .duration = 0.3,
-       .onTweenEnd = [pauseMenuPanel]() { pauseMenuPanel->SetVisibilityOff(); }} //
+      {
+        .startValue = pauseMenuPanel->GetColor().a,
+        .endValue = 0,
+        .duration = 0.3,
+        .onTweenEnd = [pauseMenuPanel]() { pauseMenuPanel->SetVisibilityOff(); },
+      } //
     );
   };
 
@@ -332,10 +337,10 @@ void GameUILayer::InitHud()
   fps->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
 }
 
-void GameUILayer::InitBuyMenu()
+void GameUILayer::InitShopMenu()
 {
   _buyMenu = GetOwner()->GetUIManager()->AddLayer("buy-menu");
-  auto mainContainer = _buyMenu->AddElement<Base::UIContainer>("main-container");
+  auto mainContainer = _buyMenu->AddElement<Base::UIContainer>("shop-menu-container");
   mainContainer->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
   mainContainer->SetSize(GetSize());
   mainContainer->SetGapMode(Base::UIContainer::GapMode::AUTO);
@@ -344,7 +349,7 @@ void GameUILayer::InitBuyMenu()
   mainContainer->SetPosition({0, -GetSize().y});
   mainContainer->_onShow = [this, mainContainer]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
-      Base::TweenKey{mainContainer.get(), "buy-menu-container-position"},
+      Base::TweenKey{mainContainer.get(), "shop-menu-container-position"},
       [mainContainer, this](float pos) { mainContainer->SetPositionalOffset({0, pos}); }, //
       {
         .startValue = mainContainer->GetPositionalOffset().y,
@@ -355,7 +360,7 @@ void GameUILayer::InitBuyMenu()
   };
   mainContainer->_onHide = [this, mainContainer]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
-      Base::TweenKey{mainContainer.get(), "buy-menu-container-position"},
+      Base::TweenKey{mainContainer.get(), "shop-menu-container-position"},
       [mainContainer, this](float pos) { mainContainer->SetPositionalOffset({0, pos}); },
       {
         .startValue = mainContainer->GetPositionalOffset().y,
@@ -420,7 +425,7 @@ void GameUILayer::InitBuyMenu()
     icon->SetSize({128, 128});
     icon->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
 
-    auto price = card->AddChild<Base::UIContainer>("light-container");
+    auto price = card->AddChild<Base::UIContainer>("price-container");
     price->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
     price->SetLayout(Base::UIContainer::Layout::HORIZONTAL);
     price->SetGapSize(20);
@@ -439,4 +444,26 @@ void GameUILayer::InitBuyMenu()
     light_cost->SetTextColor(BLACK);
   }
   _buyMenu->Hide();
+}
+
+void GameUILayer::OpenShop()
+{
+  if (_shop.HasNewItems())
+  {
+    auto currentItems = _shop.GetItems();
+    for (int i = 0; i < currentItems.size(); i++)
+    {
+      auto card = _buyMenu->GetElement<Base::UIContainer>("shop-menu-container")
+                    ->GetChild<Base::UIContainer>(std::format("card{0}", i + 1));
+      auto cost = card->GetChild<Base::UIContainer>("price-container")->GetChild<Base::UILabel>("light-cost");
+      auto icon = card->GetChild<Base::UITextureRect>("icon");
+      auto name = card->GetChild<Base::UILabel>("name");
+
+      cost->SetText(std::to_string(currentItems[i].cost));
+      icon->SetSprite(currentItems[i].textureIcon);
+      name->SetText(currentItems[i].name);
+    }
+    _shop.ResetNewItems();
+  }
+  _buyMenu->Show();
 }

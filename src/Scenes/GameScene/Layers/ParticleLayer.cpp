@@ -93,7 +93,7 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
     Base::CameraShakeConfig config;
     config.trauma = 0.5;
     config.frequency = 50.0f;
-    config.shakeMagnitude = 60.0f;
+    config.shakeMagnitude = 20.0f;
     config.duration = 1;
     config.traumaMultiplyer = 2;
     config.rotationMagnitude = 0.5;

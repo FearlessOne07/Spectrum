@@ -1,14 +1,14 @@
 #pragma once
 #include "Modifiers/Modifier.hpp"
 
-class SpeedModifier : public Modifier
+class MaxHealthModifier : public Modifier
 {
 private:
-  float _speedBoost = 1;
+  float _maxHealthBoost = 0.5;
 
 public:
   void Apply(std::shared_ptr<Base::Entity> entity) override;
   void Remove(std::shared_ptr<Base::Entity> entity) override;
-  void SetSpeedBoost(float boostPercent);
-  float GetSpeedBoost() const;
+  void SetMaxHealthBoost(float boostPercent);
+  float GetMaxHealthBoost() const;
 };

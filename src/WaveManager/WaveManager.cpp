@@ -1,6 +1,7 @@
 #include "WaveManager.hpp"
 #include "Components/EnemyComponent.hpp"
 #include "Components/LightComponent.hpp"
+#include "Components/TransformEffects.hpp"
 #include "Spawner/Spawner.hpp"
 #include "base/components/ColliderComponent.hpp"
 #include "base/components/ImpulseComponent.hpp"
@@ -182,8 +183,13 @@ void WaveManager::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
       rbcmp->direction = {sin(angle), cos(angle)};
 
       auto impcmp = e->AddComponent<Base::ImpulseComponent>();
-      impcmp->force = std::uniform_int_distribution<int>(100, 150)(_gen);
+      impcmp->force = std::uniform_int_distribution<int>(200, 400)(_gen);
       impcmp->direction = {sin(angle), cos(angle)};
+
+      auto transfx = e->AddComponent<TransformEffectsComponent>();
+      transfx->bind = true;
+      transfx->bindMin = _parentLayer->GetScreenToWorld({0, 0});
+      transfx->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
 
       e->AddComponent<LightComponent>()->value = 1;
       _entityMan->AddEntity(e);

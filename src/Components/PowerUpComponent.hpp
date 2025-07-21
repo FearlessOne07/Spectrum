@@ -1,9 +1,9 @@
 #pragma once
-#include "Modifiers/Modifier.hpp"
-#include "base/entities/Entity.hpp"
 #include <base/components/Component.hpp>
+#include <base/entities/Entity.hpp>
 #include <memory>
 #include <vector>
+#include "Modifiers/Modifier.hpp"
 struct PowerUp
 {
 private:

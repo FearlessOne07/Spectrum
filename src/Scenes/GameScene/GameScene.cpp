@@ -30,7 +30,6 @@ void GameScene::Enter(Base::SceneData sceneData)
   LoadAsset<Base::Texture>("assets/textures/ship.png");
   LoadAsset<Base::Texture>("assets/textures/power-ups.png");
   LoadAsset<Base::Texture>("assets/textures/heart-ui.png");
-  LoadAsset<Base::Texture>("assets/textures/king.png");
   LoadAsset<Base::Texture>("assets/textures/chaser.png");
   LoadAsset<Base::Texture>("assets/textures/shooter.png");
   LoadAsset<Base::Texture>("assets/textures/shooter-bullet.png");
@@ -43,9 +42,10 @@ void GameScene::Enter(Base::SceneData sceneData)
   AttachLayer<GameUILayer>(uiLayer);
 
   // MainRenderLayer
-  auto mainLayer = AddRenderLayer({1920, 1080}, GetClearColor());
-  mainLayer->SetCameraOffset({1920.f / 2, 1080.f / 2});
-  mainLayer->SetCameraZoom(1.2);
+  Vector2 mainLayerRes = {640, 360};
+  auto mainLayer = AddRenderLayer({mainLayerRes.x, mainLayerRes.y}, GetClearColor());
+  mainLayer->SetCameraOffset({mainLayerRes.x / 2, mainLayerRes.y / 2});
+  mainLayer->SetCameraZoom((mainLayerRes.x / mainLayerRes.y) / 5);
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);
   mainLayer->SetCameraMode(Base::Camera2DExtMode::SMOOTH_FOLLOW);
