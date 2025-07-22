@@ -14,7 +14,7 @@ struct ShopItem
   Base::NinePatchSprite textureIcon;
   uint16_t cost = 0;
   bool locked = false;
-  bool bought = false;
+  bool bought = true;
   std::string name = "";
 };
 

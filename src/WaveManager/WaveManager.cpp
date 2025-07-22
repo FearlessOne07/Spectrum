@@ -9,6 +9,7 @@
 #include "base/components/RigidBodyComponent.hpp"
 #include "base/components/SpriteComponent.hpp"
 #include "base/components/TransformComponent.hpp"
+#include "base/entities/Entity.hpp"
 #include "base/scenes/SceneLayer.hpp"
 #include "base/signals/Signal.hpp"
 #include "base/signals/SignalBus.hpp"
@@ -142,9 +143,10 @@ void WaveManager::SpawnWaves(float dt)
   _spawner.SpawnWave(dt, _entityMan, _playerID);
 }
 
-void WaveManager::SpawnPlayer()
+Base::EntityID WaveManager::SpawnPlayer()
 {
   _playerID = _spawner.SpawnPlayer(_entityMan, {0, 0});
+  return _playerID;
 }
 
 void WaveManager::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)

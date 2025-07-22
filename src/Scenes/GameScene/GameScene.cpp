@@ -2,6 +2,7 @@
 #include "Layers/GameUILayer.hpp"
 #include "Layers/MainGameLayer.hpp"
 #include "Layers/ParticleLayer.hpp"
+#include "Scenes/GameScene/SharedGameData.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "Systems/PowerUpSystem/PowerUpSystem.hpp"
 #include "base/audio/Sound.hpp"
@@ -19,6 +20,9 @@ void GameScene::Enter(Base::SceneData sceneData)
   GetEntityManager()->Clear();
   StartSystems();
   SetClearColor({7, 7, 15, 255});
+
+  // Init Shared Data
+  InitSharedData<SharedGameData>();
 
   // Register Events
   auto bus = Base::SignalBus::GetInstance();

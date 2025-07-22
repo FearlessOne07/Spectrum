@@ -2,7 +2,6 @@
 #include "base/input/InputEvent.hpp"
 #include <base/scenes/Scene.hpp>
 #include <memory>
-
 class GameScene : public Base::Scene
 {
 public:

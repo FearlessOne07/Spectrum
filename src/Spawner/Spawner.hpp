@@ -1,4 +1,5 @@
 #pragma once
+#include "base/entities/Entity.hpp"
 #include "base/renderer/RenderLayer.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneLayer.hpp"
@@ -26,7 +27,7 @@ private:
   std::queue<EnemyType> _toSpawn = {};
 
   // Player
-  size_t _playerID = -1;
+  Base::EntityID _playerID;
 
   // Layer
   const Base::SceneLayer *_parentLayer = nullptr;
@@ -34,13 +35,13 @@ private:
 public:
   Spawner() = default;
   Spawner(const Base::SceneLayer *parentLayer);
-  size_t SpawnPlayer( //
+  Base::EntityID SpawnPlayer( //
     Base::EntityManager *entityManager,
     Vector2 position //
   );
   void SpawnWave( //
     float dt, Base::EntityManager *entityManager,
-    size_t playerID //
+    Base::EntityID playerID //
   );
   int GetToSpawnCount() const;
   void SetToSpawn(std::vector<EnemyType> toSpawn);

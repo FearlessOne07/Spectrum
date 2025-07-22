@@ -1,4 +1,5 @@
 #include "MainGameLayer.hpp"
+#include "Scenes/GameScene/SharedGameData.hpp"
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
@@ -22,7 +23,9 @@ void MainGameLayer::OnAttach()
 
   GetOwner()->GetEntityManager()->SetWorldBounds(worldBounds);
   _waveManager.Init(this, GetOwner()->GetEntityManager());
-  _waveManager.SpawnPlayer();
+
+  auto sharedData = GetOwner()->GetSharedData<SharedGameData>();
+  sharedData->playerId = _waveManager.SpawnPlayer();
   _playerEVH.Init(this);
 
   auto bus = Base::SignalBus::GetInstance();

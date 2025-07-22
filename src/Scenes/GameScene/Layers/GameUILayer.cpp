@@ -2,6 +2,7 @@
 #include "Components/HealthComponent.hpp"
 #include "Components/LightCollectorComponent.hpp"
 #include "Components/Tags/PlayerTag.hpp"
+#include "Scenes/GameScene/SharedGameData.hpp"
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
@@ -48,7 +49,8 @@ void GameUILayer::OnAttach()
       auto playerHealth =
         _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
       int health = (int)spawnSignal->player->GetComponent<HealthComponent>()->health;
-      playerHealth->SetText(TextFormat("%i", health));
+      int maxHealth = (int)spawnSignal->player->GetComponent<HealthComponent>()->maxHealth;
+      playerHealth->SetText(std::format("{0}/{1}", health, maxHealth));
     }
   });
 }
@@ -90,12 +92,10 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
     {
       if (_buyMenu->IsVisible())
       {
-        _buyMenu->Hide();
-        bus->BroadCastSignal(rSig);
+        CloseShop();
       }
       else if (!_buyMenu->IsVisible() && !_pauseMenu->IsVisible())
       {
-        bus->BroadCastSignal(pSig);
         OpenShop();
       }
       event->isHandled = true;
@@ -106,13 +106,10 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 
 void GameUILayer::Update(float dt)
 {
-  auto player = GetOwner()->GetEntityManager()->Query<PlayerTag>();
-  if (player.size() > 0)
-  {
-    auto lightcmp = player[0]->item->GetComponent<LightCollectorComponent>();
-    auto playerLight = _hud->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
-    playerLight->SetText(std::format("{0}", lightcmp->value));
-  }
+  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->playerId);
+  auto lightcmp = player->GetComponent<LightCollectorComponent>();
+  auto playerLight = _hud->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
+  playerLight->SetText(std::format("{0}", lightcmp->value));
 
   auto fps = _hud->GetElement<Base::UIContainer>("fps-container")->GetChild<Base::UILabel>("fps");
   fps->SetText(std::format("FPS:{0}", GetFPS()));
@@ -134,7 +131,8 @@ void GameUILayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
       auto playerHealth =
         _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
       int health = (int)entityDamg->entity->GetComponent<HealthComponent>()->health;
-      playerHealth->SetText(std::format("{0}", health));
+      int maxHealth = (int)entityDamg->entity->GetComponent<HealthComponent>()->maxHealth;
+      playerHealth->SetText(std::format("{0}/{1}", health, maxHealth));
     }
   }
 }
@@ -412,6 +410,7 @@ void GameUILayer::InitShopMenu()
         );
       },
     };
+    card->onClick = [this, i, card]() { BuyItem(i); };
 
     auto name = card->AddChild<Base::UILabel>("name");
     name->SetFont(GetAsset<Base::BaseFont>("main-font"));
@@ -446,11 +445,32 @@ void GameUILayer::InitShopMenu()
   _buyMenu->Hide();
 }
 
+bool GameUILayer::BuyItem(int index)
+{
+  ShopItem item = _shop.BuyItem(index);
+  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->playerId);
+  auto lightComp = player->GetComponent<LightCollectorComponent>();
+
+  if (lightComp->value >= item.cost)
+  {
+    item.modifier->Apply(player);
+    lightComp->value -= item.cost;
+    CloseShop();
+    OpenShop();
+    return true;
+  }
+  return false;
+}
+
 void GameUILayer::OpenShop()
 {
+  auto bus = Base::SignalBus::GetInstance();
+  auto pSig = std::make_shared<GamePausedSignal>();
+  bus->BroadCastSignal(pSig);
+
   if (_shop.HasNewItems())
   {
-    auto currentItems = _shop.GetItems();
+    auto &currentItems = _shop.GetItems();
     for (int i = 0; i < currentItems.size(); i++)
     {
       auto card = _buyMenu->GetElement<Base::UIContainer>("shop-menu-container")
@@ -467,3 +487,11 @@ void GameUILayer::OpenShop()
   }
   _buyMenu->Show();
 }
+
+void GameUILayer::CloseShop()
+{
+  auto bus = Base::SignalBus::GetInstance();
+  auto rSig = std::make_shared<GameResumedSignal>();
+  bus->BroadCastSignal(rSig);
+  _buyMenu->Hide();
+};

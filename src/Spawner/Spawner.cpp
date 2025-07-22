@@ -24,7 +24,6 @@
 #include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
 #include <base/scenes/SceneLayer.inl>
-#include <cstddef>
 #include <memory>
 #include <random>
 #include <raylib.h>
@@ -46,7 +45,7 @@ int Spawner::GetToSpawnCount() const
   return _toSpawn.size();
 }
 
-size_t Spawner::SpawnPlayer( //
+Base::EntityID Spawner::SpawnPlayer( //
   Base::EntityManager *entityManager,
   Vector2 position //
 )
@@ -122,18 +121,17 @@ size_t Spawner::SpawnPlayer( //
   e->AddComponent<LightCollectorComponent>();
   entityManager->AddEntity(e);
 
-  _playerID = e->GetID();
-
   auto bus = Base::SignalBus::GetInstance();
   std::shared_ptr<PlayerSpawnedSignal> sig = std::make_shared<PlayerSpawnedSignal>();
   sig->player = e;
   bus->BroadCastSignal(sig);
+  _playerID = e->GetID();
   return _playerID;
 }
 
 void Spawner::SpawnWave( //
   float dt, Base::EntityManager *entityManager,
-  size_t playerID //
+  Base::EntityID playerID //
 )
 {
   if (_spawnTimer >= _spawnDuration && !_toSpawn.empty())

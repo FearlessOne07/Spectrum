@@ -1,10 +1,10 @@
 #pragma once
 #include "Signals/EntityDiedSignal.hpp"
 #include "Spawner/Spawner.hpp"
+#include "base/entities/Entity.hpp"
 #include "base/scenes/SceneLayer.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
-#include <cstddef>
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -50,7 +50,7 @@ private:
   std::vector<Spawner::EnemyType> _enemiesToSpawn = {};
 
   // Player
-  size_t _playerID = 0;
+  Base::EntityID _playerID;
 
   // Layer
   const Base::SceneLayer *_parentLayer = nullptr;
@@ -58,7 +58,7 @@ private:
 public:
   WaveManager() = default;
   void Init(const Base::SceneLayer *parentLayer, Base::EntityManager *entityManager);
-  void SpawnPlayer();
+  Base::EntityID SpawnPlayer();
   ~WaveManager();
   void SpawnWaves(float dt);
 };

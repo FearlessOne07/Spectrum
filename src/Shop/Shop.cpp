@@ -12,7 +12,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
 
   // Init Stock
   std::shared_ptr<SpeedModifier> speed = std::make_shared<SpeedModifier>();
-  speed->SetSpeedBoost(0.02);
+  speed->SetSpeedBoost(0.2);
   _stock.emplace_back( //
     speed,
     Base::NinePatchSprite{
@@ -25,7 +25,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
   );
 
   std::shared_ptr<MaxHealthModifier> health = std::make_shared<MaxHealthModifier>();
-  health->SetMaxHealthBoost(0.02);
+  health->SetMaxHealthBoost(0.2);
   _stock.emplace_back( //
     health,
     Base::NinePatchSprite{
@@ -45,7 +45,7 @@ void Shop::RefreshShop()
   std::uniform_int_distribution<> stockDist(0, _stock.size() - 1);
   for (auto &item : _currentItems)
   {
-    if (item.bought || (!item.bought && !item.locked))
+    if (item.bought)
     {
       _newItems = true;
       StockItem sItem = _stock[stockDist(_gen)];
