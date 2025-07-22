@@ -152,23 +152,23 @@ void GameUILayer::InitPauseMenu()
 
   float offset = 100 + (GetSize().y / 2);
   container->_onShow = [this, container, offset]() {
-    GetOwner()->GetTweenManager()->AddTween<float>( //
+    GetOwner()->GetTweenManager()->AddTween<Vector2>( //
       Base::TweenKey{container.get(), "pause-menu-container-position"},
-      [container, this](float pos) { container->SetPositionalOffset({0, pos}); },
+      [container, this](Vector2 pos) { container->SetPositionalOffset({pos}); },
       {
-        .startValue = container->GetPositionalOffset().y,
-        .endValue = offset,
+        .startValue = container->GetPositionalOffset(),
+        .endValue = {0, offset},
         .duration = 0.5,
       } //
     );
   };
 
   container->_onHide = [this, container]() {
-    GetOwner()->GetTweenManager()->AddTween<float>( //
+    GetOwner()->GetTweenManager()->AddTween<Vector2>( //
       Base::TweenKey{container.get(), "pause-menu-container-position"},
-      [container, this](float pos) { container->SetPositionalOffset({0, pos}); },
-      {.startValue = container->GetPositionalOffset().y,
-       .endValue = 0,
+      [container, this](Vector2 pos) { container->SetPositionalOffset(pos); },
+      {.startValue = container->GetPositionalOffset(),
+       .endValue = {0, 0},
        .duration = .3,
        .easingType = Base::TweenManager::EasingType::EASE_IN,
        .onTweenEnd = [container]() { container->SetVisibilityOff(); }} //
@@ -346,23 +346,23 @@ void GameUILayer::InitShopMenu()
   mainContainer->SetPadding({200, 300});
   mainContainer->SetPosition({0, -GetSize().y});
   mainContainer->_onShow = [this, mainContainer]() {
-    GetOwner()->GetTweenManager()->AddTween<float>( //
+    GetOwner()->GetTweenManager()->AddTween<Vector2>( //
       Base::TweenKey{mainContainer.get(), "shop-menu-container-position"},
-      [mainContainer, this](float pos) { mainContainer->SetPositionalOffset({0, pos}); }, //
+      [mainContainer, this](Vector2 pos) { mainContainer->SetPositionalOffset(pos); }, //
       {
-        .startValue = mainContainer->GetPositionalOffset().y,
-        .endValue = GetSize().y,
+        .startValue = mainContainer->GetPositionalOffset(),
+        .endValue = {0, GetSize().y},
         .duration = 0.5,
       } //
     );
   };
   mainContainer->_onHide = [this, mainContainer]() {
-    GetOwner()->GetTweenManager()->AddTween<float>( //
+    GetOwner()->GetTweenManager()->AddTween<Vector2>( //
       Base::TweenKey{mainContainer.get(), "shop-menu-container-position"},
-      [mainContainer, this](float pos) { mainContainer->SetPositionalOffset({0, pos}); },
+      [mainContainer, this](Vector2 pos) { mainContainer->SetPositionalOffset(pos); },
       {
-        .startValue = mainContainer->GetPositionalOffset().y,
-        .endValue = 0,
+        .startValue = mainContainer->GetPositionalOffset(),
+        .endValue = {0, 0},
         .duration = .3,
         .easingType = Base::TweenManager::EasingType::EASE_IN,
         .onTweenEnd = [mainContainer]() { mainContainer->SetVisibilityOff(); },
@@ -386,31 +386,59 @@ void GameUILayer::InitShopMenu()
     card->SetPadding({0, 100});
     card->onHover = {
       [=, this]() {
-        GetOwner()->GetTweenManager()->AddTween<float>(            //
-          {card.get(), "y-pos-offset"},                            //
-          [=](float pos) { card->SetPositionalOffset({0, pos}); }, //
+        GetOwner()->GetTweenManager()->AddTween<Vector2>(       //
+          {card.get(), "y-pos-offset"},                         //
+          [=](Vector2 pos) { card->SetPositionalOffset(pos); }, //
           {
-            .startValue = card->GetPositionalOffset().y, //
-            .endValue = -30,
+            .startValue = card->GetPositionalOffset(),
+            .endValue = {0, -30},
             .duration = 0.1,
             .easingType = Base::TweenManager::EasingType::EASE_OUT,
           } //
         );
       },
       [=, this]() {
-        GetOwner()->GetTweenManager()->AddTween<float>(            //
-          {card.get(), "y-pos-offset"},                            //
-          [=](float pos) { card->SetPositionalOffset({0, pos}); }, //
+        GetOwner()->GetTweenManager()->AddTween<Vector2>(       //
+          {card.get(), "y-pos-offset"},                         //
+          [=](Vector2 pos) { card->SetPositionalOffset(pos); }, //
           {
-            .startValue = card->GetPositionalOffset().y, //
-            .endValue = 0,
+            .startValue = card->GetPositionalOffset(),
+            .endValue = {0, 0},
             .duration = 0.1,
             .easingType = Base::TweenManager::EasingType::EASE_OUT,
           } //
         );
       },
     };
-    card->onClick = [this, i, card]() { BuyItem(i); };
+    card->onClick = [this, i, card]() {
+      if (BuyItem(i))
+      {
+        GetOwner()->GetTweenManager()->AddTween<Vector2>(       //
+          {card.get(), "y-pos-offset"},                         //
+          [=](Vector2 pos) { card->SetPositionalOffset(pos); }, //
+          {
+            .startValue = card->GetPositionalOffset(), //
+            .endValue = {0, card->GetPositionalOffset().y - 50},
+            .duration = 0.35,
+            .easingType = Base::TweenManager::EasingType::EASE_OUT,
+            .onTweenEnd =
+              [=, this]() {
+                UpdateItems();
+                GetOwner()->GetTweenManager()->AddTween<Vector2>(       //
+                  {card.get(), "y-pos-offset"},                         //
+                  [=](Vector2 pos) { card->SetPositionalOffset(pos); }, //
+                  {
+                    .startValue = card->GetPositionalOffset(), //
+                    .endValue = {0, 0},
+                    .duration = 0.25,
+                    .easingType = Base::TweenManager::EasingType::EASE_OUT,
+                  } //
+                );
+              },
+          } //
+        );
+      };
+    };
 
     auto name = card->AddChild<Base::UILabel>("name");
     name->SetFont(GetAsset<Base::BaseFont>("main-font"));
@@ -466,8 +494,14 @@ void GameUILayer::OpenShop()
 {
   auto bus = Base::SignalBus::GetInstance();
   auto pSig = std::make_shared<GamePausedSignal>();
-  bus->BroadCastSignal(pSig);
 
+  UpdateItems();
+  bus->BroadCastSignal(pSig);
+  _buyMenu->Show();
+}
+
+void GameUILayer::UpdateItems()
+{
   if (_shop.HasNewItems())
   {
     auto &currentItems = _shop.GetItems();
@@ -485,7 +519,6 @@ void GameUILayer::OpenShop()
     }
     _shop.ResetNewItems();
   }
-  _buyMenu->Show();
 }
 
 void GameUILayer::CloseShop()

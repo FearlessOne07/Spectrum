@@ -11,9 +11,12 @@ private:
   void OnPlayerDamaged(std::shared_ptr<Base::Signal>);
   void InitPauseMenu();
   void InitHud();
+
+  // Shop
   void InitShopMenu();
   void OpenShop();
   void CloseShop();
+  void UpdateItems();
   bool BuyItem(int index);
 
   Base::UILayer *_hud;
