@@ -35,24 +35,6 @@ void GameUILayer::OnAttach()
   InitShopMenu();
 
   _shop.Init(this);
-
-  // Register Events
-  auto bus = Base::SignalBus::GetInstance();
-  bus->SubscribeSignal<EntityDamagedSignal>([this](std::shared_ptr<Base::Signal> signal) {
-    this->OnPlayerDamaged(signal); //
-  });
-
-  bus->SubscribeSignal<PlayerSpawnedSignal>([this](std::shared_ptr<Base::Signal> signal) {
-    auto spawnSignal = std::dynamic_pointer_cast<PlayerSpawnedSignal>(signal);
-    if (spawnSignal)
-    {
-      auto playerHealth =
-        _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
-      int health = (int)spawnSignal->player->GetComponent<HealthComponent>()->GetHealth();
-      int maxHealth = (int)spawnSignal->player->GetComponent<HealthComponent>()->GetMaxHealth();
-      playerHealth->SetText(std::format("{0}/{1}", health, maxHealth));
-    }
-  });
 }
 
 void GameUILayer::OnDetach()
@@ -111,6 +93,10 @@ void GameUILayer::Update(float dt)
   auto playerLight = _hud->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
   playerLight->SetText(std::format("{0}", lightcmp->value));
 
+  auto hlthcmp = player->GetComponent<HealthComponent>();
+  auto playerHealth= _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
+  playerHealth->SetText(std::format("{0:.0f}/{1:.0f}", hlthcmp->GetHealth(), hlthcmp->GetMaxHealth()));
+
   auto fps = _hud->GetElement<Base::UIContainer>("fps-container")->GetChild<Base::UILabel>("fps");
   fps->SetText(std::format("FPS:{0}", GetFPS()));
 }
@@ -120,21 +106,6 @@ void GameUILayer::Render()
   GetOwner()->GetUIManager()->RenderLayer("hud");
   GetOwner()->GetUIManager()->RenderLayer("buy-menu");
   GetOwner()->GetUIManager()->RenderLayer("pause-menu");
-}
-
-void GameUILayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
-{
-  if (auto entityDamg = std::dynamic_pointer_cast<EntityDamagedSignal>(signal))
-  {
-    if (entityDamg->entity->HasComponent<PlayerTag>())
-    {
-      auto playerHealth =
-        _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
-      int health = (int)entityDamg->entity->GetComponent<HealthComponent>()->GetHealth();
-      int maxHealth = (int)entityDamg->entity->GetComponent<HealthComponent>()->GetMaxHealth();
-      playerHealth->SetText(std::format("{0}/{1}", health, maxHealth));
-    }
-  }
 }
 
 void GameUILayer::InitPauseMenu()
