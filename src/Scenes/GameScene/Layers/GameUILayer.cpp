@@ -48,8 +48,8 @@ void GameUILayer::OnAttach()
     {
       auto playerHealth =
         _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
-      int health = (int)spawnSignal->player->GetComponent<HealthComponent>()->health;
-      int maxHealth = (int)spawnSignal->player->GetComponent<HealthComponent>()->maxHealth;
+      int health = (int)spawnSignal->player->GetComponent<HealthComponent>()->GetHealth();
+      int maxHealth = (int)spawnSignal->player->GetComponent<HealthComponent>()->GetMaxHealth();
       playerHealth->SetText(std::format("{0}/{1}", health, maxHealth));
     }
   });
@@ -130,8 +130,8 @@ void GameUILayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     {
       auto playerHealth =
         _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
-      int health = (int)entityDamg->entity->GetComponent<HealthComponent>()->health;
-      int maxHealth = (int)entityDamg->entity->GetComponent<HealthComponent>()->maxHealth;
+      int health = (int)entityDamg->entity->GetComponent<HealthComponent>()->GetHealth();
+      int maxHealth = (int)entityDamg->entity->GetComponent<HealthComponent>()->GetMaxHealth();
       playerHealth->SetText(std::format("{0}/{1}", health, maxHealth));
     }
   }
@@ -255,32 +255,28 @@ void GameUILayer::InitPauseMenu()
   pauseMenuPanel->SetPosition({0, 0});
   Color panelColor = {7, 7, 10, 255};
   panelColor = {panelColor.r, panelColor.g, panelColor.b, 0};
+  pauseMenuPanel->SetAlpha(0);
   pauseMenuPanel->SetColor(panelColor);
   pauseMenuPanel->SetSize(GetSize());
   pauseMenuPanel->_onHide = [=, this]() {
-    GetOwner()->GetTweenManager()->AddTween<unsigned char>( //
+    GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{pauseMenuPanel.get(), "pause-menu-panel-alpha"},
-      [this, pauseMenuPanel, panelColor](unsigned char alpha) {
-        pauseMenuPanel->SetColor({panelColor.r, panelColor.g, panelColor.b, alpha});
-      },
+      [this, pauseMenuPanel, panelColor](float alpha) { pauseMenuPanel->SetAlpha(alpha); },
       {
-        .startValue = pauseMenuPanel->GetColor().a,
+        .startValue = pauseMenuPanel->GetAlpha(),
         .endValue = 0,
         .duration = 0.3,
         .onTweenEnd = [pauseMenuPanel]() { pauseMenuPanel->SetVisibilityOff(); },
       } //
     );
   };
-
   pauseMenuPanel->_onShow = [=, this]() {
-    GetOwner()->GetTweenManager()->AddTween<unsigned char>( //
+    GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{pauseMenuPanel.get(), "pause-menu-panel-alpha"},
-      [this, pauseMenuPanel, panelColor](unsigned char alpha) {
-        pauseMenuPanel->SetColor({panelColor.r, panelColor.g, panelColor.b, alpha});
-      },
+      [this, pauseMenuPanel, panelColor](float alpha) { pauseMenuPanel->SetAlpha(alpha); },
       {
-        .startValue = pauseMenuPanel->GetColor().a,
-        .endValue = 200,
+        .startValue = pauseMenuPanel->GetAlpha(),
+        .endValue = 0.85,
         .duration = 0.5,
       } //
     );
@@ -371,6 +367,8 @@ void GameUILayer::InitShopMenu()
   };
 
   Vector2 cardSize = {350, 500};
+  float fadeOutDuration = 0.5;
+  float fadeInDuration = 0.5;
   for (int i = 0; i < 3; i++)
   {
     auto card = mainContainer->AddChild<Base::UIContainer>(std::format("card{0}", i + 1));
@@ -387,7 +385,7 @@ void GameUILayer::InitShopMenu()
     card->onHover = {
       [=, this]() {
         GetOwner()->GetTweenManager()->AddTween<Vector2>(       //
-          {card.get(), "y-pos-offset"},                         //
+          {card.get(), std::format("y-pos-offset-{0}", i + 1)}, //
           [=](Vector2 pos) { card->SetPositionalOffset(pos); }, //
           {
             .startValue = card->GetPositionalOffset(),
@@ -399,7 +397,7 @@ void GameUILayer::InitShopMenu()
       },
       [=, this]() {
         GetOwner()->GetTweenManager()->AddTween<Vector2>(       //
-          {card.get(), "y-pos-offset"},                         //
+          {card.get(), std::format("y-pos-offset-{0}", i + 1)}, //
           [=](Vector2 pos) { card->SetPositionalOffset(pos); }, //
           {
             .startValue = card->GetPositionalOffset(),
@@ -410,27 +408,50 @@ void GameUILayer::InitShopMenu()
         );
       },
     };
-    card->onClick = [this, i, card]() {
+    card->onClick = [this, i, card, fadeOutDuration, fadeInDuration]() {
       if (BuyItem(i))
       {
         GetOwner()->GetTweenManager()->AddTween<Vector2>(       //
-          {card.get(), "y-pos-offset"},                         //
+          {card.get(), std::format("y-pos-offset-{0}", i + 1)}, //
           [=](Vector2 pos) { card->SetPositionalOffset(pos); }, //
           {
             .startValue = card->GetPositionalOffset(), //
             .endValue = {0, card->GetPositionalOffset().y - 50},
-            .duration = 0.35,
+            .duration = fadeOutDuration,
+            .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          } //
+        );
+        GetOwner()->GetTweenManager()->AddTween<float>(  //
+          {card.get(), std::format("alpha-{0}", i + 1)}, //
+          [=](float pos) { card->SetAlpha(pos); },       //
+          {
+            .startValue = card->GetAlpha(), //
+            .endValue = 0,
+            .duration = fadeOutDuration,
             .easingType = Base::TweenManager::EasingType::EASE_OUT,
             .onTweenEnd =
               [=, this]() {
+                // Refresh Shop
                 UpdateItems();
+
+                // Tween Card back to position
                 GetOwner()->GetTweenManager()->AddTween<Vector2>(       //
-                  {card.get(), "y-pos-offset"},                         //
+                  {card.get(), std::format("y-pos-offset-{0}", i + 1)}, //
                   [=](Vector2 pos) { card->SetPositionalOffset(pos); }, //
                   {
                     .startValue = card->GetPositionalOffset(), //
                     .endValue = {0, 0},
-                    .duration = 0.25,
+                    .duration = fadeInDuration,
+                    .easingType = Base::TweenManager::EasingType::EASE_OUT,
+                  } //
+                );
+                GetOwner()->GetTweenManager()->AddTween<float>(  //
+                  {card.get(), std::format("alpha-{0}", i + 1)}, //
+                  [=](float pos) { card->SetAlpha(pos); },       //
+                  {
+                    .startValue = card->GetAlpha(), //
+                    .endValue = 1,
+                    .duration = fadeInDuration,
                     .easingType = Base::TweenManager::EasingType::EASE_OUT,
                   } //
                 );
@@ -483,8 +504,6 @@ bool GameUILayer::BuyItem(int index)
   {
     item.modifier->Apply(player);
     lightComp->value -= item.cost;
-    CloseShop();
-    OpenShop();
     return true;
   }
   return false;

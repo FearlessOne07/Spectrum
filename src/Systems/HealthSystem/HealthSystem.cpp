@@ -16,19 +16,16 @@ void HealthSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
     auto e = item->item;
     auto *hlthcmp = e->GetComponent<HealthComponent>();
 
-    if (hlthcmp->hasPendingSickness)
+    if (hlthcmp->HealthChanged())
     {
-      hlthcmp->health -= hlthcmp->sickness;
       std::shared_ptr<EntityDamagedSignal> sig = std::make_shared<EntityDamagedSignal>();
       sig->entity = e;
-      sig->damageTaken = hlthcmp->sickness;
+      sig->damageTaken = hlthcmp->GetLastTakenDamage();
       bus->BroadCastSignal(sig);
-
-      hlthcmp->sickness = 0;
-      hlthcmp->hasPendingSickness = false;
+      hlthcmp->Reset();
     }
 
-    if (hlthcmp->health <= 0 && e->IsAlive())
+    if (hlthcmp->GetHealth() <= 0 && e->IsAlive())
     {
       e->SetDead();
       std::shared_ptr<EntityDiedSignal> sig = std::make_shared<EntityDiedSignal>();

@@ -129,6 +129,6 @@ void BulletSystem::EntityCollisionHandler(const std::shared_ptr<Base::Signal> &e
 
     // Enemy
     auto hlthcmp = defence->GetComponent<HealthComponent>();
-    hlthcmp->health -= dmgcmp->damage;
+    hlthcmp->TakeDamage(dmgcmp->damage);
   }
 }

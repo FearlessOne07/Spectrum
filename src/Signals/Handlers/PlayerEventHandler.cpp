@@ -75,11 +75,11 @@ void PlayerSignalHandler::PlayerEntityCollisionHandler(const std::shared_ptr<Bas
       auto *bulcmp = attack->GetComponent<BulletComponent>();
       impcmpdef->direction = attack->GetComponent<Base::RigidBodyComponent>()->direction;
 
-      if (!hlthcmp->hasPendingSickness)
+      bus->BroadCastSignal(sig);
+      if (!hlthcmp->HealthChanged())
       {
         bus->BroadCastSignal(sig);
-        hlthcmp->hasPendingSickness = true;
-        hlthcmp->sickness += dmgcmp->damage;
+        hlthcmp->TakeDamage(dmgcmp->damage);
       }
       auto rbcmp = attack->GetComponent<Base::RigidBodyComponent>();
       impcmpdef->force = bulcmp->sender->GetComponent<ShootComponent>()->bulletKnockbackForce;
@@ -93,11 +93,10 @@ void PlayerSignalHandler::PlayerEntityCollisionHandler(const std::shared_ptr<Bas
       auto *hlthcmp = defence->GetComponent<HealthComponent>();
       impcmpdef->direction = attack->GetComponent<TrackingComponent>()->targetDirection;
 
-      if (!hlthcmp->hasPendingSickness)
+      if (!hlthcmp->HealthChanged())
       {
         bus->BroadCastSignal(sig);
-        hlthcmp->hasPendingSickness = true;
-        hlthcmp->sickness += dmgcmp->damage;
+        hlthcmp->TakeDamage(dmgcmp->damage);
       }
       impcmpdef->force = mvcmpAtt->driveForce * 2;
 
