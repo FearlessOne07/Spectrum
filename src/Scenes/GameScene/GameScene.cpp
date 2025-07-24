@@ -8,7 +8,6 @@
 #include "base/audio/Sound.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
 #include "base/audio/signals/StopAudioStreamSignal.hpp"
-#include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
 #include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
@@ -30,7 +29,6 @@ void GameScene::Enter(Base::SceneData sceneData)
   Base::SystemManager *systemManager = GetSystemManager();
 
   // Activate Systems
-  LoadAsset<Base::BaseShader>("assets/shaders/vignette.frag");
   LoadAsset<Base::Texture>("assets/textures/ship.png");
   LoadAsset<Base::Texture>("assets/textures/power-ups.png");
   LoadAsset<Base::Texture>("assets/textures/heart-ui.png");
