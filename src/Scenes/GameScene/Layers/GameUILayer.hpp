@@ -1,6 +1,5 @@
 
 #include "Shop/Shop.hpp"
-#include "base/signals/Signal.hpp"
 #include "base/ui/UILayer.hpp"
 #include <base/scenes/SceneLayer.hpp>
 #include <memory>
@@ -15,7 +14,7 @@ private:
   void InitShopMenu();
   void OpenShop();
   void CloseShop();
-  void UpdateItems();
+  std::array<float, 3> UpdateItems();
   bool BuyItem(int index);
 
   Base::UILayer *_hud;

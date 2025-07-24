@@ -1,13 +1,10 @@
 #include "GameUILayer.hpp"
 #include "Components/HealthComponent.hpp"
 #include "Components/LightCollectorComponent.hpp"
-#include "Components/Tags/PlayerTag.hpp"
 #include "Scenes/GameScene/SharedGameData.hpp"
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
-#include "Signals/EntityDamagedSignal.hpp"
-#include "Signals/PlayerSpawnedSignal.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/input/Events/KeyEvent.hpp"
@@ -23,6 +20,7 @@
 #include "base/ui/elements/UIPanel.hpp"
 #include "base/ui/elements/UITextureRect.hpp"
 #include "raylib.h"
+#include <array>
 #include <format>
 #include <memory>
 #include <string>
@@ -89,13 +87,17 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 void GameUILayer::Update(float dt)
 {
   auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->playerId);
+
+  // Update Light Hud
   auto lightcmp = player->GetComponent<LightCollectorComponent>();
   auto playerLight = _hud->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
   playerLight->SetText(std::format("{0}", lightcmp->value));
 
+  // Updated Health Hud
   auto hlthcmp = player->GetComponent<HealthComponent>();
-  auto playerHealth= _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
-  playerHealth->SetText(std::format("{0:.0f}/{1:.0f}", hlthcmp->GetHealth(), hlthcmp->GetMaxHealth()));
+  auto playerHealth =
+    _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
+  playerHealth->SetText(std::format("{0}/{1}", hlthcmp->GetHealth(), hlthcmp->GetMaxHealth()));
 
   auto fps = _hud->GetElement<Base::UIContainer>("fps-container")->GetChild<Base::UILabel>("fps");
   fps->SetText(std::format("FPS:{0}", GetFPS()));
@@ -403,7 +405,7 @@ void GameUILayer::InitShopMenu()
             .onTweenEnd =
               [=, this]() {
                 // Refresh Shop
-                UpdateItems();
+                auto alphas = UpdateItems();
 
                 // Tween Card back to position
                 GetOwner()->GetTweenManager()->AddTween<Vector2>(       //
@@ -421,7 +423,7 @@ void GameUILayer::InitShopMenu()
                   [=](float pos) { card->SetAlpha(pos); },       //
                   {
                     .startValue = card->GetAlpha(), //
-                    .endValue = 1,
+                    .endValue = alphas[i],
                     .duration = fadeInDuration,
                     .easingType = Base::TweenManager::EasingType::EASE_OUT,
                   } //
@@ -467,12 +469,13 @@ void GameUILayer::InitShopMenu()
 
 bool GameUILayer::BuyItem(int index)
 {
-  ShopItem item = _shop.BuyItem(index);
+  ShopItem item = _shop.GetItem(index);
   auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->playerId);
   auto lightComp = player->GetComponent<LightCollectorComponent>();
 
   if (lightComp->value >= item.cost)
   {
+    _shop.BuyItem(index);
     item.modifier->Apply(player);
     lightComp->value -= item.cost;
     return true;
@@ -490,11 +493,11 @@ void GameUILayer::OpenShop()
   _buyMenu->Show();
 }
 
-void GameUILayer::UpdateItems()
+std::array<float, 3> GameUILayer::UpdateItems()
 {
+  auto &currentItems = _shop.GetItems();
   if (_shop.HasNewItems())
   {
-    auto &currentItems = _shop.GetItems();
     for (int i = 0; i < currentItems.size(); i++)
     {
       auto card = _buyMenu->GetElement<Base::UIContainer>("shop-menu-container")
@@ -509,6 +512,34 @@ void GameUILayer::UpdateItems()
     }
     _shop.ResetNewItems();
   }
+
+  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->playerId);
+  std::array<float, 3> alphas;
+  float alpha = 0;
+  for (int i = 0; i < currentItems.size(); i++)
+  {
+    auto card = _buyMenu->GetElement<Base::UIContainer>("shop-menu-container")
+                  ->GetChild<Base::UIContainer>(std::format("card{0}", i + 1));
+    if (currentItems[i].cost > player->GetComponent<LightCollectorComponent>()->value)
+    {
+      alpha = 0.8;
+    }
+    else
+    {
+      alpha = 1;
+    }
+    alphas[i] = alpha;
+    GetOwner()->GetTweenManager()->AddTween<float>(  //
+      {card.get(), std::format("alpha-{0}", i + 1)}, //
+      [=](float pos) { card->SetAlpha(pos); },       //
+      {
+        .startValue = card->GetAlpha(), //
+        .endValue = alpha,
+        .duration = 0.3,
+        .easingType = Base::TweenManager::EasingType::EASE_OUT,
+      });
+  }
+  return alphas;
 }
 
 void GameUILayer::CloseShop()

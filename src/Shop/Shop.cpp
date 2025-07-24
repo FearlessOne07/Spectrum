@@ -1,4 +1,5 @@
 #include "Shop.hpp"
+#include "Modifiers/HealthBoost/HealthBoostModifier.hpp"
 #include "Modifiers/MaxHealthModifier/MaxHealthModifier.hpp"
 #include "Modifiers/SpeedModifier/SpeedModifier.hpp"
 #include "base/scenes/SceneLayer.hpp"
@@ -12,7 +13,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
 
   // Init Stock
   std::shared_ptr<SpeedModifier> speed = std::make_shared<SpeedModifier>();
-  speed->SetSpeedBoost(0.2);
+  speed->SetSpeedBoost(0.02);
   _stock.emplace_back( //
     speed,
     Base::NinePatchSprite{
@@ -24,10 +25,10 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
     1, "Speed" //
   );
 
-  std::shared_ptr<MaxHealthModifier> health = std::make_shared<MaxHealthModifier>();
-  health->SetMaxHealthBoost(0.2);
+  std::shared_ptr<MaxHealthModifier> maxHealth = std::make_shared<MaxHealthModifier>();
+  maxHealth->SetMaxHealthBoost(0.2);
   _stock.emplace_back( //
-    health,
+    maxHealth,
     Base::NinePatchSprite{
       _ownerLayer->GetAsset<Base::Texture>("heart-ui"),
       {},
@@ -35,6 +36,19 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
       {8, 8},
     },
     1, "Max Health" //
+  );
+
+  std::shared_ptr<HealthBoostModifier> health = std::make_shared<HealthBoostModifier>();
+  health->SetHealthBoost(5);
+  _stock.emplace_back( //
+    health,
+    Base::NinePatchSprite{
+      _ownerLayer->GetAsset<Base::Texture>("heart-ui"),
+      {},
+      {2, 1},
+      {8, 8},
+    },
+    1, "Heal" //
   );
 
   RefreshShop();
@@ -69,6 +83,11 @@ ShopItem Shop::BuyItem(int index)
 const std::array<ShopItem, 3> &Shop::GetItems()
 {
   return _currentItems;
+}
+
+const ShopItem &Shop::GetItem(int index)
+{
+  return _currentItems[index];
 }
 
 bool Shop::HasNewItems() const

@@ -24,6 +24,7 @@ set(SOURCES
 
   "./Modifiers/SpeedModifier/SpeedModifier.cpp"
   "./Modifiers/MaxHealthModifier/MaxHealthModifier.cpp"
+  "./Modifiers/HealthBoost/HealthBoostModifier.cpp"
 
   "./Shop/Shop.cpp"
 )

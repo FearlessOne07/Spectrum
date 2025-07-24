@@ -42,6 +42,7 @@ public:
   void RefreshShop();
   ShopItem BuyItem(int index);
   const std::array<ShopItem, 3> &GetItems();
+  const ShopItem &GetItem(int index);
   bool HasNewItems() const;
   void ResetNewItems();
 };
