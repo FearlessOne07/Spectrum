@@ -11,6 +11,7 @@
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneLayer.inl"
 #include "base/signals/SignalBus.hpp"
+#include "base/tween/ITween.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/UILayer.hpp"
 #include "base/ui/UILayoutSettings.hpp"
@@ -392,6 +393,8 @@ void GameUILayer::InitShopMenu()
             .endValue = {0, card->GetPositionalOffset().y - 50},
             .duration = fadeOutDuration,
             .easingType = Base::TweenManager::EasingType::EASE_OUT,
+            .priority = Base::TweenPriorityLevel::MEDIUM,
+
           } //
         );
         GetOwner()->GetTweenManager()->AddTween<float>(  //
@@ -416,6 +419,7 @@ void GameUILayer::InitShopMenu()
                     .endValue = {0, 0},
                     .duration = fadeInDuration,
                     .easingType = Base::TweenManager::EasingType::EASE_OUT,
+                    .priority = Base::TweenPriorityLevel::MEDIUM,
                   } //
                 );
                 GetOwner()->GetTweenManager()->AddTween<float>(  //
