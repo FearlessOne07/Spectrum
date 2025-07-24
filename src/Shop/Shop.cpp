@@ -72,12 +72,11 @@ void Shop::RefreshShop()
   }
 }
 
-ShopItem Shop::BuyItem(int index)
+void Shop::BuyItem(int index)
 {
   _currentItems[index].bought = true;
   ShopItem item = _currentItems[index];
   RefreshShop();
-  return item;
 }
 
 const std::array<ShopItem, 3> &Shop::GetItems()

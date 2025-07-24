@@ -394,7 +394,6 @@ void GameUILayer::InitShopMenu()
             .duration = fadeOutDuration,
             .easingType = Base::TweenManager::EasingType::EASE_OUT,
             .priority = Base::TweenPriorityLevel::MEDIUM,
-
           } //
         );
         GetOwner()->GetTweenManager()->AddTween<float>(  //

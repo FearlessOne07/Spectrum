@@ -40,7 +40,7 @@ private:
 public:
   void Init(Base::SceneLayer *ownerLayer);
   void RefreshShop();
-  ShopItem BuyItem(int index);
+  void BuyItem(int index);
   const std::array<ShopItem, 3> &GetItems();
   const ShopItem &GetItem(int index);
   bool HasNewItems() const;
