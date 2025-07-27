@@ -91,8 +91,11 @@ void GameUILayer::Update(float dt)
 
   // Update Light Hud
   auto lightcmp = player->GetComponent<LightCollectorComponent>();
-  auto playerLight = _hud->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
-  playerLight->SetText(std::format("{0}", lightcmp->value));
+  auto playerLightHud = _hud->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
+  auto playerLightBuy =
+    _buyMenu->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
+  playerLightHud->SetText(std::format("{0}", lightcmp->value));
+  playerLightBuy->SetText(std::format("{0}", lightcmp->value));
 
   // Updated Health Hud
   auto hlthcmp = player->GetComponent<HealthComponent>();
@@ -240,6 +243,7 @@ void GameUILayer::InitPauseMenu()
         .startValue = pauseMenuPanel->GetAlpha(),
         .endValue = 0,
         .duration = 0.3,
+        .easingType = Base::TweenManager::EasingType::EASE_IN,
         .onTweenEnd = [pauseMenuPanel]() { pauseMenuPanel->SetVisibilityOff(); },
       } //
     );
@@ -341,6 +345,45 @@ void GameUILayer::InitShopMenu()
       } //
     );
   };
+
+  auto lightContainer = _buyMenu->AddElement<Base::UIContainer>("light-container");
+  lightContainer->SetLayout(Base::UIContainer::Layout::HORIZONTAL);
+  lightContainer->SetGapSize(20);
+  lightContainer->SetPadding({15, 10});
+  lightContainer->SetPosition({0, 0});
+  lightContainer->_onShow = [this, lightContainer, buyMenuEntryDuration]() {
+    GetOwner()->GetTweenManager()->AddTween<float>(      //
+      {lightContainer.get(), "light-container-alpha"},   //
+      [=](float pos) { lightContainer->SetAlpha(pos); }, //
+      {
+        .startValue = lightContainer->GetAlpha(), //
+        .endValue = 1,
+        .duration = buyMenuEntryDuration,
+        .easingType = Base::TweenManager::EasingType::EASE_OUT,
+      } //
+    );
+  };
+  lightContainer->_onHide = [this, lightContainer, buyMenuExitDuration]() {
+    GetOwner()->GetTweenManager()->AddTween<float>(      //
+      {lightContainer.get(), "light-container-alpha"},   //
+      [=](float pos) { lightContainer->SetAlpha(pos); }, //
+      {.startValue = lightContainer->GetAlpha(),         //
+       .endValue = 0,
+       .duration = buyMenuExitDuration,
+       .easingType = Base::TweenManager::EasingType::EASE_IN,
+       .onTweenEnd = [lightContainer]() { lightContainer->SetVisibilityOff(); }} //
+    );
+  };
+
+  auto lightIcon = lightContainer->AddChild<Base::UITextureRect>("light-icon");
+  lightIcon->SetSprite({GetAsset<Base::Texture>("power-ups"), {}, {2, 1}, {8, 8}});
+  lightIcon->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  lightIcon->SetSize({40, 40});
+
+  auto playerLight = lightContainer->AddChild<Base::UILabel>("player-light");
+  playerLight->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
+  playerLight->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  playerLight->SetFontSize(40);
 
   Vector2 cardSize = {350, 500};
   float fadeOutDuration = 0.5;
@@ -494,10 +537,11 @@ void GameUILayer::InitShopMenu()
       {.startValue = buyMenuPanel->GetAlpha(),         //
        .endValue = 0,
        .duration = buyMenuExitDuration,
-       .easingType = Base::TweenManager::EasingType::EASE_OUT,
+       .easingType = Base::TweenManager::EasingType::EASE_IN,
        .onTweenEnd = [buyMenuPanel]() { buyMenuPanel->SetVisibilityOff(); }} //
     );
   };
+
   _buyMenu->Hide();
 }
 
@@ -571,7 +615,8 @@ std::array<float, 3> GameUILayer::UpdateItems()
         .endValue = alpha,
         .duration = 0.3,
         .easingType = Base::TweenManager::EasingType::EASE_OUT,
-      });
+      } //
+    );
   }
   return alphas;
 }
