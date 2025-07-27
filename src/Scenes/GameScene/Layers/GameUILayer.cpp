@@ -308,6 +308,8 @@ void GameUILayer::InitHud()
 void GameUILayer::InitShopMenu()
 {
   _buyMenu = GetOwner()->GetUIManager()->AddLayer("buy-menu");
+  float buyMenuEntryDuration = 0.5;
+  float buyMenuExitDuration = 0.3;
   auto mainContainer = _buyMenu->AddElement<Base::UIContainer>("shop-menu-container");
   mainContainer->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
   mainContainer->SetSize(GetSize());
@@ -315,25 +317,25 @@ void GameUILayer::InitShopMenu()
   mainContainer->SetLayout(Base::UIContainer::Layout::HORIZONTAL);
   mainContainer->SetPadding({200, 300});
   mainContainer->SetPosition({0, -GetSize().y});
-  mainContainer->_onShow = [this, mainContainer]() {
+  mainContainer->_onShow = [this, mainContainer, buyMenuEntryDuration]() {
     GetOwner()->GetTweenManager()->AddTween<Vector2>( //
       Base::TweenKey{mainContainer.get(), "shop-menu-container-position"},
       [mainContainer, this](Vector2 pos) { mainContainer->SetPositionalOffset(pos); }, //
       {
         .startValue = mainContainer->GetPositionalOffset(),
         .endValue = {0, GetSize().y},
-        .duration = 0.5,
+        .duration = buyMenuEntryDuration,
       } //
     );
   };
-  mainContainer->_onHide = [this, mainContainer]() {
+  mainContainer->_onHide = [this, mainContainer, buyMenuExitDuration]() {
     GetOwner()->GetTweenManager()->AddTween<Vector2>( //
       Base::TweenKey{mainContainer.get(), "shop-menu-container-position"},
       [mainContainer, this](Vector2 pos) { mainContainer->SetPositionalOffset(pos); },
       {
         .startValue = mainContainer->GetPositionalOffset(),
         .endValue = {0, 0},
-        .duration = .3,
+        .duration = buyMenuExitDuration,
         .easingType = Base::TweenManager::EasingType::EASE_IN,
         .onTweenEnd = [mainContainer]() { mainContainer->SetVisibilityOff(); },
       } //
@@ -467,6 +469,35 @@ void GameUILayer::InitShopMenu()
     light_cost->SetFontSize(30);
     light_cost->SetTextColor(BLACK);
   }
+
+  auto buyMenuPanel = _buyMenu->AddElement<Base::UIPanel>("buy-menu-panel");
+  buyMenuPanel->SetSize(GetSize());
+  buyMenuPanel->SetColor(GetOwner()->GetClearColor());
+  buyMenuPanel->SetAlpha(0);
+  buyMenuPanel->SetPosition({0, 0});
+  buyMenuPanel->_onShow = [this, buyMenuPanel, buyMenuEntryDuration]() {
+    GetOwner()->GetTweenManager()->AddTween<float>(    //
+      {buyMenuPanel.get(), "buy-menu-alpha"},          //
+      [=](float pos) { buyMenuPanel->SetAlpha(pos); }, //
+      {
+        .startValue = buyMenuPanel->GetAlpha(), //
+        .endValue = 1,
+        .duration = buyMenuEntryDuration,
+        .easingType = Base::TweenManager::EasingType::EASE_OUT,
+      } //
+    );
+  };
+  buyMenuPanel->_onHide = [this, buyMenuPanel, buyMenuExitDuration]() {
+    GetOwner()->GetTweenManager()->AddTween<float>(    //
+      {buyMenuPanel.get(), "buy-menu-alpha"},          //
+      [=](float pos) { buyMenuPanel->SetAlpha(pos); }, //
+      {.startValue = buyMenuPanel->GetAlpha(),         //
+       .endValue = 0,
+       .duration = buyMenuExitDuration,
+       .easingType = Base::TweenManager::EasingType::EASE_OUT,
+       .onTweenEnd = [buyMenuPanel]() { buyMenuPanel->SetVisibilityOff(); }} //
+    );
+  };
   _buyMenu->Hide();
 }
 
@@ -525,7 +556,7 @@ std::array<float, 3> GameUILayer::UpdateItems()
                   ->GetChild<Base::UIContainer>(std::format("card{0}", i + 1));
     if (currentItems[i].cost > player->GetComponent<LightCollectorComponent>()->value)
     {
-      alpha = 0.8;
+      alpha = 0.3;
     }
     else
     {
