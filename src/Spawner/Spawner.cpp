@@ -65,7 +65,7 @@ Base::EntityID Spawner::SpawnPlayer( //
   transfxcmp->rotate = true;
 
   auto *mvcmp = e->AddComponent<Base::MoveComponent>();
-  mvcmp->driveForce = 2000;
+  mvcmp->driveForce = 1500;
   mvcmp->brakeForce = 500.f;
 
   auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
@@ -80,15 +80,14 @@ Base::EntityID Spawner::SpawnPlayer( //
   shtcmp->bulletLifetime = 3;
   shtcmp->bulletFireTimer = 1;
   shtcmp->bulletSpeed = 1500.f;
-  shtcmp->bulletTexture = _parentLayer->GetAsset<Base::Texture>("player-bullet");
 
-  auto sprtcmp = e->AddComponent<Base::SpriteComponent>(                                             //
-    _parentLayer->GetAsset<Base::Texture>("ship"), Vector2{0, 0}, Vector2{200, 200}, Vector2{64, 64} //
+  auto sprtcmp = e->AddComponent<Base::SpriteComponent>(                                         //
+    _parentLayer->GetAsset<Base::Texture>("ship"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
   );
+  shtcmp->bulletSprite = sprtcmp->GetSprite();
 
   auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
-  abbcmp->radius = ((sprtcmp->GetTexture().Get()->GetRaylibTexture()->width - 10) / 2.f) *
-                   (sprtcmp->GetTargetSize().x / sprtcmp->GetTextureSourceRect().width);
+  abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
   abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
   abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
 
@@ -206,21 +205,22 @@ void Spawner::SpawnWave( //
     transfxcmp->angularAcceleration = 0.5;
     transfxcmp->targetAngularVelocity = 90;
     transfxcmp->bind = false;
+    transfxcmp->lookAt = true;
+    transfxcmp->lookAtTarget = _playerID;
 
     switch (type)
     {
     case EnemyType::CHASER: {
-      auto *sprtcmp = e->AddComponent<Base::SpriteComponent>(                                              //
-        _parentLayer->GetAsset<Base::Texture>("chaser"), Vector2{0, 0}, Vector2{200, 200}, Vector2{64, 64} //
+      auto *sprtcmp = e->AddComponent<Base::SpriteComponent>(                                          //
+        _parentLayer->GetAsset<Base::Texture>("chaser"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
       );
       enemcmp->value = 5;
-      abbcmp->radius = ((sprtcmp->GetTexture().Get()->GetRaylibTexture()->width - 10) / 2.f) *
-                       (sprtcmp->GetTargetSize().x / sprtcmp->GetTextureSourceRect().width);
+      abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
       break;
     }
     case EnemyType::SHOOTER: {
-      auto *sprtcmp = e->AddComponent<Base::SpriteComponent>(                                               //
-        _parentLayer->GetAsset<Base::Texture>("shooter"), Vector2{0, 0}, Vector2{200, 200}, Vector2{64, 64} //
+      auto *sprtcmp = e->AddComponent<Base::SpriteComponent>(                                           //
+        _parentLayer->GetAsset<Base::Texture>("shooter"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
       );
       trckcmp->trackingDistance = 1000;
       enemcmp->value = 2;
@@ -229,12 +229,11 @@ void Spawner::SpawnWave( //
       shtcmp->bulletFireRate = 5.f;
       shtcmp->bulletKnockbackForce = 800;
       shtcmp->bulletSpeed = 1000.f;
-      shtcmp->bulletTexture = _parentLayer->GetAsset<Base::Texture>("shooter-bullet");
+      shtcmp->bulletSprite = sprtcmp->GetSprite();
 
       transfxcmp->bindMin = _parentLayer->GetScreenToWorld({0, 0});
       transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
-      abbcmp->radius = ((sprtcmp->GetTexture().Get()->GetRaylibTexture()->width - 10) / 2.f) *
-                       (sprtcmp->GetTargetSize().x / sprtcmp->GetTextureSourceRect().width);
+      abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
       break;
     }
     }

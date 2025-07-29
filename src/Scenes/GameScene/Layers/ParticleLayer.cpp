@@ -73,12 +73,12 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
 
     _emitter->isEmitting = true;
     _emitter->initialisationFunction = [=, this](Base::ParticleEmitter &emitter) mutable {
-      emitter.particleTexture = sprtcmp->GetTexture();
+      emitter.particleSprite = sprtcmp->GetSprite();
       emitter.particleTextureSource = {
         0,
         0,
-        static_cast<float>(_emitter->particleTexture.Get()->GetRaylibTexture()->width),
-        static_cast<float>(_emitter->particleTexture.Get()->GetRaylibTexture()->height),
+        static_cast<float>(_emitter->particleSprite.GetTextureSourceRect().x),
+        static_cast<float>(_emitter->particleSprite.GetTextureSourceRect().y),
       };
       emitter.particleLifeTime = lifeRange(_gen);
       float size = radiusRange(_gen) * 2;
@@ -93,7 +93,7 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
     Base::CameraShakeConfig config;
     config.trauma = 0.5;
     config.frequency = 50.0f;
-    config.shakeMagnitude = 20.0f;
+    config.shakeMagnitude = GetSize().x * (0.05);
     config.duration = 1;
     config.traumaMultiplyer = 2;
     config.rotationMagnitude = 0.5;

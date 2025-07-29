@@ -7,7 +7,6 @@ set(SOURCES
 
   "./Scenes/MainMenu/MainMenu.cpp"
   "./Scenes/MainMenu/Layers/MainMenuLayer.cpp"
-
   "./Scenes/DeathScreen/Layers/MainLayer.cpp"
   "./Scenes/DeathScreen/DeathScreen.cpp"
 

@@ -8,6 +8,7 @@
 #include "base/audio/Sound.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
 #include "base/audio/signals/StopAudioStreamSignal.hpp"
+#include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
 #include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
@@ -44,10 +45,10 @@ void GameScene::Enter(Base::SceneData sceneData)
   AttachLayer<GameUILayer>(uiLayer);
 
   // MainRenderLayer
-  Vector2 mainLayerRes = {640, 360};
+  Vector2 mainLayerRes = Vector2{1920, 1080} / 4;
   auto mainLayer = AddRenderLayer({mainLayerRes.x, mainLayerRes.y}, GetClearColor());
   mainLayer->SetCameraOffset({mainLayerRes.x / 2, mainLayerRes.y / 2});
-  mainLayer->SetCameraZoom((mainLayerRes.x / mainLayerRes.y) / 5);
+  mainLayer->SetCameraZoom(mainLayerRes.x / rd->gameWidth);
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);
   mainLayer->SetCameraMode(Base::Camera2DExtMode::SMOOTH_FOLLOW);

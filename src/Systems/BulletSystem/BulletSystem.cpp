@@ -56,8 +56,13 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
         rbcmp->direction = Vector2Subtract(shtcmp->target, transcmp->position);
 
         auto *mvcmp = bullet->AddComponent<Base::MoveComponent>();
-        auto sprtcmp = bullet->AddComponent<Base::SpriteComponent>(                //
-          shtcmp->bulletTexture, Vector2{0, 0}, Vector2{200, 200}, Vector2{32, 32} //
+        auto sprtcmp = bullet->AddComponent<Base::SpriteComponent>( //
+          shtcmp->bulletSprite.GetTexture(), Vector2{0, 0},
+          Vector2{
+            shtcmp->bulletSprite.GetTextureSourceRect().width,
+            shtcmp->bulletSprite.GetTextureSourceRect().height,
+          },
+          Vector2{32, 32} //
         );
 
         auto bulcmp = bullet->AddComponent<BulletComponent>();
@@ -66,8 +71,7 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
         bulcmp->sender = shtcmp->GetOwner();
 
         auto abbcmp = bullet->AddComponent<Base::ColliderComponent>();
-        abbcmp->radius = ((sprtcmp->GetTexture().Get()->GetRaylibTexture()->width - 10) / 2.f) *
-                         (sprtcmp->GetTargetSize().x / sprtcmp->GetTextureSourceRect().width);
+        abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
         abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
         abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
 

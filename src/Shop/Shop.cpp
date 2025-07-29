@@ -45,7 +45,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
     Base::NinePatchSprite{
       _ownerLayer->GetAsset<Base::Texture>("heart-ui"),
       {},
-      {2, 1},
+      {4, 0},
       {8, 8},
     },
     1, "Heal" //

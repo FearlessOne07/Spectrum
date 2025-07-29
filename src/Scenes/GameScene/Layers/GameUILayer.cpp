@@ -541,7 +541,6 @@ void GameUILayer::InitShopMenu()
        .onTweenEnd = [buyMenuPanel]() { buyMenuPanel->SetVisibilityOff(); }} //
     );
   };
-
   _buyMenu->Hide();
 }
 
