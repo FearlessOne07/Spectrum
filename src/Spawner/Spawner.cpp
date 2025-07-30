@@ -115,7 +115,8 @@ Base::EntityID Spawner::SpawnPlayer( //
   dmgcmp->damage = 2;
   e->AddComponent<Base::ImpulseComponent>();
   e->AddComponent<PlayerTag>();
-  e->AddComponent<LightCollectorComponent>();
+  auto lightColCmp = e->AddComponent<LightCollectorComponent>();
+  lightColCmp->collectionRaius = (abbcmp->radius * (abbcmp->radius / 2)) * _parentLayer->GetCameraZoom();
   entityManager->AddEntity(e);
 
   auto bus = Base::SignalBus::GetInstance();

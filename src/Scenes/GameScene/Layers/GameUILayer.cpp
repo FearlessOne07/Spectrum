@@ -390,7 +390,7 @@ void GameUILayer::InitShopMenu()
   float fadeInDuration = 0.5;
   for (int i = 0; i < 3; i++)
   {
-    auto card = mainContainer->AddChild<Base::UIContainer>(std::format("card{0}", i + 1));
+    auto card = mainContainer->AddChild<Base::UIContainer>(std::format("card{0}", i));
     card->SetSize(cardSize);
     card->SetBackgroundColor(WHITE);
     card->SetGapMode(Base::UIContainer::GapMode::AUTO);
@@ -404,7 +404,7 @@ void GameUILayer::InitShopMenu()
     card->onHover = {
       [=, this]() {
         GetOwner()->GetTweenManager()->AddTween<Vector2>(       //
-          {card.get(), std::format("y-pos-offset-{0}", i + 1)}, //
+          {card.get(), std::format("y-pos-offset-{0}", i)},     //
           [=](Vector2 pos) { card->SetPositionalOffset(pos); }, //
           {
             .startValue = card->GetPositionalOffset(),
@@ -416,7 +416,7 @@ void GameUILayer::InitShopMenu()
       },
       [=, this]() {
         GetOwner()->GetTweenManager()->AddTween<Vector2>(       //
-          {card.get(), std::format("y-pos-offset-{0}", i + 1)}, //
+          {card.get(), std::format("y-pos-offset-{0}", i)},     //
           [=](Vector2 pos) { card->SetPositionalOffset(pos); }, //
           {
             .startValue = card->GetPositionalOffset(),
@@ -431,7 +431,7 @@ void GameUILayer::InitShopMenu()
       if (BuyItem(i))
       {
         GetOwner()->GetTweenManager()->AddTween<Vector2>(       //
-          {card.get(), std::format("y-pos-offset-{0}", i + 1)}, //
+          {card.get(), std::format("y-pos-offset-{0}", i)},     //
           [=](Vector2 pos) { card->SetPositionalOffset(pos); }, //
           {
             .startValue = card->GetPositionalOffset(), //
@@ -441,9 +441,9 @@ void GameUILayer::InitShopMenu()
             .priority = Base::TweenPriorityLevel::MEDIUM,
           } //
         );
-        GetOwner()->GetTweenManager()->AddTween<float>(  //
-          {card.get(), std::format("alpha-{0}", i + 1)}, //
-          [=](float pos) { card->SetAlpha(pos); },       //
+        GetOwner()->GetTweenManager()->AddTween<float>( //
+          {card.get(), std::format("alpha-{0}", i)},    //
+          [=](float pos) { card->SetAlpha(pos); },      //
           {
             .startValue = card->GetAlpha(), //
             .endValue = 0,
@@ -456,7 +456,7 @@ void GameUILayer::InitShopMenu()
 
                 // Tween Card back to position
                 GetOwner()->GetTweenManager()->AddTween<Vector2>(       //
-                  {card.get(), std::format("y-pos-offset-{0}", i + 1)}, //
+                  {card.get(), std::format("y-pos-offset-{0}", i)},     //
                   [=](Vector2 pos) { card->SetPositionalOffset(pos); }, //
                   {
                     .startValue = card->GetPositionalOffset(), //
@@ -466,17 +466,19 @@ void GameUILayer::InitShopMenu()
                     .priority = Base::TweenPriorityLevel::MEDIUM,
                   } //
                 );
-                GetOwner()->GetTweenManager()->AddTween<float>(  //
-                  {card.get(), std::format("alpha-{0}", i + 1)}, //
-                  [=](float pos) { card->SetAlpha(pos); },       //
+                GetOwner()->GetTweenManager()->AddTween<float>( //
+                  {card.get(), std::format("alpha-{0}", i)},    //
+                  [=](float pos) { card->SetAlpha(pos); },      //
                   {
                     .startValue = card->GetAlpha(), //
                     .endValue = alphas[i],
                     .duration = fadeInDuration,
                     .easingType = Base::TweenManager::EasingType::EASE_OUT,
+                    .priority = Base::TweenPriorityLevel::MEDIUM,
                   } //
                 );
               },
+            .priority = Base::TweenPriorityLevel::MEDIUM,
           } //
         );
       };
@@ -506,11 +508,11 @@ void GameUILayer::InitShopMenu()
     lightIcon->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
     lightIcon->SetSize({32, 32});
 
-    auto light_cost = price->AddChild<Base::UILabel>("light-cost");
-    light_cost->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
-    light_cost->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
-    light_cost->SetFontSize(30);
-    light_cost->SetTextColor(BLACK);
+    auto lightCost = price->AddChild<Base::UILabel>("light-cost");
+    lightCost->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
+    lightCost->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+    lightCost->SetFontSize(30);
+    lightCost->SetTextColor(BLACK);
   }
 
   auto buyMenuPanel = _buyMenu->AddElement<Base::UIPanel>("buy-menu-panel");
@@ -578,7 +580,7 @@ std::array<float, 3> GameUILayer::UpdateItems()
     for (int i = 0; i < currentItems.size(); i++)
     {
       auto card = _buyMenu->GetElement<Base::UIContainer>("shop-menu-container")
-                    ->GetChild<Base::UIContainer>(std::format("card{0}", i + 1));
+                    ->GetChild<Base::UIContainer>(std::format("card{0}", i));
       auto cost = card->GetChild<Base::UIContainer>("price-container")->GetChild<Base::UILabel>("light-cost");
       auto icon = card->GetChild<Base::UITextureRect>("icon");
       auto name = card->GetChild<Base::UILabel>("name");
@@ -596,7 +598,7 @@ std::array<float, 3> GameUILayer::UpdateItems()
   for (int i = 0; i < currentItems.size(); i++)
   {
     auto card = _buyMenu->GetElement<Base::UIContainer>("shop-menu-container")
-                  ->GetChild<Base::UIContainer>(std::format("card{0}", i + 1));
+                  ->GetChild<Base::UIContainer>(std::format("card{0}", i));
     if (currentItems[i].cost > player->GetComponent<LightCollectorComponent>()->value)
     {
       alpha = 0.3;
@@ -606,9 +608,9 @@ std::array<float, 3> GameUILayer::UpdateItems()
       alpha = 1;
     }
     alphas[i] = alpha;
-    GetOwner()->GetTweenManager()->AddTween<float>(  //
-      {card.get(), std::format("alpha-{0}", i + 1)}, //
-      [=](float pos) { card->SetAlpha(pos); },       //
+    GetOwner()->GetTweenManager()->AddTween<float>( //
+      {card.get(), std::format("alpha-{0}", i)},    //
+      [=](float pos) { card->SetAlpha(pos); },      //
       {
         .startValue = card->GetAlpha(), //
         .endValue = alpha,

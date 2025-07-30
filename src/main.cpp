@@ -3,6 +3,7 @@
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "Systems/HealthSystem/HealthSystem.hpp"
+#include "Systems/LightCollectionSystem/LightCollectionSystem.hpp"
 #include "Systems/PowerUpSystem/PowerUpSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
@@ -29,6 +30,7 @@ int main(void)
 
   // Custom Systems
   game.RegisterSystem<BulletSystem>();
+  game.RegisterSystem<LightCollectionSystem>();
   game.RegisterSystem<TransformEffectsSystem>();
   game.RegisterSystem<TrackingSystem>();
   game.RegisterSystem<HealthSystem>();

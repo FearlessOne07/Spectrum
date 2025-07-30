@@ -15,6 +15,7 @@ set(SOURCES
   "./Systems/HealthSystem/HealthSystem.cpp"
   "./Systems/TransformEffectsSystem/TransformEffectsSystem.cpp"
   "./Systems/PowerUpSystem/PowerUpSystem.cpp"
+  "./Systems/LightCollectionSystem/LightCollectionSystem.cpp"
 
   "./Signals/Handlers/PlayerEventHandler.cpp"
 
