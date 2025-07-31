@@ -74,7 +74,7 @@ Base::EntityID Spawner::SpawnPlayer( //
   rbcmp->mass = 1;
   rbcmp->drag = 3;
 
-  auto hlthcmp = e->AddComponent<HealthComponent>(20);
+  auto hlthcmp = e->AddComponent<HealthComponent>(20.f);
 
   auto *shtcmp = e->AddComponent<ShootComponent>();
   shtcmp->bulletFireRate = 0.6;
@@ -199,7 +199,7 @@ void Spawner::SpawnWave( //
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
 
-    auto hlthcmp = e->AddComponent<HealthComponent>(8);
+    auto hlthcmp = e->AddComponent<HealthComponent>(8.f);
 
     auto dmgcmp = e->AddComponent<DamageComponent>();
     dmgcmp->damage = 1;
