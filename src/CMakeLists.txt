@@ -26,6 +26,8 @@ set(SOURCES
   "./Modifiers/MaxHealthModifier/MaxHealthModifier.cpp"
   "./Modifiers/HealthBoost/HealthBoostModifier.cpp"
 
+  "./ShaderEffects/Bloom/Bloom.cpp"
+
   "./Shop/Shop.cpp"
 )
 

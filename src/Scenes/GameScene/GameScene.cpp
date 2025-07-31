@@ -3,6 +3,7 @@
 #include "Layers/MainGameLayer.hpp"
 #include "Layers/ParticleLayer.hpp"
 #include "Scenes/GameScene/SharedGameData.hpp"
+#include "ShaderEffects/Bloom/Bloom.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "Systems/PowerUpSystem/PowerUpSystem.hpp"
 #include "base/audio/Sound.hpp"
@@ -40,18 +41,23 @@ void GameScene::Enter(Base::SceneData sceneData)
   LoadAsset<Base::Sound>("assets/sounds/bullet-fire.wav");
   LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
   LoadAsset<Base::Sound>("assets/sounds/player-hit.wav");
+  LoadAsset<Base::BaseShader>("assets/shaders/bloom/bright_pass.frag");
+  LoadAsset<Base::BaseShader>("assets/shaders/bloom/blur_pass.frag");
+  LoadAsset<Base::BaseShader>("assets/shaders/bloom/combine_pass.frag");
 
   auto uiLayer = AddRenderLayer({1920, 1080});
   AttachLayer<GameUILayer>(uiLayer);
 
   // MainRenderLayer
-  Vector2 mainLayerRes = Vector2{1920, 1080} / 4;
+  Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight} / 4;
   auto mainLayer = AddRenderLayer({mainLayerRes.x, mainLayerRes.y}, GetClearColor());
   mainLayer->SetCameraOffset({mainLayerRes.x / 2, mainLayerRes.y / 2});
   mainLayer->SetCameraZoom(mainLayerRes.x / rd->gameWidth);
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);
   mainLayer->SetCameraMode(Base::Camera2DExtMode::SMOOTH_FOLLOW);
+
+  mainLayer->AddShaderEffect<Bloom>();
 
   AttachLayer<MainGameLayer>(mainLayer);
   AttachLayer<ParticleLayer>(mainLayer);
