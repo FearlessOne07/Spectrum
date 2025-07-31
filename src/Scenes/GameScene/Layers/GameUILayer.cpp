@@ -47,24 +47,21 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {
   if (auto keyEvent = std::dynamic_pointer_cast<Base::KeyEvent>(event))
   {
-    auto bus = Base::SignalBus::GetInstance();
-    auto pSig = std::make_shared<GamePausedSignal>();
-    auto rSig = std::make_shared<GameResumedSignal>();
     if (keyEvent->key == KEY_ESCAPE && keyEvent->action == Base::InputEvent::Action::PRESSED)
     {
       if (_buyMenu->IsVisible())
       {
         _buyMenu->Hide();
-        bus->BroadCastSignal(rSig);
+        UnPause();
       }
       else if (_pauseMenu->IsVisible())
       {
         _pauseMenu->Hide();
-        bus->BroadCastSignal(rSig);
+        UnPause();
       }
       else if (!_pauseMenu->IsVisible())
       {
-        bus->BroadCastSignal(pSig);
+        Pause();
         _pauseMenu->Show();
       }
       event->isHandled = true;
@@ -116,10 +113,6 @@ void GameUILayer::Render()
 
 void GameUILayer::InitPauseMenu()
 {
-  auto bus = Base::SignalBus::GetInstance();
-  auto pSig = std::make_shared<GamePausedSignal>();
-  auto rSig = std::make_shared<GameResumedSignal>();
-
   _pauseMenu = GetOwner()->GetUIManager()->AddLayer("pause-menu");
   auto container = _pauseMenu->AddElement<Base::UIContainer>("pause-menu-container");
   container->SetAnchorPoint(Base::UIContainer::AnchorPoint::CENTER);
@@ -158,9 +151,9 @@ void GameUILayer::InitPauseMenu()
   resumeButton->SetText("Resume");
   resumeButton->SetFontSize(50);
   resumeButton->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
-  resumeButton->onClick = [this, bus, rSig]() {
+  resumeButton->onClick = [this]() {
     _pauseMenu->Hide();
-    bus->BroadCastSignal(rSig);
+    UnPause();
   };
   resumeButton->SetSprite(
     {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
@@ -624,8 +617,20 @@ std::array<float, 3> GameUILayer::UpdateItems()
 
 void GameUILayer::CloseShop()
 {
+  _buyMenu->Hide();
+  UnPause();
+};
+
+void GameUILayer::Pause()
+{
+  auto bus = Base::SignalBus::GetInstance();
+  auto pSig = std::make_shared<GamePausedSignal>();
+  bus->BroadCastSignal(pSig);
+}
+
+void GameUILayer::UnPause()
+{
   auto bus = Base::SignalBus::GetInstance();
   auto rSig = std::make_shared<GameResumedSignal>();
   bus->BroadCastSignal(rSig);
-  _buyMenu->Hide();
-};
+}

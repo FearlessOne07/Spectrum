@@ -33,7 +33,7 @@ void LightCollectionSystem::Update(float dt, Base::EntityManager *entityManager,
         if (distSqr < colRadiusSqr)
         {
           float scale = 1 - std::clamp<float>(distSqr / colRadiusSqr, 0, 1);
-          mvcmp->driveForce = scale * 4000;
+          mvcmp->driveForce = scale * scale * 4000;
           rbcmp->direction = Vector2Normalize(Vector2Subtract(transcmp->position, lightTranscmp->position));
         }
       }

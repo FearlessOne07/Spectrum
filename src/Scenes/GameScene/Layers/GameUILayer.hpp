@@ -8,6 +8,8 @@ class GameUILayer : public Base::SceneLayer
 {
 private:
   void InitPauseMenu();
+  void Pause();
+  void UnPause();
   void InitHud();
 
   // Shop
