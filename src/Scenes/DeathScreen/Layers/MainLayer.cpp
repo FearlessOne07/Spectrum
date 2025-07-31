@@ -20,11 +20,11 @@ void MainLayer::OnAttach()
   deathLabel->SetFontSize(80);
   deathLabel->SetPosition({rd->gameWidth / 2, rd->gameHeight / 2});
 
-  GetOwner()->GetTweenManager()->AddTween<unsigned char>( //
-    {deathLabel.get(), "alpha"}, [=](unsigned char alpha) { deathLabel->SetTextColor({RED.r, RED.g, RED.b, alpha}); },
+  GetOwner()->GetTweenManager()->AddTween<float>( //
+    {deathLabel.get(), "alpha"}, [=](float alpha) { deathLabel->SetAlpha(alpha); },
     {
       .startValue = 0,
-      .endValue = 255,
+      .endValue = 1,
       .duration = 1.5,
       .easingType = Base::TweenManager::EasingType::EASE_IN_OUT,
     } //

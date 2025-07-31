@@ -49,6 +49,8 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
 
         auto *bulTranscmp = bullet->GetComponent<Base::TransformComponent>();
         bulTranscmp->position = transcmp->position;
+        float angle = atan2f(shtcmp->target.y - transcmp->position.y, shtcmp->target.x - transcmp->position.x);
+        bulTranscmp->rotation = (angle * RAD2DEG) + 90;
 
         auto *rbcmp = bullet->AddComponent<Base::RigidBodyComponent>();
         rbcmp->isKinematic = true;

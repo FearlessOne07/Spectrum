@@ -35,20 +35,20 @@ void TransformEffectsSystem::Update(float dt, Base::EntityManager *entityManager
           float delta = fmodf(targetRotation - transcmp->rotation + 540.0f, 360.0f) - 180.0f;
           transcmp->rotation += delta * Base::Easings::EaseOutCubic(dt);
         }
-        continue;
       }
-
-      transfxcmp->angularVelocity = Lerp(                                                                    //
-        transfxcmp->angularVelocity, transfxcmp->targetAngularVelocity, transfxcmp->angularAcceleration * dt //
-      );
-      transcmp->rotation += transfxcmp->angularVelocity * dt;
+      else
+      {
+        transfxcmp->angularVelocity = Lerp(                                                                    //
+          transfxcmp->angularVelocity, transfxcmp->targetAngularVelocity, transfxcmp->angularAcceleration * dt //
+        );
+        transcmp->rotation += transfxcmp->angularVelocity * dt;
+      }
     }
 
     if (transfxcmp->bind)
     {
       if (e->HasComponent<Base::ColliderComponent>())
       {
-
         auto *rbcmp = e->GetComponent<Base::RigidBodyComponent>();
         auto *abbcmp = e->GetComponent<Base::ColliderComponent>();
 

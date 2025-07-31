@@ -11,6 +11,7 @@
 #include "Signals/PlayerSpawnedSignal.hpp"
 #include "base/components/SpriteComponent.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/sprites/Sprite.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
@@ -84,7 +85,9 @@ Base::EntityID Spawner::SpawnPlayer( //
   auto sprtcmp = e->AddComponent<Base::SpriteComponent>(                                         //
     _parentLayer->GetAsset<Base::Texture>("ship"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
   );
-  shtcmp->bulletSprite = sprtcmp->GetSprite();
+  shtcmp->bulletSprite = Base::Sprite(                                               //
+    _parentLayer->GetAsset<Base::Texture>("player-bullet"), {0, 0}, {8, 8}, {16, 16} //
+  );
 
   auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
   abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
@@ -230,7 +233,9 @@ void Spawner::SpawnWave( //
       shtcmp->bulletFireRate = 5.f;
       shtcmp->bulletKnockbackForce = 800;
       shtcmp->bulletSpeed = 1000.f;
-      shtcmp->bulletSprite = sprtcmp->GetSprite();
+      shtcmp->bulletSprite = Base::Sprite(                                                //
+        _parentLayer->GetAsset<Base::Texture>("shooter-bullet"), {0, 0}, {8, 8}, {16, 16} //
+      );
 
       transfxcmp->bindMin = _parentLayer->GetScreenToWorld({0, 0});
       transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
