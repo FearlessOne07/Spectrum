@@ -9,6 +9,7 @@
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
 #include "Scenes/DeathScreen/DeathScreen.hpp"
+#include "Signals/EntityDamagedSignal.hpp"
 #include "Signals/EntityDiedSignal.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/components/TransformComponent.hpp"
@@ -34,6 +35,9 @@ void PlayerSignalHandler::Init(Base::SceneLayer *parentLayer)
 
   signalManager->SubscribeSignal<EntityDiedSignal>(
     [this](const std::shared_ptr<Base::Signal> &signal) { this->PlayerDeathHandler(signal); });
+
+  signalManager->SubscribeSignal<EntityDamagedSignal>(
+    [this](const std::shared_ptr<Base::Signal> &signal) { this->PlayerDamaged(signal); });
 }
 
 void PlayerSignalHandler::PlayerEntityCollisionHandler(const std::shared_ptr<Base::Signal> event)
@@ -45,18 +49,9 @@ void PlayerSignalHandler::PlayerEntityCollisionHandler(const std::shared_ptr<Bas
 
   if (defence->HasComponent<PlayerTag>())
   {
-    Base::CameraShakeConfig config;
-    config.trauma = 0.5;
-    config.frequency = 150.0f;
-    config.shakeMagnitude = 10.0f;
-    config.duration = 1;
-    config.traumaMultiplyer = 2;
-    config.rotationMagnitude = 4;
-
     Vector2 knockBackDir = {0, 0};
     auto *transAtt = attack->GetComponent<Base::TransformComponent>();
     auto *transDef = defence->GetComponent<Base::TransformComponent>();
-
     auto impcmpdef = defence->GetComponent<Base::ImpulseComponent>();
 
     auto bus = Base::SignalBus::GetInstance();
@@ -69,7 +64,6 @@ void PlayerSignalHandler::PlayerEntityCollisionHandler(const std::shared_ptr<Bas
       attack->GetComponent<BulletComponent>()->sender->HasComponent<EnemyComponent>() //
     )
     {
-      _parentLayer->ShakeCamera(config);
       auto dmgcmp = attack->GetComponent<DamageComponent>();
       auto *hlthcmp = defence->GetComponent<HealthComponent>();
       auto *bulcmp = attack->GetComponent<BulletComponent>();
@@ -87,7 +81,6 @@ void PlayerSignalHandler::PlayerEntityCollisionHandler(const std::shared_ptr<Bas
     }
     else if (attack->HasComponent<EnemyComponent>())
     {
-      _parentLayer->ShakeCamera(config);
       auto *mvcmpAtt = attack->GetComponent<Base::MoveComponent>();
       auto dmgcmp = attack->GetComponent<DamageComponent>();
       auto *hlthcmp = defence->GetComponent<HealthComponent>();
@@ -104,14 +97,13 @@ void PlayerSignalHandler::PlayerEntityCollisionHandler(const std::shared_ptr<Bas
       impcmpatt->direction = impcmpdef->direction * -1;
       impcmpatt->force = 0.5 * impcmpdef->force;
     }
-  }
-
-  if (defence->HasComponent<PlayerTag>() && attack->HasComponent<LightComponent>())
-  {
-    auto lightcolcmp = defence->GetComponent<LightCollectorComponent>();
-    auto lightcmp = attack->GetComponent<LightComponent>();
-    lightcolcmp->value += lightcmp->value;
-    attack->SetDead();
+    else if (attack->HasComponent<LightComponent>())
+    {
+      auto lightcolcmp = defence->GetComponent<LightCollectorComponent>();
+      auto lightcmp = attack->GetComponent<LightComponent>();
+      lightcolcmp->value += lightcmp->value;
+      attack->SetDead();
+    }
   }
 }
 
@@ -123,5 +115,23 @@ void PlayerSignalHandler::PlayerDeathHandler(const std::shared_ptr<Base::Signal>
     {
       _parentLayer->SetSceneTransition<DeathScreen>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
     }
+  }
+}
+
+void PlayerSignalHandler::PlayerDamaged(const std::shared_ptr<Base::Signal> signal)
+{
+  auto col = std::static_pointer_cast<EntityDamagedSignal>(signal);
+
+  if (col->entity->HasComponent<PlayerTag>())
+  {
+    Base::CameraShakeConfig config;
+    config.trauma = 0.5;
+    config.frequency = 150.0f;
+    config.shakeMagnitude = 10.0f;
+    config.duration = 1;
+    config.traumaMultiplyer = 2;
+    config.rotationMagnitude = 4;
+
+    _parentLayer->ShakeCamera(config);
   }
 }

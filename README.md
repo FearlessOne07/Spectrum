@@ -14,4 +14,4 @@
 
 ## Credits
 
-Made using raylib. Check it out [here](https://github.com/raysan5/raylib).
+Made using [raylib](https://github.com/raysan5/raylib).

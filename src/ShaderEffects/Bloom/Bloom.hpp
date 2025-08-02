@@ -17,8 +17,10 @@ private:
   Base::AssetHandle<Base::BaseShader> _combineShader;
 
   // uniforms
-  float _luminanceThreshHold = 0.25;
-  float _bloomIntensitiy = 0.7f;
+  float _luminanceThreshHold = 0;
+  float _bloomIntensitiy = 0;
+  float _blurResolutionScale = 0;
+  Vector2 _blurResolution = {0, 0};
 
 private:
   void SetUpBuffers(Vector2 resolution);
@@ -26,4 +28,11 @@ private:
 public:
   void Setup(const Base::RenderLayer *layer) override;
   void Apply(RenderTexture2D *input, RenderTexture2D *output, Vector2 resolution) override;
+
+  Bloom(float bloomIntensity, float luminanceThresh, float blurResolutionScale);
+
+  // Uniforms
+  void SetBlurResoltuionScale(float res);
+  void SetLuminanceThresh(float thresh);
+  void SetBloomIntensity(float thresh);
 };

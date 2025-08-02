@@ -14,8 +14,7 @@ void main() {
     // Additive blending with intensity control
     vec3 result = original + (bloom * bloomIntensity);
 
-    // Optional: tone mapping to prevent over-brightness
-    result = result / (1.0 + result); // Simple Reinhard tone mapping
+    result = (result * (2.51 * result + 0.03)) / (result * (2.43 * result + 0.59) + 0.14);
 
     finalColor = vec4(result, 1.0);
 }

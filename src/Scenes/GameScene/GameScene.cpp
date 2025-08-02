@@ -57,7 +57,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   mainLayer->SetCameraRotation(0);
   mainLayer->SetCameraMode(Base::Camera2DExtMode::SMOOTH_FOLLOW);
 
-  mainLayer->AddShaderEffect<Bloom>();
+  mainLayer->AddShaderEffect<Bloom>(0.7, 0.25, 1);
 
   AttachLayer<MainGameLayer>(mainLayer);
   AttachLayer<ParticleLayer>(mainLayer);

@@ -9,6 +9,7 @@ private: // Handlers
   Base::SceneLayer *_parentLayer = nullptr;
   void PlayerEntityCollisionHandler(const std::shared_ptr<Base::Signal>);
   void PlayerDeathHandler(const std::shared_ptr<Base::Signal>);
+  void PlayerDamaged(const std::shared_ptr<Base::Signal>);
 
 public:
   // Function to regsier events

@@ -211,19 +211,19 @@ void Spawner::SpawnWave( //
     transfxcmp->bind = false;
     transfxcmp->lookAt = true;
     transfxcmp->lookAtTarget = _playerID;
+    Base::SpriteComponent *sprtcmp = nullptr;
 
     switch (type)
     {
     case EnemyType::CHASER: {
-      auto *sprtcmp = e->AddComponent<Base::SpriteComponent>(                                          //
+      sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                //
         _parentLayer->GetAsset<Base::Texture>("chaser"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
       );
       enemcmp->value = 5;
-      abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
       break;
     }
     case EnemyType::SHOOTER: {
-      auto *sprtcmp = e->AddComponent<Base::SpriteComponent>(                                           //
+      sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                 //
         _parentLayer->GetAsset<Base::Texture>("shooter"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
       );
       trckcmp->trackingDistance = 1000;
@@ -239,11 +239,13 @@ void Spawner::SpawnWave( //
 
       transfxcmp->bindMin = _parentLayer->GetScreenToWorld({0, 0});
       transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
-      abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
       break;
     }
+    case EnemyType::FLAMER:
+      break;
     }
 
+    abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
     entityManager->AddEntity(e);
   }
   else

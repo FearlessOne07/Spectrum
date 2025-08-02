@@ -16,15 +16,14 @@ void HealthSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
     auto e = item->item;
     auto *hlthcmp = e->GetComponent<HealthComponent>();
 
-    if (hlthcmp->HealthChanged())
+    if (hlthcmp->TookDamage())
     {
       std::shared_ptr<EntityDamagedSignal> sig = std::make_shared<EntityDamagedSignal>();
       sig->entity = e;
       sig->damageTaken = hlthcmp->GetLastTakenDamage();
       bus->BroadCastSignal(sig);
-      hlthcmp->Reset();
     }
-
+    hlthcmp->Reset();
     if (hlthcmp->GetHealth() <= 0 && e->IsAlive())
     {
       e->SetDead();

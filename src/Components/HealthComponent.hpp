@@ -10,6 +10,7 @@ private:
   float _maxHealth = 0;
   float _sickness = 0;
   bool _healthChanged = false;
+  bool _tookDamage = false;
   float _lastDamageTaken = 0;
 
 public:
@@ -48,7 +49,7 @@ public:
     _health -= damage;
     _health = std::max(_health, 0.f);
     _lastDamageTaken = damage;
-    _healthChanged = true;
+    _tookDamage = true;
   }
 
   bool HealthChanged() const
@@ -56,9 +57,15 @@ public:
     return _healthChanged;
   };
 
+  bool TookDamage() const
+  {
+    return _tookDamage;
+  }
+
   void Reset()
   {
     _healthChanged = false;
+    _tookDamage = false;
     _lastDamageTaken = 0;
   }
 

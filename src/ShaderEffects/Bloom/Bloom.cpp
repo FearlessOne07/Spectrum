@@ -2,11 +2,21 @@
 #include "base/renderer/RenderLayer.hpp"
 #include "base/scenes/Scene.hpp"
 #include "raylib.h"
+#include "raymath.h"
+#include <algorithm>
+
+Bloom::Bloom(float bloomIntensity, float luminanceThresh, float blurResolution)
+{
+  SetBlurResoltuionScale(blurResolution);
+  SetBloomIntensity(bloomIntensity);
+  SetLuminanceThresh(luminanceThresh);
+}
 
 void Bloom::SetUpBuffers(Vector2 resolution)
 {
-  _blurPassX = LoadRenderTexture(resolution.x, resolution.y);
-  _blurPassY = LoadRenderTexture(resolution.x, resolution.y);
+  _blurResolution = resolution * _blurResolutionScale;
+  _blurPassX = LoadRenderTexture(_blurResolution.x, _blurResolution.y);
+  _blurPassY = LoadRenderTexture(_blurResolution.x, _blurResolution.y);
   _brightPass = LoadRenderTexture(resolution.x, resolution.y);
   _buffersSetUp = true;
 }
@@ -40,21 +50,30 @@ void Bloom::Apply(RenderTexture2D *input, RenderTexture2D *output, Vector2 resol
 
   BeginTextureMode(_blurPassX);
   shaderMan->ActivateShader(_blurShader);
-  shaderMan->SetUniform(_blurShader, "resolution", resolution);
+  shaderMan->SetUniform(_blurShader, "resolution", _blurResolution);
   shaderMan->SetUniform(_blurShader, "direction", Vector2{1, 0});
   DrawTexturePro( //
-    _brightPass.texture, {0, 0, resolution.x, -resolution.y}, {0, 0, resolution.x, resolution.y}, {0, 0}, 0,
+    _brightPass.texture,
+    {
+      0,
+      0,
+      resolution.x,
+      -resolution.y,
+    },
+    {0, 0, _blurResolution.x, _blurResolution.y}, {0, 0}, 0,
     WHITE //
   );
+
   shaderMan->DeactivateCurrentShader();
   EndTextureMode();
 
   BeginTextureMode(_blurPassY);
   shaderMan->ActivateShader(_blurShader);
-  shaderMan->SetUniform(_blurShader, "resolution", resolution);
+  shaderMan->SetUniform(_blurShader, "resolution", _blurResolution);
   shaderMan->SetUniform(_blurShader, "direction", Vector2{0, 1});
   DrawTexturePro( //
-    _blurPassX.texture, {0, 0, resolution.x, -resolution.y}, {0, 0, resolution.x, resolution.y}, {0, 0}, 0,
+    _blurPassX.texture, {0, 0, _blurResolution.x, -_blurResolution.y}, {0, 0, _blurResolution.x, _blurResolution.y},
+    {0, 0}, 0,
     WHITE //
   );
   shaderMan->DeactivateCurrentShader();
@@ -70,4 +89,19 @@ void Bloom::Apply(RenderTexture2D *input, RenderTexture2D *output, Vector2 resol
   );
   shaderMan->DeactivateCurrentShader();
   EndTextureMode();
+}
+
+void Bloom::SetLuminanceThresh(float thresh)
+{
+  _luminanceThreshHold = std::clamp<float>(thresh, 0, 1);
+}
+
+void Bloom::SetBloomIntensity(float thresh)
+{
+  _bloomIntensitiy = std::max<float>(0, thresh);
+}
+
+void Bloom::SetBlurResoltuionScale(float res)
+{
+  _blurResolutionScale = std::clamp<float>(res, 0.25, 1);
 }

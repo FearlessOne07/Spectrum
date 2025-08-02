@@ -15,7 +15,7 @@ void main() {
     // Extract bright pixels above threshold
     if (luminance > threshold) {
         // Keep bright pixels, maybe boost them slightly
-        finalColor = vec4(color * 1.3, 1.0);
+        finalColor = vec4(color, 1.0);
     } else {
         // Dark pixels become black
         finalColor = vec4(0.0, 0.0, 0.0, 1.0);

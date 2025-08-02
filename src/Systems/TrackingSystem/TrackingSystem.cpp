@@ -27,7 +27,7 @@ void TrackingSystem::Update(float dt, Base::EntityManager *entityManager, const 
     auto *abbcmp = e->GetComponent<Base::ColliderComponent>();
 
     auto target = entityManager->GetEntity(trckcomp->targetEntityID);
-    
+
     Vector2 targetPos = target->GetComponent<Base::TransformComponent>()->position;
 
     Vector2 positionMin = {0, 0};

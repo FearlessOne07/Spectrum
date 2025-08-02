@@ -16,7 +16,8 @@ public:
   enum class EnemyType : uint8_t
   {
     CHASER = 0,
-    SHOOTER
+    SHOOTER,
+    FLAMER
   };
 
 private:
