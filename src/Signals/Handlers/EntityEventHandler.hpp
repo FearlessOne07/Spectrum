@@ -3,13 +3,13 @@
 #include <base/signals/Signal.hpp>
 #include <memory>
 
-class PlayerSignalHandler
+class EntitySignalHandler
 {
 private: // Handlers
   Base::SceneLayer *_parentLayer = nullptr;
-  void PlayerEntityCollisionHandler(const std::shared_ptr<Base::Signal>);
-  void PlayerDeathHandler(const std::shared_ptr<Base::Signal>);
-  void PlayerDamaged(const std::shared_ptr<Base::Signal>);
+  void CollisionHandler(const std::shared_ptr<Base::Signal>);
+  void DeathHandler(const std::shared_ptr<Base::Signal>);
+  void DamagedHandler(const std::shared_ptr<Base::Signal>);
 
 public:
   // Function to regsier events

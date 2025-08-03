@@ -1,4 +1,4 @@
-#include "PlayerEventHandler.hpp"
+#include "EntityEventHandler.hpp"
 #include "Components/BulletComponent.hpp"
 #include "Components/DamageComponent.hpp"
 #include "Components/EnemyComponent.hpp"
@@ -25,22 +25,22 @@
 #include <raylib.h>
 #include <raymath.h>
 
-void PlayerSignalHandler::Init(Base::SceneLayer *parentLayer)
+void EntitySignalHandler::Init(Base::SceneLayer *parentLayer)
 {
   _parentLayer = parentLayer;
   auto signalManager = Base::SignalBus::GetInstance();
 
   signalManager->SubscribeSignal<Base::EntityCollisionSignal>(
-    [this](const std::shared_ptr<Base::Signal> &signal) { this->PlayerEntityCollisionHandler(signal); });
+    [this](const std::shared_ptr<Base::Signal> &signal) { this->CollisionHandler(signal); });
 
   signalManager->SubscribeSignal<EntityDiedSignal>(
-    [this](const std::shared_ptr<Base::Signal> &signal) { this->PlayerDeathHandler(signal); });
+    [this](const std::shared_ptr<Base::Signal> &signal) { this->DeathHandler(signal); });
 
   signalManager->SubscribeSignal<EntityDamagedSignal>(
-    [this](const std::shared_ptr<Base::Signal> &signal) { this->PlayerDamaged(signal); });
+    [this](const std::shared_ptr<Base::Signal> &signal) { this->DamagedHandler(signal); });
 }
 
-void PlayerSignalHandler::PlayerEntityCollisionHandler(const std::shared_ptr<Base::Signal> event)
+void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> event)
 {
   auto collEvent = std::static_pointer_cast<Base::EntityCollisionSignal>(event);
 
@@ -107,7 +107,7 @@ void PlayerSignalHandler::PlayerEntityCollisionHandler(const std::shared_ptr<Bas
   }
 }
 
-void PlayerSignalHandler::PlayerDeathHandler(const std::shared_ptr<Base::Signal> signal)
+void EntitySignalHandler::DeathHandler(const std::shared_ptr<Base::Signal> signal)
 {
   if (auto entityDiedSig = std::dynamic_pointer_cast<EntityDiedSignal>(signal))
   {
@@ -118,7 +118,7 @@ void PlayerSignalHandler::PlayerDeathHandler(const std::shared_ptr<Base::Signal>
   }
 }
 
-void PlayerSignalHandler::PlayerDamaged(const std::shared_ptr<Base::Signal> signal)
+void EntitySignalHandler::DamagedHandler(const std::shared_ptr<Base::Signal> signal)
 {
   auto col = std::static_pointer_cast<EntityDamagedSignal>(signal);
 

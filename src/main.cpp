@@ -20,6 +20,7 @@ int main(void)
         {"audio-stream", "assets/music/game-track.mp3"},
         {"audio-stream", "assets/music/main-menu-track.wav"},
         {"texture", "assets/textures/button.png"},
+        {"texture", "assets/textures/button-new.png"},
       },
   });
 

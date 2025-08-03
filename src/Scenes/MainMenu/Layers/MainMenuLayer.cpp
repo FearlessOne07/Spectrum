@@ -2,6 +2,7 @@
 #include "Scenes/GameScene/GameScene.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/scenes/Scene.hpp"
+#include "base/sprites/NinePatchSprite.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UIButton.hpp"
@@ -10,6 +11,10 @@
 
 void MainMenuLayer::OnAttach()
 {
+  Base::NinePatchSprite buttonSprite = {
+    GetAsset<Base::Texture>("button-new"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 4,
+  };
+
   _mainMenu = GetOwner()->GetUIManager()->AddLayer("main-menu");
   auto container = _mainMenu->AddElement<Base::UIContainer>("main-menu-container");
   container->SetAnchorPoint(Base::UIContainer::AnchorPoint::CENTER);
@@ -26,9 +31,7 @@ void MainMenuLayer::OnAttach()
   playButton->onClick = [this]() {
     GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
   };
-  playButton->SetSprite(
-    {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
-  );
+  playButton->SetSprite(buttonSprite);
   playButton->onHover = {
     [=, this]() {                                     //
       GetOwner()->GetTweenManager()->AddTween<float>( //
@@ -62,9 +65,7 @@ void MainMenuLayer::OnAttach()
   exitButton->SetFontSize(55);
   exitButton->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
   exitButton->onClick = [this]() { GetOwner()->SetSceneTransition(Base::SceneRequest::QUIT); };
-  exitButton->SetSprite(
-    {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
-  );
+  exitButton->SetSprite(buttonSprite);
   exitButton->onHover = {
     [=, this]() {                                     //
       GetOwner()->GetTweenManager()->AddTween<float>( //

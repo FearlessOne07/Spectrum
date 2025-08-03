@@ -1,12 +1,12 @@
 #pragma once
-#include "Signals/Handlers/PlayerEventHandler.hpp"
+#include "Signals/Handlers/EntityEventHandler.hpp"
 #include "WaveManager/WaveManager.hpp"
 #include <base/scenes/SceneLayer.hpp>
 
 class MainGameLayer : public Base::SceneLayer
 {
   WaveManager _waveManager;
-  PlayerSignalHandler _playerEVH = PlayerSignalHandler();
+  EntitySignalHandler _entityEVH = EntitySignalHandler();
 
   void OnPlayerDamaged(std::shared_ptr<Base::Signal>);
 

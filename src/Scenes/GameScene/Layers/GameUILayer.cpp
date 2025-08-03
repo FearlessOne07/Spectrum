@@ -113,6 +113,10 @@ void GameUILayer::Render()
 
 void GameUILayer::InitPauseMenu()
 {
+  Base::NinePatchSprite buttonSprite = {
+    GetAsset<Base::Texture>("button-new"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 4,
+  };
+
   _pauseMenu = GetOwner()->GetUIManager()->AddLayer("pause-menu");
   auto container = _pauseMenu->AddElement<Base::UIContainer>("pause-menu-container");
   container->SetAnchorPoint(Base::UIContainer::AnchorPoint::CENTER);
@@ -155,9 +159,7 @@ void GameUILayer::InitPauseMenu()
     _pauseMenu->Hide();
     UnPause();
   };
-  resumeButton->SetSprite(
-    {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
-  );
+  resumeButton->SetSprite(buttonSprite);
   resumeButton->onHover = {
     [=, this]() {                                     //
       GetOwner()->GetTweenManager()->AddTween<float>( //
@@ -193,9 +195,7 @@ void GameUILayer::InitPauseMenu()
   mainMenuButton->onClick = [this]() {
     GetOwner()->SetSceneTransition<MainMenu>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
   };
-  mainMenuButton->SetSprite(
-    {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
-  );
+  mainMenuButton->SetSprite(buttonSprite);
   mainMenuButton->onHover = {
     [=, this]() {                                     //
       GetOwner()->GetTweenManager()->AddTween<float>( //
@@ -304,6 +304,10 @@ void GameUILayer::InitHud()
 
 void GameUILayer::InitShopMenu()
 {
+  Base::NinePatchSprite cardSprite = {
+    GetAsset<Base::Texture>("button-new"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 2,
+  };
+
   _buyMenu = GetOwner()->GetUIManager()->AddLayer("buy-menu");
   float buyMenuEntryDuration = 0.5;
   float buyMenuExitDuration = 0.3;
@@ -390,9 +394,7 @@ void GameUILayer::InitShopMenu()
     card->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
     card->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
     card->SetLayout(Base::UIContainer::Layout::VERTICAL);
-    card->SetSprite(
-      {GetAsset<Base::Texture>("button"), {.top = 4, .bottom = 10, .left = 4, .right = 4}, {13, 2}, {32, 32}} //
-    );
+    card->SetSprite(cardSprite);
     card->SetPadding({0, 100});
     card->onHover = {
       [=, this]() {

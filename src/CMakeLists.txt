@@ -17,7 +17,7 @@ set(SOURCES
   "./Systems/PowerUpSystem/PowerUpSystem.cpp"
   "./Systems/LightCollectionSystem/LightCollectionSystem.cpp"
 
-  "./Signals/Handlers/PlayerEventHandler.cpp"
+  "./Signals/Handlers/EntityEventHandler.cpp"
 
   "./Spawner/Spawner.cpp"
   "./WaveManager/WaveManager.cpp"

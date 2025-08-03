@@ -26,7 +26,7 @@ void MainGameLayer::OnAttach()
 
   auto sharedData = GetOwner()->GetSharedData<SharedGameData>();
   sharedData->playerId = _waveManager.SpawnPlayer();
-  _playerEVH.Init(this);
+  _entityEVH.Init(this);
 
   auto bus = Base::SignalBus::GetInstance();
   bus->SubscribeSignal<EntityDamagedSignal>([this](std::shared_ptr<Base::Signal> signal) {
