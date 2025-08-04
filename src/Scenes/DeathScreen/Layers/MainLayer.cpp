@@ -29,7 +29,7 @@ void MainLayer::OnAttach()
       {
         .startValue = 0,
         .endValue = 1,
-        .duration = 1,
+        .duration = 1.5,
         .easingType = Base::TweenManager::EasingType::EASE_IN_OUT,
       } //
     );
@@ -38,7 +38,7 @@ void MainLayer::OnAttach()
       {
         .startValue = messageContainer->GetPositionalOffset(),
         .endValue = {0, 0},
-        .duration = 1,
+        .duration = 1.5,
         .easingType = Base::TweenManager::EasingType::EASE_IN_OUT,
       } //
     );
@@ -165,15 +165,13 @@ void MainLayer::Render()
 
 void MainLayer::Update(float dt)
 {
-  if (_showMessageTimer >= 0.5)
-  {
     if (!_messageVisible)
     {
       _mainLayer->GetElement<Base::UIContainer>("message-container")->Show();
       _messageVisible = true;
     }
 
-    if (_showActionsTimer >= 1.5)
+    if (_showActionsTimer >= 2.5)
     {
       if (_messageVisible && !_actionsVisible)
       {
@@ -185,11 +183,6 @@ void MainLayer::Update(float dt)
     {
       _showActionsTimer += dt;
     }
-  }
-  else
-  {
-    _showMessageTimer += dt;
-  }
 }
 
 void MainLayer::OnDetach()
