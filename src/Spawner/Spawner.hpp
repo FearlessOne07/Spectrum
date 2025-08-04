@@ -1,25 +1,16 @@
 #pragma once
+#include "Components/EnemyComponent.hpp"
 #include "base/entities/Entity.hpp"
-#include "base/renderer/RenderLayer.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneLayer.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
-#include <cstddef>
 #include <queue>
 #include <raylib.h>
 #include <vector>
 
 class Spawner
 {
-public:
-  enum class EnemyType : uint8_t
-  {
-    CHASER = 0,
-    SHOOTER,
-    FLAMER
-  };
-
 private:
   // Spawming
   float _spawnDuration = 2.f;
@@ -36,14 +27,8 @@ private:
 public:
   Spawner() = default;
   Spawner(const Base::SceneLayer *parentLayer);
-  Base::EntityID SpawnPlayer( //
-    Base::EntityManager *entityManager,
-    Vector2 position //
-  );
-  void SpawnWave( //
-    float dt, Base::EntityManager *entityManager,
-    Base::EntityID playerID //
-  );
+  Base::EntityID SpawnPlayer(Base::EntityManager *entityManager, Vector2 position);
+  void SpawnWave(float dt, Base::EntityManager *entityManager, Base::EntityID playerID);
   int GetToSpawnCount() const;
   void SetToSpawn(std::vector<EnemyType> toSpawn);
 };

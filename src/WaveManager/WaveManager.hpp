@@ -26,9 +26,9 @@ private:
 
 private:
   // Enemy Weights
-  std::unordered_map<Spawner::EnemyType, EnemySpec> _enemySpawnInfo = {
-    {Spawner::EnemyType::CHASER, EnemySpec{.spawnChance = 0.8f, .cost = 1, .unlockWave = 1, .value = 2}},
-    {Spawner::EnemyType::SHOOTER, EnemySpec{.spawnChance = 0.2f, .cost = 2, .unlockWave = 2}},
+  std::unordered_map<EnemyType, EnemySpec> _enemySpawnInfo = {
+    {EnemyType::CHASER, EnemySpec{.spawnChance = 0.8f, .cost = 1, .unlockWave = 1, .value = 2}},
+    {EnemyType::SHOOTER, EnemySpec{.spawnChance = 0.2f, .cost = 2, .unlockWave = 2}},
   };
 
   // Wave
@@ -47,7 +47,7 @@ private:
   Spawner _spawner = Spawner();
 
   // Enemies
-  std::vector<Spawner::EnemyType> _enemiesToSpawn = {};
+  std::vector<EnemyType> _enemiesToSpawn = {};
 
   // Player
   Base::EntityID _playerID;

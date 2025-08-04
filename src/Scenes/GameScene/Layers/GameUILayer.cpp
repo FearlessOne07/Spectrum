@@ -86,19 +86,23 @@ void GameUILayer::Update(float dt)
 {
   auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->playerId);
 
-  // Update Light Hud
-  auto lightcmp = player->GetComponent<LightCollectorComponent>();
-  auto playerLightHud = _hud->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
-  auto playerLightBuy =
-    _buyMenu->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
-  playerLightHud->SetText(std::format("{0}", lightcmp->value));
-  playerLightBuy->SetText(std::format("{0}", lightcmp->value));
+  if (player)
+  {
+    // Update Light Hud
+    auto lightcmp = player->GetComponent<LightCollectorComponent>();
+    auto playerLightHud =
+      _hud->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
+    auto playerLightBuy =
+      _buyMenu->GetElement<Base::UIContainer>("light-container")->GetChild<Base::UILabel>("player-light");
+    playerLightHud->SetText(std::format("{0}", lightcmp->value));
+    playerLightBuy->SetText(std::format("{0}", lightcmp->value));
 
-  // Updated Health Hud
-  auto hlthcmp = player->GetComponent<HealthComponent>();
-  auto playerHealth =
-    _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
-  playerHealth->SetText(std::format("{0}/{1}", hlthcmp->GetHealth(), hlthcmp->GetMaxHealth()));
+    // Updated Health Hud
+    auto hlthcmp = player->GetComponent<HealthComponent>();
+    auto playerHealth =
+      _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
+    playerHealth->SetText(std::format("{0}/{1}", hlthcmp->GetHealth(), hlthcmp->GetMaxHealth()));
+  }
 
   auto fps = _hud->GetElement<Base::UIContainer>("fps-container")->GetChild<Base::UILabel>("fps");
   fps->SetText(std::format("FPS:{0}", GetFPS()));
@@ -114,7 +118,7 @@ void GameUILayer::Render()
 void GameUILayer::InitPauseMenu()
 {
   Base::NinePatchSprite buttonSprite = {
-    GetAsset<Base::Texture>("button-new"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 4,
+    GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 4,
   };
 
   _pauseMenu = GetOwner()->GetUIManager()->AddLayer("pause-menu");
@@ -125,7 +129,7 @@ void GameUILayer::InitPauseMenu()
   container->SetGapSize(15);
 
   float offset = 100 + (GetSize().y / 2);
-  container->_onShow = [this, container, offset]() {
+  container->onShow = [this, container, offset]() {
     GetOwner()->GetTweenManager()->AddTween<Vector2>( //
       Base::TweenKey{container.get(), "pause-menu-container-position"},
       [container, this](Vector2 pos) { container->SetPositionalOffset({pos}); },
@@ -137,7 +141,7 @@ void GameUILayer::InitPauseMenu()
     );
   };
 
-  container->_onHide = [this, container]() {
+  container->onHide = [this, container]() {
     GetOwner()->GetTweenManager()->AddTween<Vector2>( //
       Base::TweenKey{container.get(), "pause-menu-container-position"},
       [container, this](Vector2 pos) { container->SetPositionalOffset(pos); },
@@ -228,7 +232,7 @@ void GameUILayer::InitPauseMenu()
   pauseMenuPanel->SetAlpha(0);
   pauseMenuPanel->SetColor(panelColor);
   pauseMenuPanel->SetSize(GetSize());
-  pauseMenuPanel->_onHide = [=, this]() {
+  pauseMenuPanel->onHide = [=, this]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{pauseMenuPanel.get(), "pause-menu-panel-alpha"},
       [this, pauseMenuPanel, panelColor](float alpha) { pauseMenuPanel->SetAlpha(alpha); },
@@ -241,7 +245,7 @@ void GameUILayer::InitPauseMenu()
       } //
     );
   };
-  pauseMenuPanel->_onShow = [=, this]() {
+  pauseMenuPanel->onShow = [=, this]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{pauseMenuPanel.get(), "pause-menu-panel-alpha"},
       [this, pauseMenuPanel, panelColor](float alpha) { pauseMenuPanel->SetAlpha(alpha); },
@@ -305,7 +309,7 @@ void GameUILayer::InitHud()
 void GameUILayer::InitShopMenu()
 {
   Base::NinePatchSprite cardSprite = {
-    GetAsset<Base::Texture>("button-new"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 2,
+    GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 2,
   };
 
   _buyMenu = GetOwner()->GetUIManager()->AddLayer("buy-menu");
@@ -318,7 +322,7 @@ void GameUILayer::InitShopMenu()
   mainContainer->SetLayout(Base::UIContainer::Layout::HORIZONTAL);
   mainContainer->SetPadding({200, 300});
   mainContainer->SetPosition({0, -GetSize().y});
-  mainContainer->_onShow = [this, mainContainer, buyMenuEntryDuration]() {
+  mainContainer->onShow = [this, mainContainer, buyMenuEntryDuration]() {
     GetOwner()->GetTweenManager()->AddTween<Vector2>( //
       Base::TweenKey{mainContainer.get(), "shop-menu-container-position"},
       [mainContainer, this](Vector2 pos) { mainContainer->SetPositionalOffset(pos); }, //
@@ -329,7 +333,7 @@ void GameUILayer::InitShopMenu()
       } //
     );
   };
-  mainContainer->_onHide = [this, mainContainer, buyMenuExitDuration]() {
+  mainContainer->onHide = [this, mainContainer, buyMenuExitDuration]() {
     GetOwner()->GetTweenManager()->AddTween<Vector2>( //
       Base::TweenKey{mainContainer.get(), "shop-menu-container-position"},
       [mainContainer, this](Vector2 pos) { mainContainer->SetPositionalOffset(pos); },
@@ -348,7 +352,7 @@ void GameUILayer::InitShopMenu()
   lightContainer->SetGapSize(20);
   lightContainer->SetPadding({15, 10});
   lightContainer->SetPosition({0, 0});
-  lightContainer->_onShow = [this, lightContainer, buyMenuEntryDuration]() {
+  lightContainer->onShow = [this, lightContainer, buyMenuEntryDuration]() {
     GetOwner()->GetTweenManager()->AddTween<float>(      //
       {lightContainer.get(), "light-container-alpha"},   //
       [=](float pos) { lightContainer->SetAlpha(pos); }, //
@@ -360,7 +364,7 @@ void GameUILayer::InitShopMenu()
       } //
     );
   };
-  lightContainer->_onHide = [this, lightContainer, buyMenuExitDuration]() {
+  lightContainer->onHide = [this, lightContainer, buyMenuExitDuration]() {
     GetOwner()->GetTweenManager()->AddTween<float>(      //
       {lightContainer.get(), "light-container-alpha"},   //
       [=](float pos) { lightContainer->SetAlpha(pos); }, //
@@ -515,7 +519,7 @@ void GameUILayer::InitShopMenu()
   buyMenuPanel->SetColor(GetOwner()->GetClearColor());
   buyMenuPanel->SetAlpha(0);
   buyMenuPanel->SetPosition({0, 0});
-  buyMenuPanel->_onShow = [this, buyMenuPanel, buyMenuEntryDuration]() {
+  buyMenuPanel->onShow = [this, buyMenuPanel, buyMenuEntryDuration]() {
     GetOwner()->GetTweenManager()->AddTween<float>(    //
       {buyMenuPanel.get(), "buy-menu-alpha"},          //
       [=](float pos) { buyMenuPanel->SetAlpha(pos); }, //
@@ -527,7 +531,7 @@ void GameUILayer::InitShopMenu()
       } //
     );
   };
-  buyMenuPanel->_onHide = [this, buyMenuPanel, buyMenuExitDuration]() {
+  buyMenuPanel->onHide = [this, buyMenuPanel, buyMenuExitDuration]() {
     GetOwner()->GetTweenManager()->AddTween<float>(    //
       {buyMenuPanel.get(), "buy-menu-alpha"},          //
       [=](float pos) { buyMenuPanel->SetAlpha(pos); }, //

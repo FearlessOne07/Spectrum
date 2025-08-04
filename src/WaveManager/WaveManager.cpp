@@ -43,7 +43,7 @@ void WaveManager::GenerateWave()
   _wavePoints = (_baseWavePoints * _currentWave) - (3 * aliveCount);
 
   // Create pool of available enemies for this wave
-  std::unordered_map<Spawner::EnemyType, EnemySpec> pool = {};
+  std::unordered_map<EnemyType, EnemySpec> pool = {};
   for (auto &[type, spec] : _enemySpawnInfo)
   {
     if (_currentWave >= spec.unlockWave && spec.cost <= _wavePoints)
@@ -104,7 +104,7 @@ void WaveManager::GenerateWave()
 
     if (!enemySelected)
     {
-      Spawner::EnemyType cheapestType;
+      EnemyType cheapestType;
       int lowestCost = INT_MAX;
 
       for (auto &[type, spec] : pool)

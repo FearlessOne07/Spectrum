@@ -59,9 +59,9 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
     sig->soundHandle = _parentLayer->GetAsset<Base::Sound>("player-hit");
     sig->soundVolume = 0.75;
 
-    if (                                                                              //
-      attack->HasComponent<BulletComponent>() &&                                      //
-      attack->GetComponent<BulletComponent>()->sender->HasComponent<EnemyComponent>() //
+    if (                                                                                                   //
+      attack->HasComponent<BulletComponent>() &&                                                           //
+      attack->GetComponent<BulletComponent>()->sender->HasComponent<EnemyComponent>() && attack->IsAlive() //
     )
     {
       auto dmgcmp = attack->GetComponent<DamageComponent>();
@@ -70,7 +70,7 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
       impcmpdef->direction = attack->GetComponent<Base::RigidBodyComponent>()->direction;
 
       bus->BroadCastSignal(sig);
-      if (!hlthcmp->HealthChanged())
+      if (!hlthcmp->TookDamage())
       {
         bus->BroadCastSignal(sig);
         hlthcmp->TakeDamage(dmgcmp->damage);
@@ -86,7 +86,7 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
       auto *hlthcmp = defence->GetComponent<HealthComponent>();
       impcmpdef->direction = attack->GetComponent<TrackingComponent>()->targetDirection;
 
-      if (!hlthcmp->HealthChanged())
+      if (!hlthcmp->TookDamage())
       {
         bus->BroadCastSignal(sig);
         hlthcmp->TakeDamage(dmgcmp->damage);

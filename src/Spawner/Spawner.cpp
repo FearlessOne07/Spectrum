@@ -178,6 +178,7 @@ void Spawner::SpawnWave( //
 
     auto e = entityManager->CreateEntity();
     auto enemcmp = e->AddComponent<EnemyComponent>();
+    enemcmp->type = type;
     auto *transcmp = e->GetComponent<Base::TransformComponent>();
     transcmp->position = position;
 
@@ -211,6 +212,8 @@ void Spawner::SpawnWave( //
     transfxcmp->bind = false;
     transfxcmp->lookAt = true;
     transfxcmp->lookAtTarget = _playerID;
+
+    // Sprite
     Base::SpriteComponent *sprtcmp = nullptr;
 
     switch (type)
@@ -241,7 +244,9 @@ void Spawner::SpawnWave( //
       transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
       break;
     }
-    case EnemyType::FLAMER:
+    case EnemyType::KAMAKAZI:
+      break;
+    case EnemyType::NONE:
       break;
     }
 

@@ -12,7 +12,7 @@
 void MainMenuLayer::OnAttach()
 {
   Base::NinePatchSprite buttonSprite = {
-    GetAsset<Base::Texture>("button-new"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 4,
+    GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 4,
   };
 
   _mainMenu = GetOwner()->GetUIManager()->AddLayer("main-menu");
