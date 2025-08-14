@@ -31,7 +31,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   Base::SystemManager *systemManager = GetSystemManager();
 
   // Activate Systems
-  LoadAsset<Base::Texture>("assets/textures/ship.png");
+  LoadAsset<Base::Texture>("assets/textures/ship-sheet.png");
   LoadAsset<Base::Texture>("assets/textures/power-ups.png");
   LoadAsset<Base::Texture>("assets/textures/heart-ui.png");
   LoadAsset<Base::Texture>("assets/textures/chaser.png");

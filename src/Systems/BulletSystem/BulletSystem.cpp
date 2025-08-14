@@ -58,11 +58,12 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
         rbcmp->direction = Vector2Subtract(shtcmp->target, transcmp->position);
 
         auto *mvcmp = bullet->AddComponent<Base::MoveComponent>();
+
         auto sprtcmp = bullet->AddComponent<Base::SpriteComponent>( //
-          shtcmp->bulletSprite.GetTexture(), Vector2{0, 0},
+          shtcmp->bulletTexture, Vector2{0, 0},
           Vector2{
-            shtcmp->bulletSprite.GetTextureSourceRect().width,
-            shtcmp->bulletSprite.GetTextureSourceRect().height,
+            static_cast<float>(shtcmp->bulletTexture.Get()->GetRaylibTexture()->width),
+            static_cast<float>(shtcmp->bulletTexture.Get()->GetRaylibTexture()->height),
           },
           Vector2{32, 32} //
         );

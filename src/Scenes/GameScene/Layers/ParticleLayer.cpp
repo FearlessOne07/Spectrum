@@ -10,6 +10,7 @@
 #include "base/renderer/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/sprites/Sprite.hpp"
 #include "raylib.h"
 #include <base/audio/signals/PlaySoundSignal.hpp>
 #include <base/renderer/RenderContext.hpp>
@@ -73,12 +74,16 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
 
     _emitter->isEmitting = true;
     _emitter->initialisationFunction = [=, this](Base::ParticleEmitter &emitter) mutable {
-      emitter.particleSprite = sprtcmp->GetSprite();
+      emitter.particleSprite = Base::Sprite( //
+        sprtcmp->GetTexture(), {sprtcmp->GetSourceRect().x, sprtcmp->GetSourceRect().y},
+        {sprtcmp->GetSourceRect().width, sprtcmp->GetSourceRect().height}, sprtcmp->GetTargetSize() //
+      );
+
       emitter.particleTextureSource = {
         0,
         0,
-        static_cast<float>(_emitter->particleSprite.GetTextureSourceRect().x),
-        static_cast<float>(_emitter->particleSprite.GetTextureSourceRect().y),
+        static_cast<float>(sprtcmp->GetSourceRect().x),
+        static_cast<float>(sprtcmp->GetSourceRect().y),
       };
       emitter.particleLifeTime = lifeRange(_gen);
       float size = radiusRange(_gen) * 2;

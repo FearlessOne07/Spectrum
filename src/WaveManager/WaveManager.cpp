@@ -169,8 +169,8 @@ void WaveManager::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
       colcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
       colcmp->radius = 8;
 
-      auto sprtcmp = e->AddComponent<Base::SpriteComponent>(                                              //
-        _parentLayer->GetAsset<Base::Texture>("power-ups"), Vector2{2, 1}, Vector2{8, 8}, Vector2{16, 16} //
+      auto sprtcmp = e->AddComponent<Base::SpriteComponent>(                                               //
+        _parentLayer->GetAsset<Base::Texture>("power-ups"), Vector2{16, 8}, Vector2{8, 8}, Vector2{16, 16} //
       );
 
       auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();

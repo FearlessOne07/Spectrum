@@ -9,9 +9,9 @@
 #include "Components/TrackingComponent.hpp"
 #include "Components/TransformEffects.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
+#include "base/components/AnimationComponent.hpp"
 #include "base/components/SpriteComponent.hpp"
 #include "base/signals/SignalBus.hpp"
-#include "base/sprites/Sprite.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
@@ -82,11 +82,20 @@ Base::EntityID Spawner::SpawnPlayer( //
   shtcmp->bulletFireTimer = 1;
   shtcmp->bulletSpeed = 1500.f;
 
-  auto sprtcmp = e->AddComponent<Base::SpriteComponent>(                                         //
-    _parentLayer->GetAsset<Base::Texture>("ship"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
+  auto sprtcmp = e->AddComponent<Base::SpriteComponent>(                                               //
+    _parentLayer->GetAsset<Base::Texture>("ship-sheet"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
   );
-  shtcmp->bulletSprite = Base::Sprite(                                               //
-    _parentLayer->GetAsset<Base::Texture>("player-bullet"), {0, 0}, {8, 8}, {16, 16} //
+  shtcmp->bulletTexture = _parentLayer->GetAsset<Base::Texture>("player-bullet");
+
+  auto animcmp = e->AddComponent<Base::AnimationComponent>("idle");
+  animcmp->AddAnimation( //
+    "idle",              //
+    {
+      {{0, 0}, {8, 8},  0.15},
+      {{8, 0}, {8, 8},  0.15},
+      {{16, 0}, {8, 8}, 0.15},
+      {{24, 0}, {8, 8}, 0.15},
+    } //
   );
 
   auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
@@ -236,9 +245,7 @@ void Spawner::SpawnWave( //
       shtcmp->bulletFireRate = 5.f;
       shtcmp->bulletKnockbackForce = 800;
       shtcmp->bulletSpeed = 1000.f;
-      shtcmp->bulletSprite = Base::Sprite(                                                //
-        _parentLayer->GetAsset<Base::Texture>("shooter-bullet"), {0, 0}, {8, 8}, {16, 16} //
-      );
+      shtcmp->bulletTexture = _parentLayer->GetAsset<Base::Texture>("shooter-bullet");
 
       transfxcmp->bindMin = _parentLayer->GetScreenToWorld({0, 0});
       transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
