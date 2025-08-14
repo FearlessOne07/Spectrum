@@ -8,7 +8,6 @@
 #include "Systems/PowerUpSystem/PowerUpSystem.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
-#include "base/audio/signals/StopAudioStreamSignal.hpp"
 #include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
 #include <base/renderer/RenderContext.hpp>
@@ -72,10 +71,6 @@ void GameScene::Enter(Base::SceneData sceneData)
 
 void GameScene::Exit()
 {
-  auto bus = Base::SignalBus::GetInstance();
-  std::shared_ptr<Base::StopAudioStreamSignal> sig = std::make_shared<Base::StopAudioStreamSignal>();
-  sig->streamHandle = GetAsset<Base::AudioStream>("game-track");
-  bus->BroadCastSignal(sig);
   StopSystems();
   GetEntityManager()->Clear();
 }

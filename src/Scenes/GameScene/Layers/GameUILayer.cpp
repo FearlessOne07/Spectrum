@@ -6,12 +6,13 @@
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "base/assets/AssetManager.hpp"
+#include "base/audio/signals/StopAudioStreamSignal.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneLayer.inl"
 #include "base/signals/SignalBus.hpp"
-#include "base/tween/ITween.hpp"
+#include "base/tween/Tween.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/UILayer.hpp"
 #include "base/ui/UILayoutSettings.hpp"
@@ -158,7 +159,10 @@ void GameUILayer::InitPauseMenu()
   resumeButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   resumeButton->SetText("Resume");
   resumeButton->SetFontSize(50);
-  resumeButton->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
+  resumeButton->SetLayoutSettings({
+    .hAlignment = Base::UIHAlignment::CENTER,
+    .vAlignment = Base::UIVAlignment::CENTER,
+  });
   resumeButton->onClick = [this]() {
     _pauseMenu->Hide();
     UnPause();
@@ -195,8 +199,15 @@ void GameUILayer::InitPauseMenu()
   mainMenuButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   mainMenuButton->SetText("Main Menu");
   mainMenuButton->SetFontSize(50);
-  mainMenuButton->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
+  mainMenuButton->SetLayoutSettings({
+    .hAlignment = Base::UIHAlignment::CENTER,
+    .vAlignment = Base::UIVAlignment::CENTER,
+  });
   mainMenuButton->onClick = [this]() {
+    auto bus = Base::SignalBus::GetInstance();
+    std::shared_ptr<Base::StopAudioStreamSignal> sig = std::make_shared<Base::StopAudioStreamSignal>();
+    sig->streamHandle = GetAsset<Base::AudioStream>("game-track");
+    bus->BroadCastSignal(sig);
     GetOwner()->SetSceneTransition<MainMenu>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
   };
   mainMenuButton->SetSprite(buttonSprite);
@@ -271,12 +282,18 @@ void GameUILayer::InitHud()
   auto heartIcon = healtContainer->AddChild<Base::UITextureRect>("heart-icon");
   heartIcon->SetSprite({GetAsset<Base::Texture>("heart-ui"), {}, {2, 0}, {8, 8}});
   heartIcon->SetSize({40, 40});
-  heartIcon->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  heartIcon->SetLayoutSettings({
+    .hAlignment = Base::UIHAlignment::CENTER,
+    .vAlignment = Base::UIVAlignment::CENTER,
+  });
 
   auto playerHealth = healtContainer->AddChild<Base::UILabel>("player-health");
   playerHealth->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   playerHealth->SetFontSize(40);
-  playerHealth->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  playerHealth->SetLayoutSettings({
+    .hAlignment = Base::UIHAlignment::CENTER,
+    .vAlignment = Base::UIVAlignment::CENTER,
+  });
 
   auto lightContainer = _hud->AddElement<Base::UIContainer>("light-container");
   lightContainer->SetLayout(Base::UIContainer::Layout::HORIZONTAL);
@@ -286,12 +303,18 @@ void GameUILayer::InitHud()
 
   auto lightIcon = lightContainer->AddChild<Base::UITextureRect>("light-icon");
   lightIcon->SetSprite({GetAsset<Base::Texture>("power-ups"), {}, {2, 1}, {8, 8}});
-  lightIcon->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  lightIcon->SetLayoutSettings({
+    .hAlignment = Base::UIHAlignment::CENTER,
+    .vAlignment = Base::UIVAlignment::CENTER,
+  });
   lightIcon->SetSize({40, 40});
 
   auto playerLight = lightContainer->AddChild<Base::UILabel>("player-light");
   playerLight->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
-  playerLight->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  playerLight->SetLayoutSettings({
+    .hAlignment = Base::UIHAlignment::CENTER,
+    .vAlignment = Base::UIVAlignment::CENTER,
+  });
   playerLight->SetFontSize(40);
 
   auto fpsContainer = _hud->AddElement<Base::UIContainer>("fps-container");
@@ -303,7 +326,10 @@ void GameUILayer::InitHud()
   auto fps = fpsContainer->AddChild<Base::UILabel>("fps");
   fps->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   fps->SetFontSize(40);
-  fps->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  fps->SetLayoutSettings({
+    .hAlignment = Base::UIHAlignment::CENTER,
+    .vAlignment = Base::UIVAlignment::CENTER,
+  });
 }
 
 void GameUILayer::InitShopMenu()
@@ -378,12 +404,18 @@ void GameUILayer::InitShopMenu()
 
   auto lightIcon = lightContainer->AddChild<Base::UITextureRect>("light-icon");
   lightIcon->SetSprite({GetAsset<Base::Texture>("power-ups"), {}, {2, 1}, {8, 8}});
-  lightIcon->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  lightIcon->SetLayoutSettings({
+    .hAlignment = Base::UIHAlignment::CENTER,
+    .vAlignment = Base::UIVAlignment::CENTER,
+  });
   lightIcon->SetSize({40, 40});
 
   auto playerLight = lightContainer->AddChild<Base::UILabel>("player-light");
   playerLight->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
-  playerLight->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  playerLight->SetLayoutSettings({
+    .hAlignment = Base::UIHAlignment::CENTER,
+    .vAlignment = Base::UIVAlignment::CENTER,
+  });
   playerLight->SetFontSize(40);
 
   Vector2 cardSize = {350, 500};
@@ -396,7 +428,10 @@ void GameUILayer::InitShopMenu()
     card->SetBackgroundColor(WHITE);
     card->SetGapMode(Base::UIContainer::GapMode::AUTO);
     card->SetElementSizeMode(Base::UIElement::ElementSizeMode::FIXED);
-    card->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+    card->SetLayoutSettings({
+      .hAlignment = Base::UIHAlignment::CENTER,
+      .vAlignment = Base::UIVAlignment::CENTER,
+    });
     card->SetLayout(Base::UIContainer::Layout::VERTICAL);
     card->SetSprite(cardSprite);
     card->SetPadding({0, 100});
@@ -487,16 +522,25 @@ void GameUILayer::InitShopMenu()
     name->SetFont(GetAsset<Base::BaseFont>("main-font"));
     name->SetFontSize(30);
     name->SetText("Max Health");
-    name->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
+    name->SetLayoutSettings({
+      .hAlignment = Base::UIHAlignment::CENTER,
+      .vAlignment = Base::UIVAlignment::CENTER,
+    });
     name->SetTextColor(BLACK);
 
     auto icon = card->AddChild<Base::UITextureRect>("icon");
     icon->SetSprite({GetAsset<Base::Texture>("heart-ui"), {}, {2, 0}, {8, 8}});
     icon->SetSize({128, 128});
-    icon->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
+    icon->SetLayoutSettings({
+      .hAlignment = Base::UIHAlignment::CENTER,
+      .vAlignment = Base::UIVAlignment::CENTER,
+    });
 
     auto price = card->AddChild<Base::UIContainer>("price-container");
-    price->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
+    price->SetLayoutSettings({
+      .hAlignment = Base::UIHAlignment::CENTER,
+      .vAlignment = Base::UIVAlignment::CENTER,
+    });
     price->SetLayout(Base::UIContainer::Layout::HORIZONTAL);
     price->SetGapSize(20);
     price->SetPadding({15, 10});
@@ -504,12 +548,18 @@ void GameUILayer::InitShopMenu()
 
     auto lightIcon = price->AddChild<Base::UITextureRect>("light-icon");
     lightIcon->SetSprite({GetAsset<Base::Texture>("power-ups"), {}, {2, 1}, {8, 8}});
-    lightIcon->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+    lightIcon->SetLayoutSettings({
+      .hAlignment = Base::UIHAlignment::CENTER,
+      .vAlignment = Base::UIVAlignment::CENTER,
+    });
     lightIcon->SetSize({32, 32});
 
     auto lightCost = price->AddChild<Base::UILabel>("light-cost");
     lightCost->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
-    lightCost->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+    lightCost->SetLayoutSettings({
+      .hAlignment = Base::UIHAlignment::CENTER,
+      .vAlignment = Base::UIVAlignment::CENTER,
+    });
     lightCost->SetFontSize(30);
     lightCost->SetTextColor(BLACK);
   }

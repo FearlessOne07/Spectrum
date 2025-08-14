@@ -91,8 +91,8 @@ Base::EntityID Spawner::SpawnPlayer( //
   animcmp->AddAnimation( //
     "idle",              //
     {
-      {{0, 0}, {8, 8},  0.15},
-      {{8, 0}, {8, 8},  0.15},
+      {{0, 0}, {8, 8}, 0.15},
+      {{8, 0}, {8, 8}, 0.15},
       {{16, 0}, {8, 8}, 0.15},
       {{24, 0}, {8, 8}, 0.15},
     } //
@@ -110,6 +110,7 @@ Base::EntityID Spawner::SpawnPlayer( //
   inpcmp->BindKeyDown(KEY_D, [rbcmp]() { rbcmp->direction.x = 1; });
   inpcmp->BindKeyDown(KEY_W, [rbcmp]() { rbcmp->direction.y = -1; });
   inpcmp->BindKeyDown(KEY_S, [rbcmp]() { rbcmp->direction.y = 1; });
+  inpcmp->BindKeyPressed(KEY_K, [hlthcmp]() { hlthcmp->TakeDamage(hlthcmp->GetHealth()); });
 
   inpcmp->BindKeyReleased(KEY_A, [rbcmp]() { rbcmp->direction.x = 0; });
   inpcmp->BindKeyReleased(KEY_D, [rbcmp]() { rbcmp->direction.x = 0; });

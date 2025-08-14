@@ -27,7 +27,10 @@ void MainMenuLayer::OnAttach()
   playButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   playButton->SetText("Play");
   playButton->SetFontSize(55);
-  playButton->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
+  playButton->SetLayoutSettings({
+    .hAlignment = Base::UIHAlignment::CENTER,
+    .vAlignment = Base::UIVAlignment::CENTER,
+  });
   playButton->onClick = [this]() {
     GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
   };
@@ -63,7 +66,10 @@ void MainMenuLayer::OnAttach()
   exitButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   exitButton->SetText("Exit");
   exitButton->SetFontSize(55);
-  exitButton->SetLayoutSettings({.hAlignment = Base::UIHAlignment::CENTER});
+  exitButton->SetLayoutSettings({
+    .hAlignment = Base::UIHAlignment::CENTER,
+    .vAlignment = Base::UIVAlignment::CENTER,
+  });
   exitButton->onClick = [this]() { GetOwner()->SetSceneTransition(Base::SceneRequest::QUIT); };
   exitButton->SetSprite(buttonSprite);
   exitButton->onHover = {

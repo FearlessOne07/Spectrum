@@ -61,7 +61,7 @@ void MainLayer::OnAttach()
   actionButtonContainer->SetAnchorPoint(Base::UIContainer::AnchorPoint::CENTER);
   actionButtonContainer->SetGapMode(Base::UIContainer::GapMode::FIXED);
   actionButtonContainer->SetGapSize(200);
-  actionButtonContainer->SetPadding({100, 100});
+  actionButtonContainer->SetPadding({100, 50});
   actionButtonContainer->SetPositionalOffset({0, 100});
   actionButtonContainer->SetAlpha(0);
   actionButtonContainer->onShow = [=, this]() {
@@ -91,7 +91,10 @@ void MainLayer::OnAttach()
   mainMenuButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   mainMenuButton->SetText("Quit");
   mainMenuButton->SetFontSize(50);
-  mainMenuButton->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  mainMenuButton->SetLayoutSettings({
+    .hAlignment = Base::UIHAlignment::CENTER,
+    .vAlignment = Base::UIVAlignment::CENTER,
+  });
   mainMenuButton->onClick = [this]() {
     GetOwner()->SetSceneTransition<MainMenu>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
   };
@@ -129,7 +132,10 @@ void MainLayer::OnAttach()
   playButton->onClick = [this]() {
     GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
   };
-  playButton->SetLayoutSettings({.vAlignment = Base::UIVAlignment::CENTER});
+  playButton->SetLayoutSettings({
+    .hAlignment = Base::UIHAlignment::CENTER,
+    .vAlignment = Base::UIVAlignment::CENTER,
+  });
   playButton->SetSprite(buttonSprite);
   playButton->onHover = {
     [=, this]() {                                     //
@@ -165,24 +171,24 @@ void MainLayer::Render()
 
 void MainLayer::Update(float dt)
 {
-    if (!_messageVisible)
-    {
-      _mainLayer->GetElement<Base::UIContainer>("message-container")->Show();
-      _messageVisible = true;
-    }
+  if (!_messageVisible)
+  {
+    _mainLayer->GetElement<Base::UIContainer>("message-container")->Show();
+    _messageVisible = true;
+  }
 
-    if (_showActionsTimer >= 2.5)
+  if (_showActionsTimer >= 2.5)
+  {
+    if (_messageVisible && !_actionsVisible)
     {
-      if (_messageVisible && !_actionsVisible)
-      {
-        _mainLayer->GetElement<Base::UIContainer>("action-button-container")->Show();
-        _actionsVisible = true;
-      }
+      _mainLayer->GetElement<Base::UIContainer>("action-button-container")->Show();
+      _actionsVisible = true;
     }
-    else
-    {
-      _showActionsTimer += dt;
-    }
+  }
+  else
+  {
+    _showActionsTimer += dt;
+  }
 }
 
 void MainLayer::OnDetach()
