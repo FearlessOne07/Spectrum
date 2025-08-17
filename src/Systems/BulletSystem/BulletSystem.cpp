@@ -36,28 +36,42 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
   for (auto &item : entities_shtcmp)
   {
     auto e = item->item;
-    auto *transcmp = e->GetComponent<Base::TransformComponent>();
-    auto *shtcmp = e->GetComponent<ShootComponent>();
-    auto *dmgcmp = e->GetComponent<DamageComponent>();
+    auto transcmp = e->GetComponent<Base::TransformComponent>();
+    auto shtcmp = e->GetComponent<ShootComponent>();
+    auto dmgcmp = e->GetComponent<DamageComponent>();
 
     if (shtcmp->bulletFireTimer >= shtcmp->bulletFireRate)
     {
       if (shtcmp->IsFiring)
       {
+        Vector2 targetPos = {0, 0};
+
+        if (shtcmp->targetEntity)
+        {
+          targetPos =
+            entityManager->GetEntity(shtcmp->targetEntity)->GetComponent<Base::TransformComponent>()->position;
+        }
+        else
+        {
+          targetPos = shtcmp->targetPosition;
+        }
+
         shtcmp->bulletFireTimer = 0.f;
         auto bullet = entityManager->CreateEntity();
 
-        auto *bulTranscmp = bullet->GetComponent<Base::TransformComponent>();
+        auto bulTranscmp = bullet->GetComponent<Base::TransformComponent>();
         bulTranscmp->position = transcmp->position;
-        float angle = atan2f(shtcmp->target.y - transcmp->position.y, shtcmp->target.x - transcmp->position.x);
+
+        float angle = atan2f(targetPos.y - transcmp->position.y, targetPos.x - transcmp->position.x);
+
         bulTranscmp->rotation = (angle * RAD2DEG) + 90;
 
-        auto *rbcmp = bullet->AddComponent<Base::RigidBodyComponent>();
+        auto rbcmp = bullet->AddComponent<Base::RigidBodyComponent>();
         rbcmp->isKinematic = true;
         rbcmp->speed = shtcmp->bulletSpeed;
-        rbcmp->direction = Vector2Subtract(shtcmp->target, transcmp->position);
+        rbcmp->direction = Vector2Subtract(targetPos, transcmp->position);
 
-        auto *mvcmp = bullet->AddComponent<Base::MoveComponent>();
+        auto mvcmp = bullet->AddComponent<Base::MoveComponent>();
 
         auto sprtcmp = bullet->AddComponent<Base::SpriteComponent>( //
           shtcmp->bulletTexture, Vector2{0, 0},
@@ -70,7 +84,7 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
 
         auto bulcmp = bullet->AddComponent<BulletComponent>();
         bulcmp->lifeTime = shtcmp->bulletLifetime;
-        bulcmp->target = shtcmp->target;
+        bulcmp->target = targetPos;
         bulcmp->sender = shtcmp->GetOwner();
 
         auto abbcmp = bullet->AddComponent<Base::ColliderComponent>();

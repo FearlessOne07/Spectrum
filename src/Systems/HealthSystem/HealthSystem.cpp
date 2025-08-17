@@ -9,12 +9,12 @@
 void HealthSystem::Update(float dt, Base::EntityManager *entityManager, const Base::Scene *currentScene)
 {
   auto entities = entityManager->Query<HealthComponent>();
-  auto *bus = Base::SignalBus::GetInstance();
+  auto bus = Base::SignalBus::GetInstance();
 
   for (auto &item : entities)
   {
     auto e = item->item;
-    auto *hlthcmp = e->GetComponent<HealthComponent>();
+    auto hlthcmp = e->GetComponent<HealthComponent>();
 
     if (hlthcmp->TookDamage())
     {

@@ -30,7 +30,7 @@ void ParticleLayer::OnAttach()
   _emitter->SetPauseMask(GetPauseMask());
   _emitter->particleEndColor = {255, 255, 255, 255};
 
-  auto *bus = Base::SignalBus::GetInstance();
+  auto bus = Base::SignalBus::GetInstance();
   bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {
     this->OnEntityDiedSignal(std::static_pointer_cast<EntityDiedSignal>(sig));
   });

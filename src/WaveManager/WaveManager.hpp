@@ -27,8 +27,8 @@ private:
 private:
   // Enemy Weights
   std::unordered_map<EnemyType, EnemySpec> _enemySpawnInfo = {
-    {EnemyType::CHASER, EnemySpec{.spawnChance = 0.8f, .cost = 1, .unlockWave = 1, .value = 2}},
-    {EnemyType::SHOOTER, EnemySpec{.spawnChance = 0.2f, .cost = 2, .unlockWave = 2}},
+    {EnemyType::CHASER, EnemySpec{.spawnChance = 0.f, .cost = 1, .unlockWave = 1, .value = 2}},
+    {EnemyType::SHOOTER, EnemySpec{.spawnChance = 1.f, .cost = 2, .unlockWave = 1}},
   };
 
   // Wave

@@ -1,8 +1,0 @@
-#pragma once
-#include "base/components/Component.hpp"
-namespace Base
-{
-  class StateComponent : public Component
-  {
-  };
-} // namespace Base

@@ -1,0 +1,36 @@
+[  3%] Built target samplerate
+[  4%] Built target miniaudio
+[ 17%] Built target portaudio
+[ 43%] Built target glfw
+[ 48%] Built target raylib
+[ 84%] Built target base
+[ 84%] Building CXX object src/CMakeFiles/Spectrum.dir/Spawner/Spawner.cpp.o
+[  1%] Built target miniaudio
+[  4%] Built target samplerate
+[ 30%] Built target glfw
+[ 43%] Built target portaudio
+[ 48%] Built target raylib
+[ 84%] Built target base
+[ 84%] Building CXX object src/CMakeFiles/Spectrum.dir/Spawner/Spawner.cpp.o
+[  4%] Built target samplerate
+[  2%] Built target miniaudio
+[ 30%] Built target glfw
+[ 43%] Built target portaudio
+[ 48%] Built target raylib
+[ 49%] Building CXX object vendor/Base/src/CMakeFiles/base.dir/systems/StateSystem.cpp.o
+[ 49%] Building CXX object vendor/Base/src/CMakeFiles/base.dir/systems/ProximitySystem.cpp.o
+[ 50%] Building CXX object vendor/Base/src/CMakeFiles/base.dir/components/StateComponent.cpp.o
+[ 50%] Linking CXX static library libbase.a
+[ 84%] Built target base
+[ 84%] Building CXX object src/CMakeFiles/Spectrum.dir/Spawner/Spawner.cpp.o
+[  1%] Built target miniaudio
+[  4%] Built target samplerate
+[ 17%] Built target portaudio
+[ 43%] Built target glfw
+[ 48%] Built target raylib
+[ 48%] Building CXX object vendor/Base/src/CMakeFiles/base.dir/systems/ProximitySystem.cpp.o
+[ 49%] Building CXX object vendor/Base/src/CMakeFiles/base.dir/systems/StateSystem.cpp.o
+[ 50%] Building CXX object vendor/Base/src/CMakeFiles/base.dir/components/StateComponent.cpp.o
+[ 50%] Linking CXX static library libbase.a
+[ 84%] Built target base
+[ 84%] Building CXX object src/CMakeFiles/Spectrum.dir/Spawner/Spawner.cpp.o

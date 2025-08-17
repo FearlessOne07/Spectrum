@@ -1,12 +1,18 @@
 #pragma once
 #include "base/entities/Entity.hpp"
-#include "raylib.h"
 #include <base/components/Component.hpp>
 
-struct TrackingComponent : public Base::Component
+class TrackingComponent : public Base::Component
 {
-  bool isTracking = true;
-  Base::EntityID targetEntityID = Base::EntityID(-1);
-  float trackingDistance = 0.f;
-  Vector2 targetDirection = {0, 0};
+  Base::EntityID _targetEntityID;
+
+public:
+  TrackingComponent(const Base::EntityID &entityID) : _targetEntityID(entityID)
+  {
+  }
+
+  Base::EntityID GetTargetEntityID() const
+  {
+    return _targetEntityID;
+  }
 };

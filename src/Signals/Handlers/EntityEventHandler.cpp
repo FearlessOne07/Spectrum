@@ -50,8 +50,8 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
   if (defence->HasComponent<PlayerTag>())
   {
     Vector2 knockBackDir = {0, 0};
-    auto *transAtt = attack->GetComponent<Base::TransformComponent>();
-    auto *transDef = defence->GetComponent<Base::TransformComponent>();
+    auto transAtt = attack->GetComponent<Base::TransformComponent>();
+    auto transDef = defence->GetComponent<Base::TransformComponent>();
     auto impcmpdef = defence->GetComponent<Base::ImpulseComponent>();
 
     auto bus = Base::SignalBus::GetInstance();
@@ -65,8 +65,8 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
     )
     {
       auto dmgcmp = attack->GetComponent<DamageComponent>();
-      auto *hlthcmp = defence->GetComponent<HealthComponent>();
-      auto *bulcmp = attack->GetComponent<BulletComponent>();
+      auto hlthcmp = defence->GetComponent<HealthComponent>();
+      auto bulcmp = attack->GetComponent<BulletComponent>();
       impcmpdef->direction = attack->GetComponent<Base::RigidBodyComponent>()->direction;
 
       bus->BroadCastSignal(sig);
@@ -81,10 +81,13 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
     }
     else if (attack->HasComponent<EnemyComponent>())
     {
-      auto *mvcmpAtt = attack->GetComponent<Base::MoveComponent>();
+      auto mvcmpAtt = attack->GetComponent<Base::MoveComponent>();
       auto dmgcmp = attack->GetComponent<DamageComponent>();
-      auto *hlthcmp = defence->GetComponent<HealthComponent>();
-      impcmpdef->direction = attack->GetComponent<TrackingComponent>()->targetDirection;
+      auto hlthcmp = defence->GetComponent<HealthComponent>();
+
+      Vector2 attPosition = attack->GetComponent<Base::TransformComponent>()->position;
+      Vector2 defPosition = defence->GetComponent<Base::TransformComponent>()->position;
+      impcmpdef->direction = Vector2Normalize(Vector2Subtract(defPosition, attPosition));
 
       if (!hlthcmp->TookDamage())
       {
@@ -93,7 +96,7 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
       }
       impcmpdef->force = mvcmpAtt->driveForce * 2;
 
-      auto *impcmpatt = attack->GetComponent<Base::ImpulseComponent>();
+      auto impcmpatt = attack->GetComponent<Base::ImpulseComponent>();
       impcmpatt->direction = impcmpdef->direction * -1;
       impcmpatt->force = 0.5 * impcmpdef->force;
     }

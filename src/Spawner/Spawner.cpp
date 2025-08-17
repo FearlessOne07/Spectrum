@@ -10,8 +10,11 @@
 #include "Components/TransformEffects.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
 #include "base/components/AnimationComponent.hpp"
+#include "base/components/ProximityComponent.hpp"
 #include "base/components/SpriteComponent.hpp"
+#include "base/components/StateComponent.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/state/TransitionConditionBlock.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
@@ -39,6 +42,7 @@ void Spawner::SetToSpawn(std::vector<EnemyType> toSpawn)
 
 Spawner::Spawner(const Base::SceneLayer *parentLayer) : _parentLayer(parentLayer)
 {
+  _spawnOffset = float(-200 * _parentLayer->GetCameraZoom());
 }
 
 int Spawner::GetToSpawnCount() const
@@ -54,10 +58,10 @@ Base::EntityID Spawner::SpawnPlayer( //
   auto e = entityManager->CreateEntity();
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
 
-  auto *transcmp = e->GetComponent<Base::TransformComponent>();
+  auto transcmp = e->GetComponent<Base::TransformComponent>();
   transcmp->position = position;
 
-  auto *transfxcmp = e->AddComponent<TransformEffectsComponent>();
+  auto transfxcmp = e->AddComponent<TransformEffectsComponent>();
   transfxcmp->targetAngularVelocity = 180;
   transfxcmp->angularAcceleration = 1;
   transfxcmp->bind = true;
@@ -65,7 +69,7 @@ Base::EntityID Spawner::SpawnPlayer( //
   transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
   transfxcmp->rotate = true;
 
-  auto *mvcmp = e->AddComponent<Base::MoveComponent>();
+  auto mvcmp = e->AddComponent<Base::MoveComponent>();
   mvcmp->driveForce = 1500;
   mvcmp->brakeForce = 500.f;
 
@@ -76,7 +80,7 @@ Base::EntityID Spawner::SpawnPlayer( //
 
   auto hlthcmp = e->AddComponent<HealthComponent>(20.f);
 
-  auto *shtcmp = e->AddComponent<ShootComponent>();
+  auto shtcmp = e->AddComponent<ShootComponent>();
   shtcmp->bulletFireRate = 0.6;
   shtcmp->bulletLifetime = 3;
   shtcmp->bulletFireTimer = 1;
@@ -98,14 +102,14 @@ Base::EntityID Spawner::SpawnPlayer( //
     } //
   );
 
-  auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
+  auto abbcmp = e->AddComponent<Base::ColliderComponent>();
   abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
   abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
   abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
 
   auto pucmp = e->AddComponent<PowerUpComponent>();
 
-  auto *inpcmp = e->AddComponent<Base::InputComponent>();
+  auto inpcmp = e->AddComponent<Base::InputComponent>();
   inpcmp->BindKeyDown(KEY_A, [rbcmp]() { rbcmp->direction.x = -1; });
   inpcmp->BindKeyDown(KEY_D, [rbcmp]() { rbcmp->direction.x = 1; });
   inpcmp->BindKeyDown(KEY_W, [rbcmp]() { rbcmp->direction.y = -1; });
@@ -120,7 +124,7 @@ Base::EntityID Spawner::SpawnPlayer( //
   inpcmp->BindMouseButtonDown(MOUSE_BUTTON_LEFT, [this, shtcmp]() {
     const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
     shtcmp->IsFiring = true;
-    shtcmp->target = _parentLayer->GetScreenToWorld(_parentLayer->GetLayerMousePosition());
+    shtcmp->targetPosition = _parentLayer->GetScreenToWorld(_parentLayer->GetLayerMousePosition());
   });
   inpcmp->BindMouseButtonReleased(MOUSE_BUTTON_LEFT, [shtcmp]() { shtcmp->IsFiring = false; });
 
@@ -189,23 +193,20 @@ void Spawner::SpawnWave( //
     auto e = entityManager->CreateEntity();
     auto enemcmp = e->AddComponent<EnemyComponent>();
     enemcmp->type = type;
-    auto *transcmp = e->GetComponent<Base::TransformComponent>();
+    auto transcmp = e->GetComponent<Base::TransformComponent>();
     transcmp->position = position;
 
     e->AddComponent<Base::ImpulseComponent>();
 
-    auto *trckcmp = e->AddComponent<TrackingComponent>();
-    trckcmp->targetEntityID = playerID;
-
-    auto *mvcmp = e->AddComponent<Base::MoveComponent>();
+    auto mvcmp = e->AddComponent<Base::MoveComponent>();
     mvcmp->driveForce = std::uniform_int_distribution(300, 500)(gen);
 
-    auto *rbcmp = e->AddComponent<Base::RigidBodyComponent>();
+    auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
     rbcmp->isKinematic = false;
     rbcmp->drag = 3;
     rbcmp->mass = 1;
 
-    auto *abbcmp = e->AddComponent<Base::ColliderComponent>();
+    auto abbcmp = e->AddComponent<Base::ColliderComponent>();
     abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
@@ -224,11 +225,12 @@ void Spawner::SpawnWave( //
     transfxcmp->lookAtTarget = _playerID;
 
     // Sprite
-    Base::SpriteComponent *sprtcmp = nullptr;
+    std::shared_ptr<Base::SpriteComponent> sprtcmp = nullptr;
 
     switch (type)
     {
     case EnemyType::CHASER: {
+      auto trckcmp = e->AddComponent<TrackingComponent>(_playerID);
       sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                //
         _parentLayer->GetAsset<Base::Texture>("chaser"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
       );
@@ -239,17 +241,60 @@ void Spawner::SpawnWave( //
       sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                 //
         _parentLayer->GetAsset<Base::Texture>("shooter"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
       );
-      trckcmp->trackingDistance = 1000;
       enemcmp->value = 2;
 
-      auto *shtcmp = e->AddComponent<ShootComponent>();
+      auto shtcmp = e->AddComponent<ShootComponent>();
       shtcmp->bulletFireRate = 5.f;
       shtcmp->bulletKnockbackForce = 800;
       shtcmp->bulletSpeed = 1000.f;
       shtcmp->bulletTexture = _parentLayer->GetAsset<Base::Texture>("shooter-bullet");
-
       transfxcmp->bindMin = _parentLayer->GetScreenToWorld({0, 0});
       transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
+
+      std::unordered_map<std::string, Base::State> states = //
+        {
+          {
+            "fire",
+            {
+              {
+                [this](std::shared_ptr<Base::Entity> e) {
+                  auto shtcmp = e->GetComponent<ShootComponent>();
+                  auto rbcmp = e->GetComponent<Base::RigidBodyComponent>();
+                  shtcmp->IsFiring = true;
+                  shtcmp->targetEntity = _playerID;
+                  rbcmp->direction = {0, 0};
+                },
+                [](std::shared_ptr<Base::Entity> e) {
+                  auto shtcmp = e->GetComponent<ShootComponent>();
+                  shtcmp->IsFiring = false;
+                  shtcmp->bulletFireTimer = 0;
+                },
+              },
+              {
+                "chase",
+                Base::TransitionEvaluationType::AND,
+                std::make_shared<Base::ProximityExit>(_playerID, 250 / _parentLayer->GetCameraZoom()),
+              },
+            },
+          },
+          {
+            "chase",
+            {
+              {
+                [](std::shared_ptr<Base::Entity>) {},
+                [](std::shared_ptr<Base::Entity>) {},
+                std::make_shared<TrackingComponent>(_playerID),
+              },
+              {
+                "fire",
+                Base::TransitionEvaluationType::OR,
+                std::make_shared<Base::ProximityEntry>(_playerID, 500 / _parentLayer->GetCameraZoom()),
+              },
+            },
+          },
+        };
+
+      auto statecmp = e->AddComponent<Base::StateComponent>("chase", states);
       break;
     }
     case EnemyType::KAMAKAZI:

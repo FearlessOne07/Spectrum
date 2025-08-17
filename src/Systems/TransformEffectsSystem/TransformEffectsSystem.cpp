@@ -18,8 +18,8 @@ void TransformEffectsSystem::Update(float dt, Base::EntityManager *entityManager
   for (auto &item : entities)
   {
     auto e = item->item;
-    auto *transfxcmp = e->GetComponent<TransformEffectsComponent>();
-    auto *transcmp = e->GetComponent<Base::TransformComponent>();
+    auto transfxcmp = e->GetComponent<TransformEffectsComponent>();
+    auto transcmp = e->GetComponent<Base::TransformComponent>();
 
     if (transfxcmp->rotate)
     {
@@ -49,8 +49,8 @@ void TransformEffectsSystem::Update(float dt, Base::EntityManager *entityManager
     {
       if (e->HasComponent<Base::ColliderComponent>())
       {
-        auto *rbcmp = e->GetComponent<Base::RigidBodyComponent>();
-        auto *abbcmp = e->GetComponent<Base::ColliderComponent>();
+        auto rbcmp = e->GetComponent<Base::RigidBodyComponent>();
+        auto abbcmp = e->GetComponent<Base::ColliderComponent>();
 
         Vector2 positionMin = {0, 0};
         Vector2 positionMax = {0, 0};

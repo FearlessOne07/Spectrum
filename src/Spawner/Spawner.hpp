@@ -15,7 +15,7 @@ private:
   // Spawming
   float _spawnDuration = 2.f;
   float _spawnTimer = _spawnDuration;
-  float _spawnOffset = 200;
+  float _spawnOffset = -200;
   std::queue<EnemyType> _toSpawn = {};
 
   // Player
