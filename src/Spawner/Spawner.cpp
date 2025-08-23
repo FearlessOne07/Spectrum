@@ -10,6 +10,7 @@
 #include "Components/TransformEffects.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
 #include "base/components/AnimationComponent.hpp"
+#include "base/components/AreaComponent.hpp"
 #include "base/components/ProximityComponent.hpp"
 #include "base/components/SpriteComponent.hpp"
 #include "base/components/StateComponent.hpp"
@@ -42,7 +43,7 @@ void Spawner::SetToSpawn(std::vector<EnemyType> toSpawn)
 
 Spawner::Spawner(const Base::SceneLayer *parentLayer) : _parentLayer(parentLayer)
 {
-  _spawnOffset = float(-200 * _parentLayer->GetCameraZoom());
+  _spawnOffset = float(200 * _parentLayer->GetCameraZoom());
 }
 
 int Spawner::GetToSpawnCount() const
@@ -251,6 +252,16 @@ void Spawner::SpawnWave( //
       transfxcmp->bindMin = _parentLayer->GetScreenToWorld({0, 0});
       transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
 
+      Vector2 worldMin = _parentLayer->GetScreenToWorld({abbcmp->radius, abbcmp->radius});
+      Vector2 worldMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
+
+      Rectangle screenWorldArea = {
+        worldMin.x,
+        worldMin.y,
+        worldMax.x - worldMin.x,
+        worldMax.y - worldMin.y,
+      };
+
       std::unordered_map<std::string, Base::State> states = //
         {
           {
@@ -272,8 +283,9 @@ void Spawner::SpawnWave( //
               },
               {
                 "chase",
-                Base::TransitionEvaluationType::AND,
+                Base::TransitionEvaluationType::OR,
                 std::make_shared<Base::ProximityExit>(_playerID, 250 / _parentLayer->GetCameraZoom()),
+                std::make_shared<Base::AreaExit>(screenWorldArea),
               },
             },
           },
@@ -287,8 +299,9 @@ void Spawner::SpawnWave( //
               },
               {
                 "fire",
-                Base::TransitionEvaluationType::OR,
+                Base::TransitionEvaluationType::AND,
                 std::make_shared<Base::ProximityEntry>(_playerID, 500 / _parentLayer->GetCameraZoom()),
+                std::make_shared<Base::AreaEntry>(screenWorldArea),
               },
             },
           },
