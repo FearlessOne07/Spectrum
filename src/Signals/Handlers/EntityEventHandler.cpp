@@ -7,7 +7,6 @@
 #include "Components/LightComponent.hpp"
 #include "Components/ShootComponent.hpp"
 #include "Components/Tags/PlayerTag.hpp"
-#include "Components/TrackingComponent.hpp"
 #include "Scenes/DeathScreen/DeathScreen.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
 #include "Signals/EntityDiedSignal.hpp"
@@ -124,7 +123,6 @@ void EntitySignalHandler::DeathHandler(const std::shared_ptr<Base::Signal> signa
 void EntitySignalHandler::DamagedHandler(const std::shared_ptr<Base::Signal> signal)
 {
   auto col = std::static_pointer_cast<EntityDamagedSignal>(signal);
-
   if (col->entity->HasComponent<PlayerTag>())
   {
     Base::CameraShakeConfig config;
@@ -134,7 +132,6 @@ void EntitySignalHandler::DamagedHandler(const std::shared_ptr<Base::Signal> sig
     config.duration = 1;
     config.traumaMultiplyer = 2;
     config.rotationMagnitude = 4;
-
     _parentLayer->ShakeCamera(config);
   }
 }

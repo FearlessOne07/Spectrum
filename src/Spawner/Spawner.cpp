@@ -261,13 +261,12 @@ void Spawner::SpawnWave( //
         worldMax.x - worldMin.x,
         worldMax.y - worldMin.y,
       };
-
       std::unordered_map<std::string, Base::State> states = //
         {
           {
             "fire",
-            {
-              {
+            Base::State{
+              Base::ComponentBundle{
                 [this](std::shared_ptr<Base::Entity> e) {
                   auto shtcmp = e->GetComponent<ShootComponent>();
                   auto rbcmp = e->GetComponent<Base::RigidBodyComponent>();
@@ -281,7 +280,7 @@ void Spawner::SpawnWave( //
                   shtcmp->bulletFireTimer = 0;
                 },
               },
-              {
+              Base::TransitionConditionBlock{
                 "chase",
                 Base::TransitionEvaluationType::OR,
                 std::make_shared<Base::ProximityExit>(_playerID, 250 / _parentLayer->GetCameraZoom()),
@@ -291,13 +290,13 @@ void Spawner::SpawnWave( //
           },
           {
             "chase",
-            {
-              {
+            Base::State{
+              Base::ComponentBundle{
                 [](std::shared_ptr<Base::Entity>) {},
                 [](std::shared_ptr<Base::Entity>) {},
                 std::make_shared<TrackingComponent>(_playerID),
               },
-              {
+              Base::TransitionConditionBlock{
                 "fire",
                 Base::TransitionEvaluationType::AND,
                 std::make_shared<Base::ProximityEntry>(_playerID, 500 / _parentLayer->GetCameraZoom()),
