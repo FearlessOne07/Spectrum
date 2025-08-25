@@ -242,7 +242,7 @@ void Spawner::SpawnWave( //
       sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                 //
         _parentLayer->GetAsset<Base::Texture>("shooter"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
       );
-      enemcmp->value = 2;
+      enemcmp->value = 3;
 
       auto shtcmp = e->AddComponent<ShootComponent>();
       shtcmp->bulletFireRate = 5.f;

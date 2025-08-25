@@ -54,7 +54,6 @@ void GameScene::Enter(Base::SceneData sceneData)
   mainLayer->SetCameraZoom(mainLayerRes.x / rd->gameWidth);
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);
-  mainLayer->SetCameraMode(Base::Camera2DExtMode::SMOOTH_FOLLOW);
 
   mainLayer->AddShaderEffect<Bloom>(0.7, 0.25, 1);
 

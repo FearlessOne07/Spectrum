@@ -151,51 +151,71 @@ Base::EntityID WaveManager::SpawnPlayer()
 
 void WaveManager::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
 {
-  std::random_device _rd;
-  std::mt19937_64 _gen = std::mt19937_64(_rd());
-
-  if (sig->entity->HasComponent<EnemyComponent>())
+  if (!sig->entity->HasComponent<EnemyComponent>())
   {
-    int value = sig->entity->GetComponent<EnemyComponent>()->value;
+    return;
+  }
 
-    for (int i = 0; i < value; i++)
-    {
-      auto e = _entityMan->CreateEntity();
-      e->GetComponent<Base::TransformComponent>()->position =
-        sig->entity->GetComponent<Base::TransformComponent>()->position;
+  int totalValue = sig->entity->GetComponent<EnemyComponent>()->value;
+  std::random_device _rd;
+  std::mt19937_64 _gen(_rd());
 
-      auto colcmp = e->AddComponent<Base::ColliderComponent>();
-      colcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
-      colcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
-      colcmp->radius = 8;
+  // First, split the value into chunks of at most 3
+  std::vector<int> chunks;
+  while (totalValue > 0)
+  {
+    int maxThis = std::min(3, totalValue);
 
-      auto sprtcmp = e->AddComponent<Base::SpriteComponent>(                                               //
-        _parentLayer->GetAsset<Base::Texture>("power-ups"), Vector2{16, 8}, Vector2{8, 8}, Vector2{16, 16} //
-      );
+    // Randomly pick between 1 and maxThis
+    int v = std::uniform_int_distribution<int>(1, maxThis)(_gen);
+    chunks.push_back(v);
+    totalValue -= v;
+  }
 
-      auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
-      rbcmp->isKinematic = false;
-      rbcmp->drag = 4;
-      rbcmp->mass = 1;
+  // Shuffle so it's not always descending
+  std::shuffle(chunks.begin(), chunks.end(), _gen);
 
-      auto mvcmp = e->AddComponent<Base::MoveComponent>();
-      mvcmp->driveForce = 0;
+  // Spawn each chunk as a light entity
+  for (int lightValue : chunks)
+  {
+    float targetSize = 16 + (lightValue - 1) * 4; // 1=16px, 2=20px, 3=24px
 
-      float angle = std::uniform_real_distribution<float>(0, 2 * PI)(_gen);
-      rbcmp->direction = {sin(angle), cos(angle)};
+    auto e = _entityMan->CreateEntity();
+    e->GetComponent<Base::TransformComponent>()->position =
+      sig->entity->GetComponent<Base::TransformComponent>()->position;
 
-      auto impcmp = e->AddComponent<Base::ImpulseComponent>();
-      impcmp->force = std::uniform_int_distribution<int>(200, 400)(_gen);
-      impcmp->direction = {sin(angle), cos(angle)};
+    auto colcmp = e->AddComponent<Base::ColliderComponent>();
+    colcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
+    colcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
+    colcmp->radius = targetSize / 2;
 
-      auto transfx = e->AddComponent<TransformEffectsComponent>();
-      transfx->bind = true;
-      transfx->bindMin = _parentLayer->GetScreenToWorld({0, 0});
-      transfx->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
+    e->AddComponent<Base::SpriteComponent>(                          //
+      _parentLayer->GetAsset<Base::Texture>("power-ups"),            //
+      Vector2{16, 8}, Vector2{8, 8}, Vector2{targetSize, targetSize} //
+    );
 
-      e->AddComponent<LightComponent>()->value = 1;
-      _entityMan->AddEntity(e);
-    }
+    auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
+    rbcmp->isKinematic = false;
+    rbcmp->drag = 4;
+    rbcmp->mass = 1;
+
+    auto mvcmp = e->AddComponent<Base::MoveComponent>();
+    mvcmp->driveForce = 0;
+
+    float angle = std::uniform_real_distribution<float>(0, 2 * PI)(_gen);
+    rbcmp->direction = {sin(angle), cos(angle)};
+
+    auto impcmp = e->AddComponent<Base::ImpulseComponent>();
+    impcmp->force = std::uniform_int_distribution<int>(200, 400)(_gen);
+    impcmp->direction = {sin(angle), cos(angle)};
+
+    auto transfx = e->AddComponent<TransformEffectsComponent>();
+    transfx->bind = true;
+    transfx->bindMin = _parentLayer->GetScreenToWorld({0, 0});
+    transfx->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
+
+    e->AddComponent<LightComponent>()->value = lightValue;
+    _entityMan->AddEntity(e);
   }
 }
 
