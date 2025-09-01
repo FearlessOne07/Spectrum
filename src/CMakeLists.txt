@@ -16,6 +16,7 @@ set(SOURCES
   "./Systems/TransformEffectsSystem/TransformEffectsSystem.cpp"
   "./Systems/PowerUpSystem/PowerUpSystem.cpp"
   "./Systems/LightCollectionSystem/LightCollectionSystem.cpp"
+  "./Systems/DiveSystem/DiveSystem.cpp"
 
   "./Signals/Handlers/EntityEventHandler.cpp"
 

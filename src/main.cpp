@@ -2,6 +2,7 @@
 #include "Scenes/GameScene/GameScene.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
+#include "Systems/DiveSystem/DiveSystem.hpp"
 #include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/LightCollectionSystem/LightCollectionSystem.hpp"
 #include "Systems/PowerUpSystem/PowerUpSystem.hpp"
@@ -35,6 +36,7 @@ int main(void)
   game.RegisterSystem<TrackingSystem>();
   game.RegisterSystem<HealthSystem>();
   game.RegisterSystem<PowerUpSystem>();
+  game.RegisterSystem<DiveSystem>();
 
   // Run game
   game.Run();

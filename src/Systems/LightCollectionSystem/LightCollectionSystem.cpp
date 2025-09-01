@@ -30,7 +30,7 @@ void LightCollectionSystem::Update(float dt, Base::EntityManager *entityManager,
         float distSqr = Vector2DistanceSqr(transcmp->position, lightTranscmp->position);
         float colRadiusSqr = lightCol->collectionRaius * lightCol->collectionRaius;
 
-        if (distSqr < colRadiusSqr)
+        if (distSqr <= colRadiusSqr)
         {
           float scale = 1 - std::clamp<float>(distSqr / colRadiusSqr, 0, 1);
           mvcmp->driveForce = scale * scale * 4000;

@@ -1,7 +1,9 @@
 #include "Spawner.hpp"
 #include "Components/DamageComponent.hpp"
+#include "Components/DiveComponent.hpp"
 #include "Components/EnemyComponent.hpp"
 #include "Components/HealthComponent.hpp"
+#include "Components/KnockBackComponent.hpp"
 #include "Components/LightCollectorComponent.hpp"
 #include "Components/PowerUpComponent.hpp"
 #include "Components/ShootComponent.hpp"
@@ -14,6 +16,7 @@
 #include "base/components/ProximityComponent.hpp"
 #include "base/components/SpriteComponent.hpp"
 #include "base/components/StateComponent.hpp"
+#include "base/components/TimerComponent.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/state/TransitionConditionBlock.hpp"
 #include <base/assets/AssetManager.hpp>
@@ -133,8 +136,10 @@ Base::EntityID Spawner::SpawnPlayer( //
   dmgcmp->damage = 2;
   e->AddComponent<Base::ImpulseComponent>();
   e->AddComponent<PlayerTag>();
+
   auto lightColCmp = e->AddComponent<LightCollectorComponent>();
-  lightColCmp->collectionRaius = (abbcmp->radius + (abbcmp->radius * 0.5)) / _parentLayer->GetCameraZoom();
+  float baseRadius = abbcmp->radius / _parentLayer->GetCameraZoom();
+  lightColCmp->collectionRaius = (baseRadius + (baseRadius * 0.5));
   entityManager->AddEntity(e);
 
   auto bus = Base::SignalBus::GetInstance();
@@ -200,7 +205,6 @@ void Spawner::SpawnWave( //
     e->AddComponent<Base::ImpulseComponent>();
 
     auto mvcmp = e->AddComponent<Base::MoveComponent>();
-    mvcmp->driveForce = std::uniform_int_distribution(300, 500)(gen);
 
     auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
     rbcmp->isKinematic = false;
@@ -225,8 +229,19 @@ void Spawner::SpawnWave( //
     transfxcmp->lookAt = true;
     transfxcmp->lookAtTarget = _playerID;
 
+    e->AddComponent<KnockBackComponent>(1000);
+
     // Sprite
     std::shared_ptr<Base::SpriteComponent> sprtcmp = nullptr;
+    Vector2 worldMin = _parentLayer->GetScreenToWorld({abbcmp->radius, abbcmp->radius});
+    Vector2 worldMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
+
+    Rectangle screenWorldArea = {
+      worldMin.x,
+      worldMin.y,
+      worldMax.x - worldMin.x,
+      worldMax.y - worldMin.y,
+    };
 
     switch (type)
     {
@@ -236,6 +251,7 @@ void Spawner::SpawnWave( //
         _parentLayer->GetAsset<Base::Texture>("chaser"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
       );
       enemcmp->value = 5;
+      mvcmp->driveForce = std::uniform_real_distribution<float>(400, 500)(gen);
       break;
     }
     case EnemyType::SHOOTER: {
@@ -243,6 +259,7 @@ void Spawner::SpawnWave( //
         _parentLayer->GetAsset<Base::Texture>("shooter"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
       );
       enemcmp->value = 3;
+      mvcmp->driveForce = 350;
 
       auto shtcmp = e->AddComponent<ShootComponent>();
       shtcmp->bulletFireRate = 5.f;
@@ -252,15 +269,6 @@ void Spawner::SpawnWave( //
       transfxcmp->bindMin = _parentLayer->GetScreenToWorld({0, 0});
       transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
 
-      Vector2 worldMin = _parentLayer->GetScreenToWorld({abbcmp->radius, abbcmp->radius});
-      Vector2 worldMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
-
-      Rectangle screenWorldArea = {
-        worldMin.x,
-        worldMin.y,
-        worldMax.x - worldMin.x,
-        worldMax.y - worldMin.y,
-      };
       std::unordered_map<std::string, Base::State> states = //
         {
           {
@@ -309,8 +317,79 @@ void Spawner::SpawnWave( //
       auto statecmp = e->AddComponent<Base::StateComponent>("chase", states);
       break;
     }
-    case EnemyType::KAMAKAZI:
+    case EnemyType::KAMAKAZI: {
+      mvcmp->driveForce = 500;
+      sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                  //
+        _parentLayer->GetAsset<Base::Texture>("kamakazi"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
+      );
+
+      std::unordered_map<std::string, Base::State> states = {
+        {
+          "chase",
+          Base::State{
+            Base::ComponentBundle{
+              [](std::shared_ptr<Base::Entity> e) {},
+              [](std::shared_ptr<Base::Entity>) {},
+              std::make_shared<TrackingComponent>(_playerID),
+            },
+            Base::TransitionConditionBlock{
+              "scope",
+              Base::TransitionEvaluationType::AND,
+              std::make_shared<Base::AreaEntry>(screenWorldArea),
+            },
+          },
+        },
+        {
+          "scope",
+          Base::State{
+            Base::ComponentBundle{
+              [](std::shared_ptr<Base::Entity> e) {
+                auto rbcmp = e->GetComponent<Base::RigidBodyComponent>();
+                rbcmp->direction = {0, 0};
+              },
+              [](std::shared_ptr<Base::Entity>) {},
+            },
+            Base::TransitionConditionBlock{
+              "dive",
+              Base::TransitionEvaluationType::OR,
+              std::make_shared<Base::TimerComponent>(5.f),
+            },
+          },
+        },
+        {
+          "dive",
+          Base::State{
+            Base::ComponentBundle{
+              [](std::shared_ptr<Base::Entity> e) {
+                auto mvcmp = e->GetComponent<Base::MoveComponent>();
+                mvcmp->driveForce *= 6;
+
+                auto dvcmp = e->GetComponent<DiveComponent>();
+                dvcmp->ResetHasDived();
+
+                auto transfxcmp = e->GetComponent<TransformEffectsComponent>();
+                transfxcmp->rotate = false;
+              },
+              [](std::shared_ptr<Base::Entity> e) {
+                auto mvcmp = e->GetComponent<Base::MoveComponent>();
+                mvcmp->driveForce /= 6;
+
+                auto transfxcmp = e->GetComponent<TransformEffectsComponent>();
+                transfxcmp->rotate = true;
+              },
+              std::make_shared<DiveComponent>(_playerID),
+            },
+            Base::TransitionConditionBlock{
+              "chase",
+              Base::TransitionEvaluationType::OR,
+              std::make_shared<Base::AreaExit>(screenWorldArea),
+            },
+          },
+        },
+      };
+      auto statecmp = e->AddComponent<Base::StateComponent>("chase", states);
       break;
+    }
     case EnemyType::NONE:
       break;
     }

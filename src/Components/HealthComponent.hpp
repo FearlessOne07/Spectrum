@@ -23,6 +23,11 @@ public:
     return _health;
   }
 
+  void Kill()
+  {
+    TakeDamage(_health);
+  }
+
   float GetMaxHealth() const
   {
     return _maxHealth;

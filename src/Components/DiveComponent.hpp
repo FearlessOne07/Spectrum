@@ -4,18 +4,12 @@
 class DiveComponent : public Base::Component
 {
 private:
-  float _diveForce = 0;
   Base::EntityID _diveTarget;
   bool _hasDived = false;
 
 public:
-  DiveComponent(float diveForce, Base::EntityID diveTarget) : _diveForce(diveForce), _diveTarget(diveTarget)
+  DiveComponent(Base::EntityID diveTarget) : _diveTarget(diveTarget)
   {
-  }
-
-  float GetDiveForce() const
-  {
-    return _diveForce;
   }
 
   Base::EntityID GetDiveTarget() const
@@ -31,5 +25,10 @@ public:
   void SetHasDived()
   {
     _hasDived = true;
+  }
+
+  void ResetHasDived()
+  {
+    _hasDived = false;
   }
 };

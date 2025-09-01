@@ -3,16 +3,21 @@
 #include "Components/DamageComponent.hpp"
 #include "Components/EnemyComponent.hpp"
 #include "Components/HealthComponent.hpp"
+#include "Components/KnockBackComponent.hpp"
 #include "Components/LightCollectorComponent.hpp"
 #include "Components/LightComponent.hpp"
 #include "Components/ShootComponent.hpp"
+#include "Components/Tags/ExplosionTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Scenes/DeathScreen/DeathScreen.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
 #include "Signals/EntityDiedSignal.hpp"
 #include "base/audio/Sound.hpp"
+#include "base/components/ColliderComponent.hpp"
 #include "base/components/TransformComponent.hpp"
+#include "base/entities/EntityManager.hpp"
 #include "base/scenes/SceneTransition.hpp"
+#include "base/util/Circle.hpp"
 #include <base/audio/signals/PlaySoundSignal.hpp>
 #include <base/components/ImpulseComponent.hpp>
 #include <base/components/MoveComponent.hpp>
@@ -80,6 +85,21 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
     }
     else if (attack->HasComponent<EnemyComponent>())
     {
+      auto enemycmp = attack->GetComponent<EnemyComponent>();
+
+      if (enemycmp->type == EnemyType::KAMAKAZI)
+      {
+        attack->GetComponent<HealthComponent>()->Kill();
+        // Base::CameraShakeConfig config;
+        // config.trauma = 0.1;
+        // config.frequency = 150.0f;
+        // config.shakeMagnitude = _parentLayer->GetSize().x * 0.20;
+        // config.duration = 1;
+        // config.traumaMultiplyer = 2;
+        // config.rotationMagnitude = 4;
+        // _parentLayer->ShakeCamera(config);
+      }
+
       auto mvcmpAtt = attack->GetComponent<Base::MoveComponent>();
       auto dmgcmp = attack->GetComponent<DamageComponent>();
       auto hlthcmp = defence->GetComponent<HealthComponent>();
@@ -93,11 +113,15 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
         bus->BroadCastSignal(sig);
         hlthcmp->TakeDamage(dmgcmp->damage);
       }
-      impcmpdef->force = mvcmpAtt->driveForce * 2;
-
       auto impcmpatt = attack->GetComponent<Base::ImpulseComponent>();
       impcmpatt->direction = impcmpdef->direction * -1;
-      impcmpatt->force = 0.5 * impcmpdef->force;
+      impcmpatt->force = mvcmpAtt->driveForce * 1.1;
+
+      if (attack->HasComponent<KnockBackComponent>())
+      {
+        auto kckbckcmp = attack->GetComponent<KnockBackComponent>();
+        impcmpdef->force = kckbckcmp->GetForce();
+      }
     }
     else if (attack->HasComponent<LightComponent>())
     {
@@ -105,6 +129,40 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
       auto lightcmp = attack->GetComponent<LightComponent>();
       lightcolcmp->value += lightcmp->value;
       attack->SetDead();
+    }
+    else if (attack->HasComponent<ExplosionTag>())
+    {
+      auto expcmp = attack->GetComponent<ExplosionTag>();
+      if (!expcmp->exploded)
+      {
+        // expcmp->exploded = true;
+        auto colcmp = attack->GetComponent<Base::ColliderComponent>();
+
+        // float radius = colcmp->radius / _parentLayer->GetCameraZoom();
+
+        auto entities = _parentLayer->GetOwner()->GetEntityManager()->QueryArea(Circle{
+          transAtt->position,
+          colcmp->radius,
+        });
+
+        for (auto &e : entities)
+        {
+          if (e->item == attack)
+          {
+            continue;
+          }
+
+          Vector2 playerPos = e->item->GetComponent<Base::TransformComponent>()->position;
+          Vector2 direction = Vector2Normalize(playerPos - transAtt->position);
+
+          if (e->item->HasComponent<Base::ImpulseComponent>())
+          {
+            auto playerImpcmp = e->item->GetComponent<Base::ImpulseComponent>();
+            playerImpcmp->direction = direction;
+            playerImpcmp->force = expcmp->explosionForce;
+          }
+        }
+      }
     }
   }
 }

@@ -24,8 +24,16 @@ void TrackingSystem::Update(float dt, Base::EntityManager *entityManager, const 
     auto transcomp = e->GetComponent<Base::TransformComponent>();
     auto rbcmp = e->GetComponent<Base::RigidBodyComponent>();
 
-    auto target = entityManager->GetEntity(trckcomp->GetTargetEntityID());
-    Vector2 targetPos = target->GetComponent<Base::TransformComponent>()->position;
+    Vector2 targetPos = {0, 0};
+    if (trckcomp->GetTargetEntityID())
+    {
+      auto target = entityManager->GetEntity(trckcomp->GetTargetEntityID());
+      targetPos = target->GetComponent<Base::TransformComponent>()->position;
+    }
+    else
+    {
+      targetPos = trckcomp->GetTargetPosition();
+    }
 
     Vector2 trackingDirection = Vector2Subtract( //
       targetPos, transcomp->position             //

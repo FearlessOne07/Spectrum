@@ -36,6 +36,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   LoadAsset<Base::Texture>("assets/textures/chaser.png");
   LoadAsset<Base::Texture>("assets/textures/shooter.png");
   LoadAsset<Base::Texture>("assets/textures/shooter-bullet.png");
+  LoadAsset<Base::Texture>("assets/textures/kamakazi.png");
   LoadAsset<Base::Texture>("assets/textures/player-bullet.png");
   LoadAsset<Base::Sound>("assets/sounds/bullet-fire.wav");
   LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
@@ -48,7 +49,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   AttachLayer<GameUILayer>(uiLayer);
 
   // MainRenderLayer
-  Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight} / 4;
+  Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight} / 1;
   auto mainLayer = AddRenderLayer({mainLayerRes.x, mainLayerRes.y}, GetClearColor());
   mainLayer->SetCameraOffset({mainLayerRes.x / 2, mainLayerRes.y / 2});
   mainLayer->SetCameraZoom(mainLayerRes.x / rd->gameWidth);
