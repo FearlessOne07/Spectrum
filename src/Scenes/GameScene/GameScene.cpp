@@ -49,7 +49,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   AttachLayer<GameUILayer>(uiLayer);
 
   // MainRenderLayer
-  Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight} / 1;
+  Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight} / 4;
   auto mainLayer = AddRenderLayer({mainLayerRes.x, mainLayerRes.y}, GetClearColor());
   mainLayer->SetCameraOffset({mainLayerRes.x / 2, mainLayerRes.y / 2});
   mainLayer->SetCameraZoom(mainLayerRes.x / rd->gameWidth);

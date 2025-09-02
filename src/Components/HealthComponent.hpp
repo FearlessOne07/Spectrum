@@ -8,19 +8,25 @@ struct HealthComponent : public Base::Component
 private:
   float _health = 0;
   float _maxHealth = 0;
+  float _baseHealth = 0;
   float _sickness = 0;
   bool _healthChanged = false;
   bool _tookDamage = false;
   float _lastDamageTaken = 0;
 
 public:
-  HealthComponent(float maxHealth) : _maxHealth(maxHealth), _health(maxHealth)
+  HealthComponent(float baseHealth) : _baseHealth(baseHealth), _maxHealth(baseHealth), _health(baseHealth)
   {
   }
 
   float GetHealth() const
   {
     return _health;
+  }
+
+  float GetBaseHealth() const
+  {
+    return _baseHealth;
   }
 
   void Kill()

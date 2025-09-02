@@ -3,6 +3,8 @@
 #include "Modifiers/MaxHealthModifier/MaxHealthModifier.hpp"
 #include "Modifiers/SpeedModifier/SpeedModifier.hpp"
 #include "base/scenes/SceneLayer.hpp"
+#include <algorithm>
+#include <cmath>
 #include <memory>
 #include <random>
 
@@ -13,6 +15,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
 
   // Init Stock
   std::shared_ptr<SpeedModifier> speed = std::make_shared<SpeedModifier>();
+  std::uniform_int_distribution basePriceDist(3, 7);
   speed->SetSpeedBoost(0.02);
   _stock.emplace_back( //
     speed,
@@ -22,7 +25,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
       {5, 1},
       {8, 8},
     },
-    1, "Speed" //
+    1, "Speed", basePriceDist(_gen) //
   );
 
   std::shared_ptr<MaxHealthModifier> maxHealth = std::make_shared<MaxHealthModifier>();
@@ -35,7 +38,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
       {2, 0},
       {8, 8},
     },
-    1, "Max Health" //
+    1, "Max Health", basePriceDist(_gen) //
   );
 
   std::shared_ptr<HealthBoostModifier> health = std::make_shared<HealthBoostModifier>();
@@ -48,7 +51,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
       {4, 0},
       {8, 8},
     },
-    1, "Heal" //
+    1, "Heal", basePriceDist(_gen) //
   );
 
   RefreshShop();
@@ -57,17 +60,37 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
 void Shop::RefreshShop()
 {
   std::uniform_int_distribution<> stockDist(0, _stock.size() - 1);
+
   for (auto &item : _currentItems)
   {
     if (item.bought)
     {
       _newItems = true;
-      StockItem sItem = _stock[stockDist(_gen)];
+
+      if (item.stockItem)
+      {
+        item.stockItem->modifierLevel++;
+      }
+
+      StockItem &sItem = _stock[stockDist(_gen)];
+
+      // while (true)
+      // {
+      //   if ( //
+      //     std::ranges::find_if(_currentItems, [sItem](ShopItem &shop) { return shop.name == sItem.name; }) ==
+      //     _currentItems.end())
+      //   {
+      //     break;
+      //   }
+      //   sItem = _stock[stockDist(_gen)];
+      // }
+
       item.bought = false;
-      item.cost = std::uniform_int_distribution(5, 20)(_gen);
+      item.cost = std::round(sItem.basePrice * std::pow(1.8, sItem.modifierLevel - 1));
       item.modifier = sItem.modifier;
       item.textureIcon = sItem.itemSprite;
       item.name = sItem.name;
+      item.stockItem = &sItem;
     }
   }
 }

@@ -118,7 +118,6 @@ Base::EntityID Spawner::SpawnPlayer( //
   inpcmp->BindKeyDown(KEY_D, [rbcmp]() { rbcmp->direction.x = 1; });
   inpcmp->BindKeyDown(KEY_W, [rbcmp]() { rbcmp->direction.y = -1; });
   inpcmp->BindKeyDown(KEY_S, [rbcmp]() { rbcmp->direction.y = 1; });
-  inpcmp->BindKeyPressed(KEY_K, [hlthcmp]() { hlthcmp->TakeDamage(hlthcmp->GetHealth()); });
 
   inpcmp->BindKeyReleased(KEY_A, [rbcmp]() { rbcmp->direction.x = 0; });
   inpcmp->BindKeyReleased(KEY_D, [rbcmp]() { rbcmp->direction.x = 0; });
@@ -133,7 +132,7 @@ Base::EntityID Spawner::SpawnPlayer( //
   inpcmp->BindMouseButtonReleased(MOUSE_BUTTON_LEFT, [shtcmp]() { shtcmp->IsFiring = false; });
 
   auto dmgcmp = e->AddComponent<DamageComponent>();
-  dmgcmp->damage = 2;
+  dmgcmp->damage = 1;
   e->AddComponent<Base::ImpulseComponent>();
   e->AddComponent<PlayerTag>();
 
@@ -216,10 +215,7 @@ void Spawner::SpawnWave( //
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
 
-    auto hlthcmp = e->AddComponent<HealthComponent>(8.f);
-
     auto dmgcmp = e->AddComponent<DamageComponent>();
-    dmgcmp->damage = 1;
 
     auto transfxcmp = e->AddComponent<TransformEffectsComponent>();
     transfxcmp->rotate = true;
@@ -246,6 +242,8 @@ void Spawner::SpawnWave( //
     switch (type)
     {
     case EnemyType::CHASER: {
+      auto hlthcmp = e->AddComponent<HealthComponent>(3.f);
+      dmgcmp->damage = 1;
       auto trckcmp = e->AddComponent<TrackingComponent>(_playerID);
       sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                //
         _parentLayer->GetAsset<Base::Texture>("chaser"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
@@ -255,6 +253,8 @@ void Spawner::SpawnWave( //
       break;
     }
     case EnemyType::SHOOTER: {
+      auto hlthcmp = e->AddComponent<HealthComponent>(4.f);
+      dmgcmp->damage = 2;
       sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                 //
         _parentLayer->GetAsset<Base::Texture>("shooter"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
       );
@@ -318,6 +318,8 @@ void Spawner::SpawnWave( //
       break;
     }
     case EnemyType::KAMAKAZI: {
+      auto hlthcmp = e->AddComponent<HealthComponent>(5.f);
+      dmgcmp->damage = 5;
       mvcmp->driveForce = 500;
       sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                  //
         _parentLayer->GetAsset<Base::Texture>("kamakazi"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //

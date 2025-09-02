@@ -27,9 +27,9 @@ private:
 private:
   // Enemy Weights
   std::unordered_map<EnemyType, EnemySpec> _enemySpawnInfo = {
-    {EnemyType::CHASER, EnemySpec{.spawnChance = 0.7f, .cost = 1, .unlockWave = 1, .value = 2}},
+    {EnemyType::CHASER, EnemySpec{.spawnChance = 0.7f, .cost = 1, .unlockWave = 1}},
     {EnemyType::SHOOTER, EnemySpec{.spawnChance = 0.2f, .cost = 2, .unlockWave = 2}},
-    {EnemyType::KAMAKAZI, EnemySpec{.spawnChance = 0.1f, .cost = 2, .unlockWave = 2}},
+    {EnemyType::KAMAKAZI, EnemySpec{.spawnChance = 0.1f, .cost = 3, .unlockWave = 3}},
   };
 
   // Wave

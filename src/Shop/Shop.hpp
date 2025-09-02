@@ -8,6 +8,16 @@
 #include <memory>
 #include <random>
 #include <vector>
+
+struct StockItem
+{
+  std::shared_ptr<Modifier> modifier = nullptr;
+  Base::NinePatchSprite itemSprite;
+  int modifierLevel = 1;
+  std::string name = "";
+  int basePrice = 0;
+};
+
 struct ShopItem
 {
   std::shared_ptr<Modifier> modifier = nullptr;
@@ -16,14 +26,7 @@ struct ShopItem
   bool locked = false;
   bool bought = true;
   std::string name = "";
-};
-
-struct StockItem
-{
-  std::shared_ptr<Modifier> modifier = nullptr;
-  Base::NinePatchSprite itemSprite;
-  int modifierLevel = 1;
-  std::string name = "";
+  StockItem *stockItem = nullptr;
 };
 
 class Shop
