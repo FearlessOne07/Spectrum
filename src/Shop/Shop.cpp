@@ -74,16 +74,14 @@ void Shop::RefreshShop()
 
       StockItem &sItem = _stock[stockDist(_gen)];
 
-      // while (true)
-      // {
-      //   if ( //
-      //     std::ranges::find_if(_currentItems, [sItem](ShopItem &shop) { return shop.name == sItem.name; }) ==
-      //     _currentItems.end())
-      //   {
-      //     break;
-      //   }
-      //   sItem = _stock[stockDist(_gen)];
-      // }
+      while (true)
+      {
+        if (std::ranges::count_if(_currentItems, [sItem](ShopItem &shop) { return shop.name == sItem.name; }) <= 1)
+        {
+          break;
+        }
+        sItem = _stock[stockDist(_gen)];
+      }
 
       item.bought = false;
       item.cost = std::round(sItem.basePrice * std::pow(1.8, sItem.modifierLevel - 1));
