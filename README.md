@@ -14,7 +14,7 @@ F11 - Fullscreen (Broken On Linux)
 
 Esc - Pause
 
-## Gameplaye
+## Gameplay
 
 Shoot Enemies, Collect Light, Upgrade in the Shop, Rinse and Repeat
 
