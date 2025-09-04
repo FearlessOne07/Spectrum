@@ -26,6 +26,7 @@ set(SOURCES
   "./Modifiers/SpeedModifier/SpeedModifier.cpp"
   "./Modifiers/MaxHealthModifier/MaxHealthModifier.cpp"
   "./Modifiers/HealthBoost/HealthBoostModifier.cpp"
+  "./Modifiers/DamageBoostModifier/DamageModifier.cpp"
 
   "./ShaderEffects/Bloom/Bloom.cpp"
 

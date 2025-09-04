@@ -6,30 +6,45 @@
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
 #include <memory>
-#include <unordered_map>
 #include <vector>
 
 class WaveManager
 {
 public:
-  struct EnemySpec
-  {
-    float spawnChance = 0;
-    int cost = 0;
-    int unlockWave = 0;
-    int value = 0;
-  };
-
 private:
   void GenerateWave();
   void SpawnLight(std::shared_ptr<EntityDiedSignal> sig);
 
 private:
   // Enemy Weights
-  std::unordered_map<EnemyType, EnemySpec> _enemySpawnInfo = {
-    {EnemyType::CHASER, EnemySpec{.spawnChance = 0.7f, .cost = 1, .unlockWave = 1}},
-    {EnemyType::SHOOTER, EnemySpec{.spawnChance = 0.2f, .cost = 2, .unlockWave = 2}},
-    {EnemyType::KAMAKAZI, EnemySpec{.spawnChance = 0.1f, .cost = 3, .unlockWave = 3}},
+  std::vector<EnemySpec> _enemySpawnInfo = {
+    EnemySpec{
+      .Type = EnemyType::CHASER,
+      .SpawnChance = 0.7f,
+      .Cost = 1,
+      .UnlockWave = 1,
+      .Value = 2,
+      .BaseDamage = 1.5,
+      .BaseHealth = 4,
+    },
+    EnemySpec{
+      .Type = EnemyType::SHOOTER,
+      .SpawnChance = 0.2f,
+      .Cost = 2,
+      .UnlockWave = 2,
+      .Value = 3,
+      .BaseDamage = 1,
+      .BaseHealth = 4,
+    },
+    EnemySpec{
+      .Type = EnemyType::KAMAKAZI,
+      .SpawnChance = 0.1f,
+      .Cost = 3,
+      .UnlockWave = 3,
+      .Value = 5,
+      .BaseDamage = 5,
+      .BaseHealth = 4,
+    },
   };
 
   // Wave
@@ -48,7 +63,7 @@ private:
   Spawner _spawner = Spawner();
 
   // Enemies
-  std::vector<EnemyType> _enemiesToSpawn = {};
+  std::vector<EnemySpec> _enemiesToSpawn = {};
 
   // Player
   Base::EntityID _playerID;

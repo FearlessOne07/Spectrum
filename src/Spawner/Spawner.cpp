@@ -36,11 +36,11 @@
 #include <random>
 #include <raylib.h>
 
-void Spawner::SetToSpawn(std::vector<EnemyType> toSpawn)
+void Spawner::SetToSpawn(std::vector<EnemySpec> toSpawn)
 {
-  for (EnemyType type : toSpawn)
+  for (EnemySpec spec : toSpawn)
   {
-    _toSpawn.push(type);
+    _toSpawn.push(spec);
   }
 }
 
@@ -131,8 +131,7 @@ Base::EntityID Spawner::SpawnPlayer( //
   });
   inpcmp->BindMouseButtonReleased(MOUSE_BUTTON_LEFT, [shtcmp]() { shtcmp->IsFiring = false; });
 
-  auto dmgcmp = e->AddComponent<DamageComponent>();
-  dmgcmp->damage = 1;
+  auto dmgcmp = e->AddComponent<DamageComponent>(1);
   e->AddComponent<Base::ImpulseComponent>();
   e->AddComponent<PlayerTag>();
 
@@ -159,7 +158,7 @@ void Spawner::SpawnWave( //
     _spawnTimer = 0.f;
     const Base::RenderContext *rctx = Base::RenderContextSingleton::GetInstance();
 
-    EnemyType &type = _toSpawn.front();
+    EnemySpec &spec = _toSpawn.front();
     _toSpawn.pop();
 
     std::random_device rd;
@@ -197,7 +196,9 @@ void Spawner::SpawnWave( //
 
     auto e = entityManager->CreateEntity();
     auto enemcmp = e->AddComponent<EnemyComponent>();
-    enemcmp->type = type;
+    enemcmp->type = spec.Type;
+    enemcmp->value = spec.Value;
+
     auto transcmp = e->GetComponent<Base::TransformComponent>();
     transcmp->position = position;
 
@@ -214,8 +215,6 @@ void Spawner::SpawnWave( //
     abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
     abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
-
-    auto dmgcmp = e->AddComponent<DamageComponent>();
 
     auto transfxcmp = e->AddComponent<TransformEffectsComponent>();
     transfxcmp->rotate = true;
@@ -239,26 +238,24 @@ void Spawner::SpawnWave( //
       worldMax.y - worldMin.y,
     };
 
-    switch (type)
+    switch (spec.Type)
     {
     case EnemyType::CHASER: {
       auto hlthcmp = e->AddComponent<HealthComponent>(3.f);
-      dmgcmp->damage = 1;
+      e->AddComponent<DamageComponent>(1);
       auto trckcmp = e->AddComponent<TrackingComponent>(_playerID);
       sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                //
         _parentLayer->GetAsset<Base::Texture>("chaser"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
       );
-      enemcmp->value = 5;
       mvcmp->driveForce = std::uniform_real_distribution<float>(400, 500)(gen);
       break;
     }
     case EnemyType::SHOOTER: {
       auto hlthcmp = e->AddComponent<HealthComponent>(4.f);
-      dmgcmp->damage = 2;
+      e->AddComponent<DamageComponent>(2);
       sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                 //
         _parentLayer->GetAsset<Base::Texture>("shooter"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
       );
-      enemcmp->value = 3;
       mvcmp->driveForce = 350;
 
       auto shtcmp = e->AddComponent<ShootComponent>();
@@ -319,7 +316,7 @@ void Spawner::SpawnWave( //
     }
     case EnemyType::KAMAKAZI: {
       auto hlthcmp = e->AddComponent<HealthComponent>(5.f);
-      dmgcmp->damage = 5;
+      e->AddComponent<DamageComponent>(5);
       mvcmp->driveForce = 500;
       sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                  //
         _parentLayer->GetAsset<Base::Texture>("kamakazi"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //

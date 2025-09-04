@@ -77,7 +77,7 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
       if (!hlthcmp->TookDamage())
       {
         bus->BroadCastSignal(sig);
-        hlthcmp->TakeDamage(dmgcmp->damage);
+        hlthcmp->TakeDamage(dmgcmp->GetDamage());
       }
       auto rbcmp = attack->GetComponent<Base::RigidBodyComponent>();
       impcmpdef->force = bulcmp->sender->GetComponent<ShootComponent>()->bulletKnockbackForce;
@@ -111,7 +111,7 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
       if (!hlthcmp->TookDamage())
       {
         bus->BroadCastSignal(sig);
-        hlthcmp->TakeDamage(dmgcmp->damage);
+        hlthcmp->TakeDamage(dmgcmp->GetDamage());
       }
       auto impcmpatt = attack->GetComponent<Base::ImpulseComponent>();
       impcmpatt->direction = impcmpdef->direction * -1;

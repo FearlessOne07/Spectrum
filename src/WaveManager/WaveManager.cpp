@@ -44,11 +44,11 @@ void WaveManager::GenerateWave()
 
   // Create pool of available enemies for this wave
   std::unordered_map<EnemyType, EnemySpec> pool = {};
-  for (auto &[type, spec] : _enemySpawnInfo)
+  for (auto &spec : _enemySpawnInfo)
   {
-    if (_currentWave >= spec.unlockWave && spec.cost <= _wavePoints)
+    if (_currentWave >= spec.UnlockWave && spec.Cost <= _wavePoints)
     {
-      pool[type] = spec;
+      pool[spec.Type] = spec;
     }
   }
 
@@ -63,7 +63,7 @@ void WaveManager::GenerateWave()
   float totalChance = 0;
   for (auto &[type, spec] : pool)
   {
-    totalChance += spec.spawnChance;
+    totalChance += spec.SpawnChance;
   }
 
   while (_wavePoints > 0)
@@ -71,7 +71,7 @@ void WaveManager::GenerateWave()
     bool canAffordAny = false;
     for (auto &[type, spec] : pool)
     {
-      if (spec.cost <= _wavePoints)
+      if (spec.Cost <= _wavePoints)
       {
         canAffordAny = true;
         break;
@@ -89,13 +89,13 @@ void WaveManager::GenerateWave()
 
     for (auto &[type, spec] : pool)
     {
-      if (spec.cost <= _wavePoints)
+      if (spec.Cost <= _wavePoints)
       {
-        runningSum += spec.spawnChance;
+        runningSum += spec.SpawnChance;
         if (selectedChance <= runningSum)
         {
-          _wavePoints -= spec.cost;
-          _enemiesToSpawn.push_back(type); // Fixed: removed asterisks
+          _wavePoints -= spec.Cost;
+          _enemiesToSpawn.push_back(spec); // Fixed: removed asterisks
           enemySelected = true;
           break;
         }
@@ -104,22 +104,22 @@ void WaveManager::GenerateWave()
 
     if (!enemySelected)
     {
-      EnemyType cheapestType;
+      EnemySpec cheapest;
       int lowestCost = INT_MAX;
 
       for (auto &[type, spec] : pool)
       {
-        if (spec.cost <= _wavePoints && spec.cost < lowestCost)
+        if (spec.Cost <= _wavePoints && spec.Cost < lowestCost)
         {
-          lowestCost = spec.cost;
-          cheapestType = type;
+          lowestCost = spec.Cost;
+          cheapest = spec;
         }
       }
 
       if (lowestCost != INT_MAX)
       {
-        _wavePoints -= pool[cheapestType].cost;
-        _enemiesToSpawn.push_back(cheapestType);
+        _wavePoints -= cheapest.Cost;
+        _enemiesToSpawn.push_back(cheapest);
       }
     }
   }

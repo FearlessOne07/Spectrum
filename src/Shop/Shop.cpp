@@ -1,4 +1,5 @@
 #include "Shop.hpp"
+#include "Modifiers/DamageBoostModifier/DamageModifier.hpp"
 #include "Modifiers/HealthBoost/HealthBoostModifier.hpp"
 #include "Modifiers/MaxHealthModifier/MaxHealthModifier.hpp"
 #include "Modifiers/SpeedModifier/SpeedModifier.hpp"
@@ -15,7 +16,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
 
   // Init Stock
   std::shared_ptr<SpeedModifier> speed = std::make_shared<SpeedModifier>();
-  std::uniform_int_distribution basePriceDist(3, 7);
+  std::uniform_int_distribution basePriceDist(6, 12);
   speed->SetSpeedBoost(0.02);
   _stock.emplace_back( //
     speed,
@@ -52,6 +53,19 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
       {8, 8},
     },
     1, "Heal", basePriceDist(_gen) //
+  );
+
+  std::shared_ptr<DamageModifier> damageBoost = std::make_shared<DamageModifier>();
+  damageBoost->SetDamageBoost(0.12);
+  _stock.emplace_back( //
+    damageBoost,
+    Base::NinePatchSprite{
+      _ownerLayer->GetAsset<Base::Texture>("power-ups"),
+      {},
+      {4, 3},
+      {8, 8},
+    },
+    1, "Damage Boost", basePriceDist(_gen) //
   );
 
   RefreshShop();

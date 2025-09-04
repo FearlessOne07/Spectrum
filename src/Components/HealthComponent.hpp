@@ -43,7 +43,6 @@ public:
   {
     _health = health;
     _health = std::clamp<float>(_health, 0, _maxHealth);
-    _health = std::round(_health);
     _healthChanged = true;
   }
 
@@ -51,7 +50,6 @@ public:
   {
     _maxHealth = maxHealth;
     _maxHealth = std::max<float>(_maxHealth, 1);
-    _maxHealth = std::round(_maxHealth);
     _healthChanged = true;
   }
 

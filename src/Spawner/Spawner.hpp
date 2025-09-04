@@ -16,7 +16,7 @@ private:
   float _spawnDuration = 2.f;
   float _spawnTimer = _spawnDuration;
   float _spawnOffset = -200;
-  std::queue<EnemyType> _toSpawn = {};
+  std::queue<EnemySpec> _toSpawn = {};
 
   // Player
   Base::EntityID _playerID;
@@ -30,5 +30,5 @@ public:
   Base::EntityID SpawnPlayer(Base::EntityManager *entityManager, Vector2 position);
   void SpawnWave(float dt, Base::EntityManager *entityManager, Base::EntityID playerID);
   int GetToSpawnCount() const;
-  void SetToSpawn(std::vector<EnemyType> toSpawn);
+  void SetToSpawn(std::vector<EnemySpec> toSpawn);
 };

@@ -92,8 +92,7 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
         abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
         abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
 
-        auto bulDmgcmp = bullet->AddComponent<DamageComponent>();
-        bulDmgcmp->damage = dmgcmp->damage;
+        bullet->AddComponent<DamageComponent>(dmgcmp->GetDamage());
         entityManager->AddEntity(bullet);
 
         // Emmit sound signal
@@ -150,6 +149,6 @@ void BulletSystem::EntityCollisionHandler(const std::shared_ptr<Base::Signal> &e
 
     // Enemy
     auto hlthcmp = defence->GetComponent<HealthComponent>();
-    hlthcmp->TakeDamage(dmgcmp->damage);
+    hlthcmp->TakeDamage(dmgcmp->GetDamage());
   }
 }
