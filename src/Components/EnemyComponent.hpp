@@ -7,7 +7,7 @@ enum class EnemyType : uint8_t
   NONE = 0,
   CHASER,
   SHOOTER,
-  KAMAKAZI
+  KAMIKAZE
 };
 
 struct EnemySpec

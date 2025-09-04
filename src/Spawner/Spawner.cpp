@@ -38,7 +38,7 @@
 
 void Spawner::SetToSpawn(std::vector<EnemySpec> toSpawn)
 {
-  for (EnemySpec spec : toSpawn)
+  for (EnemySpec& spec : toSpawn)
   {
     _toSpawn.push(spec);
   }
@@ -314,12 +314,12 @@ void Spawner::SpawnWave( //
       auto statecmp = e->AddComponent<Base::StateComponent>("chase", states);
       break;
     }
-    case EnemyType::KAMAKAZI: {
+    case EnemyType::KAMIKAZE: {
       auto hlthcmp = e->AddComponent<HealthComponent>(5.f);
       e->AddComponent<DamageComponent>(5);
       mvcmp->driveForce = 500;
       sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                  //
-        _parentLayer->GetAsset<Base::Texture>("kamakazi"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
+        _parentLayer->GetAsset<Base::Texture>("kamikaze"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
       );
 
       std::unordered_map<std::string, Base::State> states = {

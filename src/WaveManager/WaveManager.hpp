@@ -37,7 +37,7 @@ private:
       .BaseHealth = 4,
     },
     EnemySpec{
-      .Type = EnemyType::KAMAKAZI,
+      .Type = EnemyType::KAMIKAZE,
       .SpawnChance = 0.1f,
       .Cost = 3,
       .UnlockWave = 3,

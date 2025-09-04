@@ -36,7 +36,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   LoadAsset<Base::Texture>("assets/textures/chaser.png");
   LoadAsset<Base::Texture>("assets/textures/shooter.png");
   LoadAsset<Base::Texture>("assets/textures/shooter-bullet.png");
-  LoadAsset<Base::Texture>("assets/textures/kamakazi.png");
+  LoadAsset<Base::Texture>("assets/textures/kamikaze.png");
   LoadAsset<Base::Texture>("assets/textures/player-bullet.png");
   LoadAsset<Base::Sound>("assets/sounds/bullet-fire.wav");
   LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");

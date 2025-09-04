@@ -87,17 +87,9 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
     {
       auto enemycmp = attack->GetComponent<EnemyComponent>();
 
-      if (enemycmp->type == EnemyType::KAMAKAZI)
+      if (enemycmp->type == EnemyType::KAMIKAZE)
       {
         attack->GetComponent<HealthComponent>()->Kill();
-        // Base::CameraShakeConfig config;
-        // config.trauma = 0.1;
-        // config.frequency = 150.0f;
-        // config.shakeMagnitude = _parentLayer->GetSize().x * 0.20;
-        // config.duration = 1;
-        // config.traumaMultiplyer = 2;
-        // config.rotationMagnitude = 4;
-        // _parentLayer->ShakeCamera(config);
       }
 
       auto mvcmpAtt = attack->GetComponent<Base::MoveComponent>();
