@@ -32,7 +32,6 @@ void main() {
         }
     }
 
-    // Normalize by actual weights used (optional, for consistent brightness)
     result = result / totalWeight;
 
     finalColor = vec4(result, 1.0);
