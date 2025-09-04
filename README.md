@@ -10,6 +10,10 @@ Left Mouse Button - Fire your Gun
 
 Tab - Open Shop to Upgrade Yourself!
 
+F11 - Fullscreen (Broken On Linux)
+
+Esc - Pause
+
 ## Images
 
 ![1](./images/1.png)

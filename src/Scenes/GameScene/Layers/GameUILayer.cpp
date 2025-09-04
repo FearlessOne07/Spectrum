@@ -102,7 +102,7 @@ void GameUILayer::Update(float dt)
     auto hlthcmp = player->GetComponent<HealthComponent>();
     auto playerHealth =
       _hud->GetElement<Base::UIContainer>("player-health-container")->GetChild<Base::UILabel>("player-health");
-    playerHealth->SetText(std::format("{0}/{1}", hlthcmp->GetHealth(), hlthcmp->GetMaxHealth()));
+    playerHealth->SetText(std::format("{0:.0f}/{1:.0f}", hlthcmp->GetHealth(), hlthcmp->GetMaxHealth()));
   }
 
   auto fps = _hud->GetElement<Base::UIContainer>("fps-container")->GetChild<Base::UILabel>("fps");
