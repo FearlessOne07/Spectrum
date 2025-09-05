@@ -15,7 +15,7 @@ void DamageModifier::Remove(std::shared_ptr<Base::Entity> entity)
   if (entity->HasComponent<DamageComponent>())
   {
     auto dmgcmp = entity->GetComponent<DamageComponent>();
-    dmgcmp->SetDamage(dmgcmp->GetDamage() - (dmgcmp->GetBaseDamage() * _damageBoost));
+    dmgcmp->SetDamage(dmgcmp->GetDamage() / (1 + _damageBoost));
   }
 }
 

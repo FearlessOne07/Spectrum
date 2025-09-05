@@ -56,7 +56,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
   );
 
   std::shared_ptr<DamageModifier> damageBoost = std::make_shared<DamageModifier>();
-  damageBoost->SetDamageBoost(0.12);
+  damageBoost->SetDamageBoost(0.15);
   _stock.emplace_back( //
     damageBoost,
     Base::NinePatchSprite{
