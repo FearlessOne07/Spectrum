@@ -81,7 +81,7 @@ void Bloom::Apply(RenderTexture2D *input, RenderTexture2D *output, Vector2 resol
 
   BeginTextureMode(*output);
   shaderMan->ActivateShader(_combineShader);
-  shaderMan->SetUniform(_combineShader, "texture1", _blurPassY.texture);
+  shaderMan->SetUniform(_combineShader, "blurredTexture", _blurPassY.texture);
   shaderMan->SetUniform(_combineShader, "bloomIntensity", _bloomIntensitiy);
   DrawTexturePro( //
     input->texture, {0, 0, resolution.x, -resolution.y}, {0, 0, resolution.x, resolution.y}, {0, 0}, 0,
