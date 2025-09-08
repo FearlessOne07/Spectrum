@@ -74,6 +74,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
 void Shop::RefreshShop()
 {
   std::uniform_int_distribution<> stockDist(0, _stock.size() - 1);
+  std::uniform_int_distribution<> priceOffset(-3, 3);
 
   for (auto &item : _currentItems)
   {
@@ -98,7 +99,10 @@ void Shop::RefreshShop()
       }
 
       item.bought = false;
-      item.cost = std::round(sItem.basePrice * std::pow(1.8, sItem.modifierLevel - 1));
+
+      float basePrice = (sItem.basePrice * std::pow(1.8, sItem.modifierLevel - 1));
+      float offset = priceOffset(_gen);
+      item.cost = std::round(basePrice + offset);
       item.modifier = sItem.modifier;
       item.textureIcon = sItem.itemSprite;
       item.name = sItem.name;
