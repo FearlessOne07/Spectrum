@@ -38,7 +38,7 @@ private:
   bool _newItems = false;
 
   std::random_device _rd;
-  std::mt19937_64 _gen;
+  std::mt19937 _gen;
 
 public:
   void Init(Base::SceneLayer *ownerLayer);

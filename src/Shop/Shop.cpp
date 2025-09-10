@@ -11,7 +11,7 @@
 
 void Shop::Init(Base::SceneLayer *ownerLayer)
 {
-  _gen = std::mt19937_64(_rd());
+  _gen = std::mt19937(_rd());
   _ownerLayer = ownerLayer;
 
   // Init Stock
@@ -87,16 +87,23 @@ void Shop::RefreshShop()
         item.stockItem->modifierLevel++;
       }
 
-      StockItem &sItem = _stock[stockDist(_gen)];
+      int newStockIndex = stockDist(_gen);
+      // StockItem sItem = _stock[newStockIndex];
 
       while (true)
       {
-        if (std::ranges::count_if(_currentItems, [sItem](ShopItem &shop) { return shop.name == sItem.name; }) <= 1)
+        if (                                                                                                         //
+          std::ranges::count_if(                                                                                     //
+            _currentItems, [this, newStockIndex](ShopItem &shop) { return shop.name == _stock[newStockIndex].name; } //
+            ) == 0                                                                                                   //
+        )
         {
           break;
         }
-        sItem = _stock[stockDist(_gen)];
+        newStockIndex = stockDist(_gen);
       }
+
+      StockItem &sItem = _stock[newStockIndex];
 
       item.bought = false;
 
