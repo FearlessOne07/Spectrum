@@ -146,17 +146,19 @@ void GameUILayer::InitPauseMenu()
     GetOwner()->GetTweenManager()->AddTween<Vector2>( //
       Base::TweenKey{container.get(), "pause-menu-container-position"},
       [container, this](Vector2 pos) { container->SetPositionalOffset(pos); },
-      {.startValue = container->GetPositionalOffset(),
-       .endValue = {0, 0},
-       .duration = .3,
-       .easingType = Base::TweenManager::EasingType::EASE_IN,
-       .onTweenEnd = [container]() { container->SetVisibilityOff(); }} //
+      {
+        .startValue = container->GetPositionalOffset(),
+        .endValue = {0, 0},
+        .duration = .3,
+        .easingType = Base::TweenManager::EasingType::EASE_IN,
+        .onTweenEnd = [container]() { container->SetVisibilityOff(); },
+      } //
     );
   };
 
   // Resume Button
   auto resumeButton = container->AddChild<Base::UIButton>("resume-button");
-  resumeButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
+  resumeButton->SetFont(GetAsset<Base::BaseFont>("main-font"));
   resumeButton->SetText("Resume");
   resumeButton->SetFontSize(50);
   resumeButton->SetLayoutSettings({

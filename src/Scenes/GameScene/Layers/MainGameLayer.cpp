@@ -1,15 +1,20 @@
 #include "MainGameLayer.hpp"
+#include "Components/Tags/PlayerTag.hpp"
 #include "Scenes/GameScene/SharedGameData.hpp"
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
+#include "base/components/TransformComponent.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/systems/SystemManager.hpp"
+#include "base/ui/elements/UIContainer.hpp"
+#include "base/ui/elements/UILabel.hpp"
 #include "raylib.h"
 #include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
+#include <format>
 #include <memory>
 
 void MainGameLayer::OnAttach()
@@ -44,10 +49,13 @@ void MainGameLayer::OnAttach()
   });
 
   SetCameraPauseMask();
+
+  _inWorldUILayer = GetOwner()->GetUIManager()->AddLayer("in-world-ui");
 }
 
 void MainGameLayer::OnDetach()
 {
+  GetOwner()->GetUIManager()->RemoveLayer("in-world-ui");
 }
 
 void MainGameLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
@@ -68,9 +76,65 @@ void MainGameLayer::Render()
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   BeginCamera();
   GetOwner()->GetSystemManager()->Render();
+  GetOwner()->GetUIManager()->RenderLayer("in-world-ui");
   EndCamera();
 }
 
 void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
 {
+  auto sig = std::static_pointer_cast<EntityDamagedSignal>(signal);
+  if (sig->entity->HasComponent<PlayerTag>())
+  {
+
+    Vector2 playerPos = sig->entity->GetComponent<Base::TransformComponent>()->position;
+
+    std::string name = std::format("damage-pop-cont-{0}", _currentPopUp++);
+    auto popUpCont = _inWorldUILayer->AddElement<Base::UIContainer>(name);
+    popUpCont->SetAnchorPoint(Base::UIContainer::AnchorPoint::CENTER);
+    popUpCont->SetPosition(playerPos, true);
+
+    auto popUp = popUpCont->AddChild<Base::UILabel>(name + "-popup");
+    popUp->SetText(std::format("-{0}", sig->damageTaken));
+    popUp->SetFont(GetAsset<Base::BaseFont>("main-font"));
+    popUp->SetTextColor(RED);
+    popUp->SetFontSize(43);
+
+    float offsetTarget = 0;
+    Vector2 min = GetScreenToWorld({0, 0});
+    if (playerPos.y - min.y > 200)
+    {
+      offsetTarget = -200;
+    }
+    else
+    {
+      offsetTarget = 200;
+    }
+
+    auto shrink = [this, popUp, name]() {
+      GetOwner()->GetTweenManager()->AddTween<float>(          //
+        {popUp.get(), name + "-popup-" + "font"},              //
+        [popUp](float pos) { popUp->SetFontSize(pos, true); }, //
+        {
+          .startValue = 43,
+          .endValue = 0,
+          .duration = 0.3,
+          .onTweenEnd = [this, name]() { _inWorldUILayer->RemoveElement(name); },
+        } //
+      );
+    };
+
+    auto rise = [this, popUpCont, name, shrink, offsetTarget]() {
+      GetOwner()->GetTweenManager()->AddTween<Vector2>(                    //
+        {popUpCont.get(), name + "-postionoffset"},                        //
+        [popUpCont](Vector2 pos) { popUpCont->SetPositionalOffset(pos); }, //
+        {
+          .startValue = {0, 0},
+          .endValue = {0, offsetTarget},
+          .duration = 0.8,
+          .onTweenEnd = shrink,
+        } //
+      );
+    };
+    rise();
+  }
 }

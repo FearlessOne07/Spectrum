@@ -1,6 +1,7 @@
 #pragma once
 #include "Signals/Handlers/EntityEventHandler.hpp"
 #include "WaveManager/WaveManager.hpp"
+#include "base/ui/UILayer.hpp"
 #include <base/scenes/SceneLayer.hpp>
 
 class MainGameLayer : public Base::SceneLayer
@@ -9,6 +10,10 @@ class MainGameLayer : public Base::SceneLayer
   EntitySignalHandler _entityEVH = EntitySignalHandler();
 
   void OnPlayerDamaged(std::shared_ptr<Base::Signal>);
+
+  // UILayer
+  int _currentPopUp = 0;
+  Base::UILayer *_inWorldUILayer = nullptr;
 
 public:
   void Update(float dt) override;
