@@ -94,28 +94,17 @@ Base::EntityID Spawner::SpawnPlayer( //
   auto sprtcmp = e->AddComponent<Base::SpriteComponent>( //
     Base::Sprite{
       _parentLayer->GetAsset<Base::Texture>("entities"),
-      Vector2{0, 8},
+      Vector2{24, 0},
       Vector2{8, 8},
       Vector2{64, 64},
     } //
   );
   shtcmp->bulletSprite = {
     _parentLayer->GetAsset<Base::Texture>("entities"),
-    {0, 16},
+    {0, 8},
     Vector2{8, 8},
     Vector2{32, 32},
   };
-
-  auto animcmp = e->AddComponent<Base::AnimationComponent>("idle");
-  animcmp->AddAnimation( //
-    "idle",              //
-    {
-      {{0, 8}, {8, 8}, 0.15},
-      {{8, 8}, {8, 8}, 0.15},
-      {{16, 8}, {8, 8}, 0.15},
-      {{24, 8}, {8, 8}, 0.15},
-    } //
-  );
 
   auto abbcmp = e->AddComponent<Base::ColliderComponent>();
   abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
@@ -285,7 +274,7 @@ void Spawner::SpawnWave( //
       shtcmp->bulletSpeed = 1000.f;
       shtcmp->bulletSprite = {
         _parentLayer->GetAsset<Base::Texture>("entities"),
-        {8, 16},
+        {8, 8},
         Vector2{8, 8},
         Vector2{32, 32},
       };

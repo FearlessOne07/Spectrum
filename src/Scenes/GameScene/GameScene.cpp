@@ -53,7 +53,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);
 
-  mainLayer->AddShaderEffect<Bloom>(0.8, 0.25, 1);
+  mainLayer->AddShaderEffect<Bloom>(1.2, 0.25, 1);
 
   AttachLayer<MainGameLayer>(mainLayer);
   AttachLayer<ParticleLayer>(mainLayer);

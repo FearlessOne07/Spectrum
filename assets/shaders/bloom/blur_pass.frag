@@ -32,7 +32,6 @@ void main() {
         }
     }
 
-    result = result / totalWeight;
-
+    result = result / totalWeight; 
     finalColor = vec4(result, 1.0);
 }

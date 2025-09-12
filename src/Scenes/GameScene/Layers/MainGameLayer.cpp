@@ -118,7 +118,13 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
           .startValue = 43,
           .endValue = 0,
           .duration = 0.3,
-          .onTweenEnd = [this, name]() { _inWorldUILayer->RemoveElement(name); },
+          .onTweenEnd =
+            [this, name]() {
+              if (_inWorldUILayer->HasElement(name))
+              {
+                _inWorldUILayer->RemoveElement(name);
+              }
+            },
         } //
       );
     };

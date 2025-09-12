@@ -11,8 +11,7 @@ void main() {
     vec3 original = texture(texture0, fragTexCoord).rgb;
     vec3 bloom = texture(blurredTexture, fragTexCoord).rgb;
 
-    vec3 result = original + (bloom * bloomIntensity);
-
-    result = (result * (2.51 * result + 0.03)) / (result * (2.43 * result + 0.59) + 0.14);
+    vec3 result = original + bloom * bloomIntensity;
+    result = 1.0 - exp(-result);
     finalColor = vec4(result, 1.0);
 }
