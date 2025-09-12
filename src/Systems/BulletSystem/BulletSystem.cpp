@@ -73,14 +73,7 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
 
         auto mvcmp = bullet->AddComponent<Base::MoveComponent>();
 
-        auto sprtcmp = bullet->AddComponent<Base::SpriteComponent>( //
-          shtcmp->bulletTexture, Vector2{0, 0},
-          Vector2{
-            static_cast<float>(shtcmp->bulletTexture.Get()->GetRaylibTexture()->width),
-            static_cast<float>(shtcmp->bulletTexture.Get()->GetRaylibTexture()->height),
-          },
-          Vector2{32, 32} //
-        );
+        auto sprtcmp = bullet->AddComponent<Base::SpriteComponent>(shtcmp->bulletSprite);
 
         auto bulcmp = bullet->AddComponent<BulletComponent>();
         bulcmp->lifeTime = shtcmp->bulletLifetime;

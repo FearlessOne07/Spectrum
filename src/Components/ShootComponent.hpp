@@ -1,8 +1,6 @@
 #pragma once
-#include "base/assets/AssetHandle.hpp"
 #include "base/entities/Entity.hpp"
-#include "base/assets/AssetHandle.hpp"
-#include "base/textures/Texture.hpp"
+#include "base/sprites/Sprite.hpp"
 #include <base/components/Component.hpp>
 #include <raylib.h>
 
@@ -18,5 +16,5 @@ struct ShootComponent : public Base::Component
   float bulletKnockbackForce = 0.f;
   float bulletLifetime = 5;
   float bulletSpeed = 0.f;
-  Base::AssetHandle<Base::Texture> bulletTexture;
+  Base::Sprite bulletSprite;
 };

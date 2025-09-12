@@ -14,6 +14,5 @@ void main() {
     vec3 result = original + (bloom * bloomIntensity);
 
     result = (result * (2.51 * result + 0.03)) / (result * (2.43 * result + 0.59) + 0.14);
-
     finalColor = vec4(result, 1.0);
 }

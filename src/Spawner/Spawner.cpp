@@ -18,6 +18,7 @@
 #include "base/components/StateComponent.hpp"
 #include "base/components/TimerComponent.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/sprites/Sprite.hpp"
 #include "base/state/TransitionConditionBlock.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/components/ColliderComponent.hpp>
@@ -38,7 +39,7 @@
 
 void Spawner::SetToSpawn(std::vector<EnemySpec> toSpawn)
 {
-  for (EnemySpec& spec : toSpawn)
+  for (EnemySpec &spec : toSpawn)
   {
     _toSpawn.push(spec);
   }
@@ -90,19 +91,29 @@ Base::EntityID Spawner::SpawnPlayer( //
   shtcmp->bulletFireTimer = 1;
   shtcmp->bulletSpeed = 1500.f;
 
-  auto sprtcmp = e->AddComponent<Base::SpriteComponent>(                                               //
-    _parentLayer->GetAsset<Base::Texture>("ship-sheet"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
+  auto sprtcmp = e->AddComponent<Base::SpriteComponent>( //
+    Base::Sprite{
+      _parentLayer->GetAsset<Base::Texture>("entities"),
+      Vector2{0, 8},
+      Vector2{8, 8},
+      Vector2{64, 64},
+    } //
   );
-  shtcmp->bulletTexture = _parentLayer->GetAsset<Base::Texture>("player-bullet");
+  shtcmp->bulletSprite = {
+    _parentLayer->GetAsset<Base::Texture>("entities"),
+    {0, 16},
+    Vector2{8, 8},
+    Vector2{32, 32},
+  };
 
   auto animcmp = e->AddComponent<Base::AnimationComponent>("idle");
   animcmp->AddAnimation( //
     "idle",              //
     {
-      {{0, 0}, {8, 8}, 0.15},
-      {{8, 0}, {8, 8}, 0.15},
-      {{16, 0}, {8, 8}, 0.15},
-      {{24, 0}, {8, 8}, 0.15},
+      {{0, 8}, {8, 8}, 0.15},
+      {{8, 8}, {8, 8}, 0.15},
+      {{16, 8}, {8, 8}, 0.15},
+      {{24, 8}, {8, 8}, 0.15},
     } //
   );
 
@@ -244,8 +255,13 @@ void Spawner::SpawnWave( //
       auto hlthcmp = e->AddComponent<HealthComponent>(3.f);
       e->AddComponent<DamageComponent>(1);
       auto trckcmp = e->AddComponent<TrackingComponent>(_playerID);
-      sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                //
-        _parentLayer->GetAsset<Base::Texture>("chaser"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
+      sprtcmp = e->AddComponent<Base::SpriteComponent>( //
+        Base::Sprite{
+          _parentLayer->GetAsset<Base::Texture>("entities"),
+          Vector2{0, 0},
+          Vector2{8, 8},
+          Vector2{64, 64},
+        } //
       );
       mvcmp->driveForce = std::uniform_real_distribution<float>(400, 500)(gen);
       break;
@@ -253,8 +269,13 @@ void Spawner::SpawnWave( //
     case EnemyType::SHOOTER: {
       auto hlthcmp = e->AddComponent<HealthComponent>(4.f);
       e->AddComponent<DamageComponent>(2);
-      sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                 //
-        _parentLayer->GetAsset<Base::Texture>("shooter"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
+      sprtcmp = e->AddComponent<Base::SpriteComponent>( //
+        Base::Sprite{
+          _parentLayer->GetAsset<Base::Texture>("entities"),
+          Vector2{8, 0},
+          Vector2{8, 8},
+          Vector2{64, 64},
+        } //
       );
       mvcmp->driveForce = 350;
 
@@ -262,7 +283,12 @@ void Spawner::SpawnWave( //
       shtcmp->bulletFireRate = 5.f;
       shtcmp->bulletKnockbackForce = 800;
       shtcmp->bulletSpeed = 1000.f;
-      shtcmp->bulletTexture = _parentLayer->GetAsset<Base::Texture>("shooter-bullet");
+      shtcmp->bulletSprite = {
+        _parentLayer->GetAsset<Base::Texture>("entities"),
+        {8, 16},
+        Vector2{8, 8},
+        Vector2{32, 32},
+      };
       transfxcmp->bindMin = _parentLayer->GetScreenToWorld({0, 0});
       transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
 
@@ -318,8 +344,13 @@ void Spawner::SpawnWave( //
       auto hlthcmp = e->AddComponent<HealthComponent>(5.f);
       e->AddComponent<DamageComponent>(5);
       mvcmp->driveForce = 500;
-      sprtcmp = e->AddComponent<Base::SpriteComponent>(                                                  //
-        _parentLayer->GetAsset<Base::Texture>("kamikaze"), Vector2{0, 0}, Vector2{8, 8}, Vector2{64, 64} //
+      sprtcmp = e->AddComponent<Base::SpriteComponent>( //
+        Base::Sprite{
+          _parentLayer->GetAsset<Base::Texture>("entities"),
+          Vector2{16, 0},
+          Vector2{8, 8},
+          Vector2{64, 64},
+        } //
       );
 
       std::unordered_map<std::string, Base::State> states = {

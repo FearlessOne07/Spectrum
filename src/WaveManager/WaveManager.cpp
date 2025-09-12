@@ -13,6 +13,7 @@
 #include "base/scenes/SceneLayer.hpp"
 #include "base/signals/Signal.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/sprites/Sprite.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
 #include <base/scenes/SceneLayer.inl>
@@ -189,9 +190,13 @@ void WaveManager::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
     colcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
     colcmp->radius = targetSize / 2;
 
-    e->AddComponent<Base::SpriteComponent>(                          //
-      _parentLayer->GetAsset<Base::Texture>("power-ups"),            //
-      Vector2{16, 8}, Vector2{8, 8}, Vector2{targetSize, targetSize} //
+    e->AddComponent<Base::SpriteComponent>( //
+      Base::Sprite{
+        _parentLayer->GetAsset<Base::Texture>("power-ups"),
+        Vector2{16, 8},
+        Vector2{8, 8},
+        Vector2{targetSize, targetSize},
+      } //
     );
 
     auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();

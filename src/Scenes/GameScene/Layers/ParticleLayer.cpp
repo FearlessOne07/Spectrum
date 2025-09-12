@@ -74,17 +74,7 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
 
     _emitter->isEmitting = true;
     _emitter->initialisationFunction = [=, this](Base::ParticleEmitter &emitter) mutable {
-      emitter.particleSprite = Base::Sprite( //
-        sprtcmp->GetTexture(), {sprtcmp->GetSourceRect().x, sprtcmp->GetSourceRect().y},
-        {sprtcmp->GetSourceRect().width, sprtcmp->GetSourceRect().height}, sprtcmp->GetTargetSize() //
-      );
-
-      emitter.particleTextureSource = {
-        0,
-        0,
-        static_cast<float>(sprtcmp->GetSourceRect().x),
-        static_cast<float>(sprtcmp->GetSourceRect().y),
-      };
+      emitter.particleSprite = Base::Sprite(sprtcmp->GetSprite());
       emitter.particleLifeTime = lifeRange(_gen);
       float size = radiusRange(_gen) * 2;
       emitter.particleStartSize = {size, size};

@@ -30,14 +30,11 @@ void GameScene::Enter(Base::SceneData sceneData)
   Base::SystemManager *systemManager = GetSystemManager();
 
   // Activate Systems
-  LoadAsset<Base::Texture>("assets/textures/ship-sheet.png");
   LoadAsset<Base::Texture>("assets/textures/power-ups.png");
   LoadAsset<Base::Texture>("assets/textures/heart-ui.png");
-  LoadAsset<Base::Texture>("assets/textures/chaser.png");
-  LoadAsset<Base::Texture>("assets/textures/shooter.png");
-  LoadAsset<Base::Texture>("assets/textures/shooter-bullet.png");
-  LoadAsset<Base::Texture>("assets/textures/kamikaze.png");
-  LoadAsset<Base::Texture>("assets/textures/player-bullet.png");
+
+  LoadAsset<Base::Texture>("assets/textures/entities.png");
+
   LoadAsset<Base::Sound>("assets/sounds/bullet-fire.wav");
   LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
   LoadAsset<Base::Sound>("assets/sounds/player-hit.wav");
@@ -56,7 +53,7 @@ void GameScene::Enter(Base::SceneData sceneData)
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);
 
-  mainLayer->AddShaderEffect<Bloom>(0.7, 0.25, 1);
+  mainLayer->AddShaderEffect<Bloom>(0.8, 0.25, 1);
 
   AttachLayer<MainGameLayer>(mainLayer);
   AttachLayer<ParticleLayer>(mainLayer);
