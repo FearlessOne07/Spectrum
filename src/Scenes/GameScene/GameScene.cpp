@@ -52,7 +52,8 @@ void GameScene::Enter(Base::SceneData sceneData)
   mainLayer->SetCameraZoom(mainLayerRes.x / rd->gameWidth);
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);
-
+  
+  // TODO: Fix Tone mapping??
   mainLayer->AddShaderEffect<Bloom>(1.2, 0.25, 1);
 
   AttachLayer<MainGameLayer>(mainLayer);
