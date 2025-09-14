@@ -21,18 +21,17 @@ void Bloom::SetUpBuffers(Vector2 resolution)
   _buffersSetUp = true;
 }
 
-void Bloom::Setup(const Base::RenderLayer *layer)
+void Bloom::Setup(const Base::Scene *scene)
 {
-  _renderLayer = layer;
-
-  _brightShader = layer->GetOwnerScene()->GetAsset<Base::BaseShader>("bright_pass");
-  _blurShader = layer->GetOwnerScene()->GetAsset<Base::BaseShader>("blur_pass");
-  _combineShader = layer->GetOwnerScene()->GetAsset<Base::BaseShader>("combine_pass");
+  _currentScene = scene;
+  _brightShader = scene->GetAsset<Base::BaseShader>("bright_pass");
+  _blurShader = scene->GetAsset<Base::BaseShader>("blur_pass");
+  _combineShader = scene->GetAsset<Base::BaseShader>("combine_pass");
 }
 
 void Bloom::Apply(RenderTexture2D *input, RenderTexture2D *output, Vector2 resolution)
 {
-  auto shaderMan = _renderLayer->GetOwnerScene()->GetShaderManager();
+  auto shaderMan = _currentScene->GetShaderManager();
   if (!_buffersSetUp)
   {
     SetUpBuffers(resolution);

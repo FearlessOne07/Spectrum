@@ -26,7 +26,7 @@ private:
   void SetUpBuffers(Vector2 resolution);
 
 public:
-  void Setup(const Base::RenderLayer *layer) override;
+  void Setup(const Base::Scene *layer) override;
   void Apply(RenderTexture2D *input, RenderTexture2D *output, Vector2 resolution) override;
 
   Bloom(float bloomIntensity, float luminanceThresh, float blurResolutionScale);
