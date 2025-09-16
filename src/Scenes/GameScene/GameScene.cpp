@@ -4,6 +4,7 @@
 #include "Layers/ParticleLayer.hpp"
 #include "Scenes/GameScene/SharedGameData.hpp"
 #include "ShaderEffects/Bloom/Bloom.hpp"
+#include "ShaderEffects/Vignette/Vignette.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "Systems/PowerUpSystem/PowerUpSystem.hpp"
 #include "base/audio/Sound.hpp"
@@ -38,9 +39,11 @@ void GameScene::Enter(Base::SceneData sceneData)
   LoadAsset<Base::Sound>("assets/sounds/bullet-fire.wav");
   LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
   LoadAsset<Base::Sound>("assets/sounds/player-hit.wav");
+
   LoadAsset<Base::BaseShader>("assets/shaders/bloom/bright_pass.frag");
   LoadAsset<Base::BaseShader>("assets/shaders/bloom/blur_pass.frag");
   LoadAsset<Base::BaseShader>("assets/shaders/bloom/combine_pass.frag");
+  LoadAsset<Base::BaseShader>("assets/shaders/vignette/vignette.frag");
 
   auto uiLayer = AddRenderLayer({1920, 1080});
   AttachLayer<GameUILayer>(uiLayer);
@@ -55,6 +58,7 @@ void GameScene::Enter(Base::SceneData sceneData)
 
   // TODO: Fix Tone mapping??
   mainLayer->AddShaderEffect<Bloom>(1.2, 0.25, 1);
+  // mainLayer->AddShaderEffect<Vignette>(Color{123, 123, 231, 255});
 
   AttachLayer<MainGameLayer>(mainLayer);
   AttachLayer<ParticleLayer>(mainLayer);

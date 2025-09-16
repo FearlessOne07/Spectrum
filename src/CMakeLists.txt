@@ -29,6 +29,7 @@ set(SOURCES
   "./Modifiers/DamageBoostModifier/DamageModifier.cpp"
 
   "./ShaderEffects/Bloom/Bloom.cpp"
+  "./ShaderEffects/Vignette/Vignette.cpp"
 
   "./Shop/Shop.cpp"
 )
