@@ -6,8 +6,7 @@
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UIButton.hpp"
-#include "base/ui/elements/UIContainer.hpp"
-#include "raylib.h"
+#include "base/ui/elements/UIStackPanel.hpp"
 
 void MainMenuLayer::OnAttach()
 {
@@ -15,22 +14,24 @@ void MainMenuLayer::OnAttach()
     GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 4,
   };
 
-  _mainMenu = GetOwner()->GetUIManager()->AddLayer("main-menu");
-  auto container = _mainMenu->AddElement<Base::UIContainer>("main-menu-container");
-  container->SetAnchorPoint(Base::UIContainer::AnchorPoint::CENTER);
-  container->SetPosition({GetSize().x / 2, GetSize().y / 2});
-  container->SetPadding({10, 10});
-  container->SetGapSize(25);
+  _mainMenu = GetOwner()->GetUIManager()->AddLayer("main-menu", GetSize());
+  auto container = _mainMenu->SetRootElement<Base::UIStackPanel>("main-menu-container");
+  container->SetOrientation(Base::UIStackPanel::Orientation::Vertical);
+  container->SetHAlignment(Base::HAlign::Center);
+  container->SetVAlignment(Base::VAlign::Center);
+  container->SetPadding(10);
+  container->SetGap(25);
+
+  float hoverScale = 1.15;
 
   // Resume Button
   auto playButton = container->AddChild<Base::UIButton>("play-button");
   playButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   playButton->SetText("Play");
+  playButton->SetHAlignment(Base::HAlign::Center);
+  playButton->SetVAlignment(Base::VAlign::Center);
   playButton->SetFontSize(55);
-  playButton->SetLayoutSettings({
-    .hAlignment = Base::UIHAlignment::CENTER,
-    .vAlignment = Base::UIVAlignment::CENTER,
-  });
+  playButton->SetPadding(10);
   playButton->onClick = [this]() {
     GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
   };
@@ -38,22 +39,22 @@ void MainMenuLayer::OnAttach()
   playButton->onHover = {
     [=, this]() {                                     //
       GetOwner()->GetTweenManager()->AddTween<float>( //
-        {playButton.get(), "font-size"}, [=](float size) { playButton->SetFontSize(size, false); },
+        {playButton.get(), "font-size"}, [=](float size) { playButton->SetRenderTransform({.fontScale = size}); },
         {
-          .startValue = playButton->GetFontSize(),
-          .endValue = 60,
+          .startValue = playButton->GetRenderTransform().fontScale,
+          .endValue = hoverScale,
           .duration = 0.1,
           .easingType = Base::TweenManager::EasingType::EASE_OUT,
         } //
       );
     },
-    [=, this]() {                                                  //
-      GetOwner()->GetTweenManager()->AddTween<float>(              //
-        {playButton.get(), "font-size"},                           //
-        [=](float size) { playButton->SetFontSize(size, false); }, //
+    [=, this]() {                                                                 //
+      GetOwner()->GetTweenManager()->AddTween<float>(                             //
+        {playButton.get(), "font-size"},                                          //
+        [=](float size) { playButton->SetRenderTransform({.fontScale = size}); }, //
         {
-          .startValue = playButton->GetFontSize(), //
-          .endValue = playButton->GetBaseFontSize(),
+          .startValue = playButton->GetRenderTransform().fontScale, //
+          .endValue = 1,
           .duration = 0.1,
           .easingType = Base::TweenManager::EasingType::EASE_OUT,
         } //
@@ -66,19 +67,18 @@ void MainMenuLayer::OnAttach()
   exitButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   exitButton->SetText("Exit");
   exitButton->SetFontSize(55);
-  exitButton->SetLayoutSettings({
-    .hAlignment = Base::UIHAlignment::CENTER,
-    .vAlignment = Base::UIVAlignment::CENTER,
-  });
+  exitButton->SetHAlignment(Base::HAlign::Center);
+  exitButton->SetVAlignment(Base::VAlign::Center);
+  exitButton->SetPadding(10);
   exitButton->onClick = [this]() { GetOwner()->SetSceneTransition(Base::SceneRequest::QUIT); };
   exitButton->SetSprite(buttonSprite);
   exitButton->onHover = {
     [=, this]() {                                     //
       GetOwner()->GetTweenManager()->AddTween<float>( //
-        {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetFontSize(size, false); },
+        {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetRenderTransform({.fontScale = size}); },
         {
-          .startValue = exitButton->GetFontSize(),
-          .endValue = 60,
+          .startValue = exitButton->GetRenderTransform().fontScale,
+          .endValue = hoverScale,
           .duration = 0.1,
           .easingType = Base::TweenManager::EasingType::EASE_OUT,
         } //
@@ -86,10 +86,10 @@ void MainMenuLayer::OnAttach()
     },
     [=, this]() {                                     //
       GetOwner()->GetTweenManager()->AddTween<float>( //
-        {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetFontSize(size, false); },
+        {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetRenderTransform({.fontScale = size}); },
         {
-          .startValue = exitButton->GetFontSize(),
-          .endValue = exitButton->GetBaseFontSize(),
+          .startValue = exitButton->GetRenderTransform().fontScale,
+          .endValue = 1,
           .duration = 0.1,
           .easingType = Base::TweenManager::EasingType::EASE_OUT,
         } //
