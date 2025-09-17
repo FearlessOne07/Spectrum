@@ -50,7 +50,8 @@ void MainGameLayer::OnAttach()
 
   SetCameraPauseMask();
 
-  // _inWorldUILayer = GetOwner()->GetUIManager()->AddLayer("in-world-ui", GetSize());
+  _inWorldUILayer = GetOwner()->GetUIManager()->AddLayer("in-world-ui", GetSize());
+  _inWorldUILayer->Hide();
 }
 
 void MainGameLayer::OnDetach()

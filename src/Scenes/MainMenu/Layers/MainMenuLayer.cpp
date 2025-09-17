@@ -39,9 +39,9 @@ void MainMenuLayer::OnAttach()
   playButton->onHover = {
     [=, this]() {                                     //
       GetOwner()->GetTweenManager()->AddTween<float>( //
-        {playButton.get(), "font-size"}, [=](float size) { playButton->SetRenderTransform({.fontScale = size}); },
+        {playButton.get(), "font-size"}, [=](float size) { playButton->GetRenderTransform().SetFontScale(size); },
         {
-          .startValue = playButton->GetRenderTransform().fontScale,
+          .startValue = playButton->GetRenderTransform().GetFontScale(),
           .endValue = hoverScale,
           .duration = 0.1,
           .easingType = Base::TweenManager::EasingType::EASE_OUT,
@@ -51,9 +51,9 @@ void MainMenuLayer::OnAttach()
     [=, this]() {                                                                 //
       GetOwner()->GetTweenManager()->AddTween<float>(                             //
         {playButton.get(), "font-size"},                                          //
-        [=](float size) { playButton->SetRenderTransform({.fontScale = size}); }, //
+        [=](float size) { playButton->GetRenderTransform().SetFontScale(size); }, //
         {
-          .startValue = playButton->GetRenderTransform().fontScale, //
+          .startValue = playButton->GetRenderTransform().GetFontScale(), //
           .endValue = 1,
           .duration = 0.1,
           .easingType = Base::TweenManager::EasingType::EASE_OUT,
@@ -75,9 +75,9 @@ void MainMenuLayer::OnAttach()
   exitButton->onHover = {
     [=, this]() {                                     //
       GetOwner()->GetTweenManager()->AddTween<float>( //
-        {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetRenderTransform({.fontScale = size}); },
+        {exitButton.get(), "font-size"}, [=](float size) { exitButton->GetRenderTransform().SetFontScale(size); },
         {
-          .startValue = exitButton->GetRenderTransform().fontScale,
+          .startValue = exitButton->GetRenderTransform().GetFontScale(),
           .endValue = hoverScale,
           .duration = 0.1,
           .easingType = Base::TweenManager::EasingType::EASE_OUT,
@@ -86,9 +86,9 @@ void MainMenuLayer::OnAttach()
     },
     [=, this]() {                                     //
       GetOwner()->GetTweenManager()->AddTween<float>( //
-        {exitButton.get(), "font-size"}, [=](float size) { exitButton->SetRenderTransform({.fontScale = size}); },
+        {exitButton.get(), "font-size"}, [=](float size) { exitButton->GetRenderTransform().SetFontScale(size); },
         {
-          .startValue = exitButton->GetRenderTransform().fontScale,
+          .startValue = exitButton->GetRenderTransform().GetFontScale(),
           .endValue = 1,
           .duration = 0.1,
           .easingType = Base::TweenManager::EasingType::EASE_OUT,

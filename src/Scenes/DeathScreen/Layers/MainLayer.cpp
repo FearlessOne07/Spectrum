@@ -21,7 +21,7 @@ void MainLayer::OnAttach()
   auto messageContainer = _mainLayer->SetRootElement<Base::UIStackPanel>("message-container");
   messageContainer->SetHAlignment(Base::HAlign::Left);
   messageContainer->SetVAlignment(Base::VAlign::Center);
-  messageContainer->SetAlpha(0);
+  messageContainer->GetRenderTransform().SetOpacity(0);
   // messageContainer->onShow = [=, this]() {
   //   GetOwner()->GetTweenManager()->AddTween<float>( //
   //     {messageContainer.get(), "alpha"}, [=](float alpha) { messageContainer->SetAlpha(alpha); },
