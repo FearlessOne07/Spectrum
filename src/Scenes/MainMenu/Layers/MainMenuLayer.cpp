@@ -15,7 +15,7 @@ void MainMenuLayer::OnAttach()
   };
 
   _mainMenu = GetOwner()->GetUIManager()->AddLayer("main-menu", GetSize());
-  auto container = _mainMenu->SetRootElement<Base::UIStackPanel>("main-menu-container");
+  auto container = _mainMenu->SetRootElement<Base::UIStackPanel>();
   container->SetOrientation(Base::UIStackPanel::Orientation::Vertical);
   container->SetHAlignment(Base::HAlign::Center);
   container->SetVAlignment(Base::VAlign::Center);

@@ -91,10 +91,10 @@ void GameUILayer::Update(float dt)
   {
     // Update Light Hud
     auto lightcmp = player->GetComponent<LightCollectorComponent>();
-    auto playerLightHud = _hud->GetRootElement<Base::UIStackPanel>("hud-stack")
+    auto playerLightHud = _hud->GetRootElement<Base::UIStackPanel>()
                             ->GetChild<Base::UIStackPanel>("light-stack")
                             ->GetChild<Base::UILabel>("player-light");
-    auto playerLightBuy = _buyMenu->GetRootElement<Base::UIStackPanel>("shop-menu-container")
+    auto playerLightBuy = _buyMenu->GetRootElement<Base::UIStackPanel>()
                             ->GetChild<Base::UIStackPanel>("light-container")
                             ->GetChild<Base::UILabel>("player-light");
 
@@ -103,13 +103,13 @@ void GameUILayer::Update(float dt)
 
     // Updated Health Hud
     auto hlthcmp = player->GetComponent<HealthComponent>();
-    auto playerHealth = _hud->GetRootElement<Base::UIStackPanel>("hud-stack")
+    auto playerHealth = _hud->GetRootElement<Base::UIStackPanel>()
                           ->GetChild<Base::UIStackPanel>("health-stack")
                           ->GetChild<Base::UILabel>("player-health");
     playerHealth->SetText(std::format("{0:.0f}/{1:.0f}", hlthcmp->GetHealth(), hlthcmp->GetMaxHealth()));
   }
 
-  auto fps = _hud->GetRootElement<Base::UIStackPanel>("hud-stack")
+  auto fps = _hud->GetRootElement<Base::UIStackPanel>()
                ->GetChild<Base::UIStackPanel>("fps-stack")
                ->GetChild<Base::UILabel>("fps");
   fps->SetText(std::format("FPS:{0}", GetFPS()));
@@ -129,7 +129,7 @@ void GameUILayer::InitPauseMenu()
   };
 
   _pauseMenu = GetOwner()->GetUIManager()->AddLayer("pause-menu", GetSize());
-  auto container = _pauseMenu->SetRootElement<Base::UIStackPanel>("pause-menu-stack");
+  auto container = _pauseMenu->SetRootElement<Base::UIStackPanel>();
   container->SetVAlignment(Base::VAlign::Center);
   container->SetHAlignment(Base::HAlign::Center);
   container->SetPadding(10, 10);
@@ -282,7 +282,7 @@ void GameUILayer::InitPauseMenu()
 void GameUILayer::InitHud()
 {
   _hud = GetOwner()->GetUIManager()->AddLayer("hud", GetSize());
-  auto hudStack = _hud->SetRootElement<Base::UIStackPanel>("hud-stack");
+  auto hudStack = _hud->SetRootElement<Base::UIStackPanel>();
   hudStack->SetOrientation(Base::UIStackPanel::Orientation::Vertical);
 
   auto healtContainer = hudStack->AddChild<Base::UIStackPanel>("health-stack");
@@ -371,7 +371,7 @@ void GameUILayer::InitShopMenu()
   };
 
   float offset = -GetSize().y;
-  auto mainContainer = _buyMenu->SetRootElement<Base::UIStackPanel>("shop-menu-container");
+  auto mainContainer = _buyMenu->SetRootElement<Base::UIStackPanel>();
   mainContainer->SetVAlignment(Base::VAlign::Stretch);
   mainContainer->SetHAlignment(Base::HAlign::Stretch);
   mainContainer->SetOrientation(Base::UIStackPanel::Orientation::Vertical);
@@ -621,7 +621,7 @@ std::array<float, 3> GameUILayer::UpdateItems()
   {
     for (int i = 0; i < currentItems.size(); i++)
     {
-      auto card = _buyMenu->GetRootElement<Base::UIStackPanel>("shop-menu-container")
+      auto card = _buyMenu->GetRootElement<Base::UIStackPanel>()
                     ->GetChild<Base::UIStackPanel>("card-stack")
                     ->GetChild<Base::UIStackPanel>(std::format("card{0}", i));
       auto cost = card->GetChild<Base::UIStackPanel>("price-container")->GetChild<Base::UILabel>("light-cost");
@@ -640,7 +640,7 @@ std::array<float, 3> GameUILayer::UpdateItems()
   float alpha = 0;
   for (int i = 0; i < currentItems.size(); i++)
   {
-    auto card = _buyMenu->GetRootElement<Base::UIStackPanel>("shop-menu-container")
+    auto card = _buyMenu->GetRootElement<Base::UIStackPanel>()
                   ->GetChild<Base::UIStackPanel>("card-stack")
                   ->GetChild<Base::UIStackPanel>(std::format("card{0}", i));
     if (currentItems[i].cost > player->GetComponent<LightCollectorComponent>()->value)

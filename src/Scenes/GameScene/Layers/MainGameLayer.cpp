@@ -9,8 +9,9 @@
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/systems/SystemManager.hpp"
+#include "base/ui/UIElement.hpp"
+#include "base/ui/elements/UICanvas.hpp"
 #include "base/ui/elements/UILabel.hpp"
-#include "base/ui/elements/UIStackPanel.hpp"
 #include "raylib.h"
 #include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
@@ -50,8 +51,15 @@ void MainGameLayer::OnAttach()
 
   SetCameraPauseMask();
 
-  _inWorldUILayer = GetOwner()->GetUIManager()->AddLayer("in-world-ui", GetSize());
+  _inWorldUILayer = GetOwner()->GetUIManager()->AddLayer(                                                   //
+    "in-world-ui", {GetSize().x / GetCameraZoom(), GetSize().y / GetCameraZoom()}, GetScreenToWorld({0, 0}) //
+  );
   _inWorldUILayer->Hide();
+
+  auto canvas = _inWorldUILayer->SetRootElement<Base::UICanvas>();
+  canvas->SetPosition({0, 0});
+  canvas->SetVAlignment(Base::VAlign::Stretch);
+  canvas->SetHAlignment(Base::HAlign::Stretch);
 }
 
 void MainGameLayer::OnDetach()
@@ -76,72 +84,68 @@ void MainGameLayer::Render()
 {
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   BeginCamera();
+  GetOwner()->GetUIManager()->RenderLayer("in-world-ui");
   GetOwner()->GetSystemManager()->Render();
-  // GetOwner()->GetUIManager()->RenderLayer("in-world-ui");
   EndCamera();
 }
 
 void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
 {
-  // auto sig = std::static_pointer_cast<EntityDamagedSignal>(signal);
-  // if (sig->entity->HasComponent<PlayerTag>())
-  // {
-  //
-  //   Vector2 playerPos = sig->entity->GetComponent<Base::TransformComponent>()->position;
-  //
-  //   std::string name = std::format("damage-pop-cont-{0}", _currentPopUp++);
-  //   auto popUpCont = _inWorldUILayer->AddElement<Base::UIContainer>(name);
-  //   popUpCont->SetAnchorPoint(Base::UIContainer::AnchorPoint::CENTER);
-  //   popUpCont->SetPosition(playerPos, true);
-  //
-  //   auto popUp = popUpCont->AddChild<Base::UILabel>(name + "-popup");
-  //   popUp->SetText(std::format("-{0}", sig->damageTaken));
-  //   popUp->SetFont(GetAsset<Base::BaseFont>("main-font"));
-  //   popUp->SetTextColor(RED);
-  //   popUp->SetFontSize(43);
-  //
-  //   float offsetTarget = 0;
-  //   Vector2 min = GetScreenToWorld({0, 0});
-  //   if (playerPos.y - min.y > 200)
-  //   {
-  //     offsetTarget = -200;
-  //   }
-  //   else
-  //   {
-  //     offsetTarget = 200;
-  //   }
-  //
-  //   auto shrink = [this, popUp, name]() {
-  //     GetOwner()->GetTweenManager()->AddTween<float>(          //
-  //       {popUp.get(), name + "-popup-" + "font"},              //
-  //       [popUp](float pos) { popUp->SetFontSize(pos, true); }, //
-  //       {
-  //         .startValue = 43,
-  //         .endValue = 0,
-  //         .duration = 0.3,
-  //         .onTweenEnd =
-  //           [this, name]() {
-  //             if (_inWorldUILayer->HasElement(name))
-  //             {
-  //               _inWorldUILayer->RemoveElement(name);
-  //             }
-  //           },
-  //       } //
-  //     );
-  //   };
-  //
-  //   auto rise = [this, popUpCont, name, shrink, offsetTarget]() {
-  //     GetOwner()->GetTweenManager()->AddTween<Vector2>(                    //
-  //       {popUpCont.get(), name + "-postionoffset"},                        //
-  //       [popUpCont](Vector2 pos) { popUpCont->SetPositionalOffset(pos); }, //
-  //       {
-  //         .startValue = {0, 0},
-  //         .endValue = {0, offsetTarget},
-  //         .duration = 0.8,
-  //         .onTweenEnd = shrink,
-  //       } //
-  //     );
-  //   };
-  //   rise();
-  // }
+  auto sig = std::static_pointer_cast<EntityDamagedSignal>(signal);
+  if (sig->entity->HasComponent<PlayerTag>())
+  {
+    Vector2 playerPos = sig->entity->GetComponent<Base::TransformComponent>()->position;
+    std::string name = std::format("damage-popup-{}", _currentPopUp++);
+    auto canvas = _inWorldUILayer->GetRootElement<Base::UICanvas>();
+    auto popUp = canvas->AddChild<Base::UILabel>(name);
+    popUp->SetText(std::format("-{0}", sig->damageTaken));
+    popUp->SetFont(GetAsset<Base::BaseFont>("main-font"));
+    popUp->SetTextColor(RED);
+    popUp->SetFontSize(43);
+    popUp->SetPosition(GetWorldToScreen(playerPos));
+
+    float offsetTarget = 0;
+    Vector2 min = GetScreenToWorld({0, 0});
+    if (playerPos.y - min.y > 200)
+    {
+      offsetTarget = -200;
+    }
+    else
+    {
+      offsetTarget = 200;
+    }
+
+    auto shrink = [this, popUp, name, canvas]() {
+      GetOwner()->GetTweenManager()->AddTween<float>(                          //
+        {popUp.get(), name + "-font"},                                         //
+        [popUp](float pos) { popUp->GetRenderTransform().SetFontScale(pos); }, //
+        {
+          .startValue = 1,
+          .endValue = 0,
+          .duration = 0.3,
+          .onTweenEnd =
+            [this, name, canvas]() {
+              if (canvas->HasChild(name))
+              {
+                canvas->RemoveChild(name);
+              }
+            },
+        } //
+      );
+    };
+
+    auto rise = [this, popUp, name, shrink, offsetTarget]() {
+      GetOwner()->GetTweenManager()->AddTween<float>(                        //
+        {popUp.get(), name + "-offsetY"},                                    //
+        [popUp](float pos) { popUp->GetRenderTransform().SetOffsetY(pos); }, //
+        {
+          .startValue = popUp->GetRenderTransform().GetOffsetY(),
+          .endValue = offsetTarget,
+          .duration = 0.8,
+          .onTweenEnd = shrink,
+        } //
+      );
+    };
+    rise();
+  }
 }
