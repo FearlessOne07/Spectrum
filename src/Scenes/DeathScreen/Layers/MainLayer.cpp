@@ -7,7 +7,6 @@
 #include "base/scenes/Scene.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIElement.hpp"
-#include "base/ui/UILayoutSettings.hpp"
 #include "base/ui/elements/UIButton.hpp"
 #include "base/ui/elements/UILabel.hpp"
 #include "base/ui/elements/UIStackPanel.hpp"

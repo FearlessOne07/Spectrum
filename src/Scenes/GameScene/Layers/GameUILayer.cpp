@@ -16,6 +16,7 @@
 #include "base/ui/UIElement.hpp"
 #include "base/ui/UILayer.hpp"
 #include "base/ui/elements/UIButton.hpp"
+#include "base/ui/elements/UIFlexContainer.hpp"
 #include "base/ui/elements/UILabel.hpp"
 #include "base/ui/elements/UIStackPanel.hpp"
 #include "base/ui/elements/UITextureRect.hpp"
@@ -375,7 +376,7 @@ void GameUILayer::InitShopMenu()
   mainContainer->SetHAlignment(Base::HAlign::Stretch);
   mainContainer->SetOrientation(Base::UIStackPanel::Orientation::Vertical);
   mainContainer->GetRenderTransform().SetOffsetY(offset);
-  mainContainer->SetGap(0);
+  mainContainer->SetGap(150);
   mainContainer->onShow = [this, mainContainer, buyMenuEntryDuration]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
       Base::TweenKey{mainContainer.get(), "shop-menu-container-position"},
@@ -445,9 +446,10 @@ void GameUILayer::InitShopMenu()
   playerLight->SetHAlignment(Base::HAlign::Center);
   playerLight->SetFontSize(40);
 
-  auto cardStack = mainContainer->AddChild<Base::UIStackPanel>("card-stack");
-  cardStack->SetOrientation(Base::UIStackPanel::Orientation::Horizontal);
-  cardStack->SetPadding(200, 300);
+  auto cardStack = mainContainer->AddChild<Base::UIFlexContainer>("card-stack");
+  cardStack->SetOrientation(Base::UIFlexContainer::Orientation::Horizontal);
+  cardStack->SetPadding(100, 100);
+  cardStack->SetHAlignment(Base::HAlign::Stretch);
 
   Base::Size cardSize = {350, 500};
   float fadeOutDuration = 0.5;
@@ -456,8 +458,10 @@ void GameUILayer::InitShopMenu()
   for (int i = 0; i < 3; i++)
   {
     auto card = cardStack->AddChild<Base::UIStackPanel>(std::format("card{0}", i));
+    card->SetWidth(cardSize.width);
+    card->SetSizeMode(Base::SizeMode::Fixed);
     card->SetSize(cardSize);
-    card->SetBackgroundColor(WHITE);
+
     card->SetHAlignment(Base::HAlign::Center);
     card->SetVAlignment(Base::VAlign::Center);
     card->SetSprite(cardSprite);
