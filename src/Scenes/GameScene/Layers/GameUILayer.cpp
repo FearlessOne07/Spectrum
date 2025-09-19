@@ -5,8 +5,10 @@
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
+#include "Signals/PlayerSpawnedSignal.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/audio/signals/StopAudioStreamSignal.hpp"
+#include "base/entities/Entity.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/scenes/Scene.hpp"
@@ -29,18 +31,20 @@
 void GameUILayer::OnAttach()
 {
   // Init UI
-  InitHud();
   InitPauseMenu();
-  InitShopMenu();
 
   _shop.Init(this);
+
+  auto bus = Base::SignalBus::GetInstance();
+  bus->SubscribeSignal<PlayerSpawnedSignal>([this](std::shared_ptr<Base::Signal> sig) {
+    auto pSpawn = std::static_pointer_cast<PlayerSpawnedSignal>(sig);
+    InitHud(pSpawn->player);
+    InitShopMenu(pSpawn->player);
+  });
 }
 
 void GameUILayer::OnDetach()
 {
-  GetOwner()->GetUIManager()->RemoveLayer("hud");
-  GetOwner()->GetUIManager()->RemoveLayer("pause-menu");
-  GetOwner()->GetUIManager()->RemoveLayer("buy-menu");
 }
 
 void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
@@ -84,35 +88,6 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 
 void GameUILayer::Update(float dt)
 {
-  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->playerId);
-
-  // TODO: ADD DATA BINDING ... SOMEHOW, THIS IS UGLY
-  if (player)
-  {
-    // Update Light Hud
-    auto lightcmp = player->GetComponent<LightCollectorComponent>();
-    auto playerLightHud = _hud->GetRootElement<Base::UIStackPanel>()
-                            ->GetChild<Base::UIStackPanel>("light-stack")
-                            ->GetChild<Base::UILabel>("player-light");
-    auto playerLightBuy = _buyMenu->GetRootElement<Base::UIStackPanel>()
-                            ->GetChild<Base::UIStackPanel>("light-container")
-                            ->GetChild<Base::UILabel>("player-light");
-
-    playerLightHud->SetText(std::format("{0}", lightcmp->value));
-    playerLightBuy->SetText(std::format("{0}", lightcmp->value));
-
-    // Updated Health Hud
-    auto hlthcmp = player->GetComponent<HealthComponent>();
-    auto playerHealth = _hud->GetRootElement<Base::UIStackPanel>()
-                          ->GetChild<Base::UIStackPanel>("health-stack")
-                          ->GetChild<Base::UILabel>("player-health");
-    playerHealth->SetText(std::format("{0:.0f}/{1:.0f}", hlthcmp->GetHealth(), hlthcmp->GetMaxHealth()));
-  }
-
-  auto fps = _hud->GetRootElement<Base::UIStackPanel>()
-               ->GetChild<Base::UIStackPanel>("fps-stack")
-               ->GetChild<Base::UILabel>("fps");
-  fps->SetText(std::format("FPS:{0}", GetFPS()));
 }
 
 void GameUILayer::Render()
@@ -279,7 +254,7 @@ void GameUILayer::InitPauseMenu()
   _pauseMenu->Hide();
 }
 
-void GameUILayer::InitHud()
+void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
 {
   _hud = GetOwner()->GetUIManager()->AddLayer("hud", GetSize());
   auto hudStack = _hud->SetRootElement<Base::UIStackPanel>();
@@ -296,11 +271,15 @@ void GameUILayer::InitHud()
   heartIcon->SetVAlignment(Base::VAlign::Center);
   heartIcon->SetHAlignment(Base::HAlign::Center);
 
+  auto hlthcmp = player->GetComponent<HealthComponent>();
   auto playerHealth = healtContainer->AddChild<Base::UILabel>("player-health");
   playerHealth->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   playerHealth->SetFontSize(40);
   playerHealth->SetVAlignment(Base::VAlign::Center);
   playerHealth->SetHAlignment(Base::HAlign::Center);
+  playerHealth->Bind({
+    [hlthcmp]() -> std::string { return std::format("{:.0f}/{:.0f}", hlthcmp->GetHealth(), hlthcmp->GetMaxHealth()); },
+  });
 
   auto lightContainer = hudStack->AddChild<Base::UIStackPanel>("light-stack");
   lightContainer->SetOrientation(Base::UIStackPanel::Orientation::Horizontal);
@@ -313,11 +292,13 @@ void GameUILayer::InitHud()
   lightIcon->SetHAlignment(Base::HAlign::Center);
   lightIcon->SetSize({40, 40});
 
+  auto lightcmp = player->GetComponent<LightCollectorComponent>();
   auto playerLight = lightContainer->AddChild<Base::UILabel>("player-light");
   playerLight->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   playerLight->SetVAlignment(Base::VAlign::Center);
   playerLight->SetHAlignment(Base::HAlign::Center);
   playerLight->SetFontSize(40);
+  playerLight->Bind({[lightcmp]() -> std::string { return std::format("{}", lightcmp->value); }});
 
   auto fpsContainer = hudStack->AddChild<Base::UIStackPanel>("fps-stack");
   fpsContainer->SetOrientation(Base::UIStackPanel::Orientation::Horizontal);
@@ -329,9 +310,10 @@ void GameUILayer::InitHud()
   fps->SetFontSize(40);
   fps->SetVAlignment(Base::VAlign::Center);
   fps->SetHAlignment(Base::HAlign::Center);
+  fps->Bind({[]() { return std::format("FPS:{}", GetFPS()); }});
 }
 
-void GameUILayer::InitShopMenu()
+void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
 {
   float buyMenuEntryDuration = 0.5;
   float buyMenuExitDuration = 0.3;
@@ -440,11 +422,13 @@ void GameUILayer::InitShopMenu()
   lightIcon->SetHAlignment(Base::HAlign::Center);
   lightIcon->SetSize({40, 40});
 
+  auto lightcmp = player->GetComponent<LightCollectorComponent>();
   auto playerLight = lightContainer->AddChild<Base::UILabel>("player-light");
   playerLight->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   playerLight->SetVAlignment(Base::VAlign::Center);
   playerLight->SetHAlignment(Base::HAlign::Center);
   playerLight->SetFontSize(40);
+  playerLight->Bind({[lightcmp]() -> std::string { return std::format("{}", lightcmp->value); }});
 
   auto cardStack = mainContainer->AddChild<Base::UIFlexContainer>("card-stack");
   cardStack->SetOrientation(Base::UIFlexContainer::Orientation::Horizontal);

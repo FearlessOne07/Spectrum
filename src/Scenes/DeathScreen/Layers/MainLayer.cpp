@@ -191,7 +191,6 @@ void MainLayer::Update(float dt)
 
 void MainLayer::OnDetach()
 {
-  GetOwner()->GetUIManager()->RemoveLayer("main-layer");
 }
 
 void MainLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)

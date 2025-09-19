@@ -64,7 +64,6 @@ void MainGameLayer::OnAttach()
 
 void MainGameLayer::OnDetach()
 {
-  GetOwner()->GetUIManager()->RemoveLayer("in-world-ui");
 }
 
 void MainGameLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)

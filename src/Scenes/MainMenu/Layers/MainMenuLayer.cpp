@@ -109,7 +109,6 @@ void MainMenuLayer::Update(float dt)
 
 void MainMenuLayer::OnDetach()
 {
-  GetOwner()->GetUIManager()->RemoveLayer("main-menu");
 }
 
 void MainMenuLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)

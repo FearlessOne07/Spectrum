@@ -1,5 +1,6 @@
 
 #include "Shop/Shop.hpp"
+#include "base/entities/Entity.hpp"
 #include "base/ui/UILayer.hpp"
 #include <base/scenes/SceneLayer.hpp>
 #include <memory>
@@ -10,10 +11,10 @@ private:
   void InitPauseMenu();
   void Pause();
   void UnPause();
-  void InitHud();
+  void InitHud(std::shared_ptr<Base::Entity> player);
 
   // Shop
-  void InitShopMenu();
+  void InitShopMenu(std::shared_ptr<Base::Entity> player);
   void OpenShop();
   void CloseShop();
   std::array<float, 3> UpdateItems();

@@ -144,6 +144,7 @@ Base::EntityID Spawner::SpawnPlayer( //
   std::shared_ptr<PlayerSpawnedSignal> sig = std::make_shared<PlayerSpawnedSignal>();
   sig->player = e;
   bus->BroadCastSignal(sig);
+
   _playerID = e->GetID();
   return _playerID;
 }
