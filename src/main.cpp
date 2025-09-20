@@ -7,6 +7,7 @@
 #include "Systems/LightCollectionSystem/LightCollectionSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
+#include "base/assets/BaseAsset.hpp"
 #include <base/game/Game.hpp>
 
 int main(void)
@@ -16,10 +17,25 @@ int main(void)
     .Title = "Spectrum",
     .GlobalAssets =
       {
-        {"font", "assets/fonts/main-font.ttf"},
-        {"audio-stream", "assets/music/game-track.mp3"},
-        {"audio-stream", "assets/music/main-menu-track.wav"},
-        {"texture", "assets/textures/button.png"},
+        {
+          Base::AssetType::Font,
+          {
+            "assets/fonts/main-font.ttf",
+          },
+        },
+        {
+          Base::AssetType::AudioStream,
+          {
+            "assets/music/game-track.mp3",
+            "assets/music/main-menu-track.wav",
+          },
+        },
+        {
+          Base::AssetType::Texture,
+          {
+            "assets/textures/button.png",
+          },
+        },
       },
   });
 
