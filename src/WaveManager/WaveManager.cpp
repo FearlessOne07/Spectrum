@@ -1,34 +1,19 @@
 #include "WaveManager.hpp"
 #include "Components/EnemyComponent.hpp"
-#include "Components/LightComponent.hpp"
-#include "Components/TransformEffects.hpp"
 #include "Spawner/Spawner.hpp"
 #include "base/components/ColliderComponent.hpp"
-#include "base/components/ImpulseComponent.hpp"
-#include "base/components/MoveComponent.hpp"
-#include "base/components/RigidBodyComponent.hpp"
-#include "base/components/SpriteComponent.hpp"
-#include "base/components/TransformComponent.hpp"
 #include "base/entities/Entity.hpp"
 #include "base/scenes/SceneLayer.hpp"
-#include "base/signals/Signal.hpp"
-#include "base/signals/SignalBus.hpp"
-#include "base/sprites/Sprite.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
 #include <base/scenes/SceneLayer.inl>
-#include <memory>
 #include <random>
 
 void WaveManager::Init(const Base::SceneLayer *parentLayer, Base::EntityManager *entityMan)
 {
   _entityMan = entityMan;
   _parentLayer = parentLayer;
-  _spawner = Spawner(_parentLayer);
-  auto bus = Base::SignalBus::GetInstance();
-  bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {
-    this->SpawnLight(std::static_pointer_cast<EntityDiedSignal>(sig)); //
-  });
+  _spawner.Init(_parentLayer, _entityMan);
 }
 
 void WaveManager::GenerateWave()
@@ -141,87 +126,13 @@ void WaveManager::SpawnWaves(float dt)
   {
     _waveTimer += dt;
   }
-  _spawner.SpawnWave(dt, _entityMan, _playerID);
+  _spawner.SpawnWave(dt, _playerID);
 }
 
 Base::EntityID WaveManager::SpawnPlayer()
 {
-  _playerID = _spawner.SpawnPlayer(_entityMan, {0, 0});
+  _playerID = _spawner.SpawnPlayer({0, 0});
   return _playerID;
-}
-
-void WaveManager::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
-{
-  if (!sig->entity->HasComponent<EnemyComponent>())
-  {
-    return;
-  }
-
-  int totalValue = sig->entity->GetComponent<EnemyComponent>()->value;
-  std::random_device _rd;
-  std::mt19937_64 _gen(_rd());
-
-  // First, split the value into chunks of at most 3
-  std::vector<int> chunks;
-  while (totalValue > 0)
-  {
-    int maxThis = std::min(3, totalValue);
-
-    // Randomly pick between 1 and maxThis
-    int v = std::uniform_int_distribution<int>(1, maxThis)(_gen);
-    chunks.push_back(v);
-    totalValue -= v;
-  }
-
-  // Shuffle so it's not always descending
-  std::shuffle(chunks.begin(), chunks.end(), _gen);
-
-  // Spawn each chunk as a light entity
-  for (int lightValue : chunks)
-  {
-    float targetSize = 16 + (lightValue - 1) * 4; // 1=16px, 2=20px, 3=24px
-
-    auto e = _entityMan->CreateEntity();
-    e->GetComponent<Base::TransformComponent>()->position =
-      sig->entity->GetComponent<Base::TransformComponent>()->position;
-
-    auto colcmp = e->AddComponent<Base::ColliderComponent>();
-    colcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
-    colcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
-    colcmp->radius = targetSize / 2;
-
-    e->AddComponent<Base::SpriteComponent>( //
-      Base::Sprite{
-        _parentLayer->GetAsset<Base::Texture>("power-ups"),
-        Vector2{16, 8},
-        Vector2{8, 8},
-        Vector2{targetSize, targetSize},
-      } //
-    );
-
-    auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
-    rbcmp->isKinematic = false;
-    rbcmp->drag = 4;
-    rbcmp->mass = 1;
-
-    auto mvcmp = e->AddComponent<Base::MoveComponent>();
-    mvcmp->driveForce = 0;
-
-    float angle = std::uniform_real_distribution<float>(0, 2 * PI)(_gen);
-    rbcmp->direction = {sin(angle), cos(angle)};
-
-    auto impcmp = e->AddComponent<Base::ImpulseComponent>();
-    impcmp->force = std::uniform_int_distribution<int>(200, 400)(_gen);
-    impcmp->direction = {sin(angle), cos(angle)};
-
-    auto transfx = e->AddComponent<TransformEffectsComponent>();
-    transfx->bind = true;
-    transfx->bindMin = _parentLayer->GetScreenToWorld({0, 0});
-    transfx->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
-
-    e->AddComponent<LightComponent>()->value = lightValue;
-    _entityMan->AddEntity(e);
-  }
 }
 
 WaveManager::~WaveManager()

@@ -1,5 +1,6 @@
 #pragma once
 #include "Components/EnemyComponent.hpp"
+#include "Signals/EntityDiedSignal.hpp"
 #include "base/entities/Entity.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneLayer.hpp"
@@ -24,11 +25,15 @@ private:
   // Layer
   const Base::SceneLayer *_parentLayer = nullptr;
 
+  Base::EntityManager *_entityManager = nullptr;
+
+  void SpawnLight(std::shared_ptr<EntityDiedSignal> sig);
+
 public:
   Spawner() = default;
-  Spawner(const Base::SceneLayer *parentLayer);
-  Base::EntityID SpawnPlayer(Base::EntityManager *entityManager, Vector2 position);
-  void SpawnWave(float dt, Base::EntityManager *entityManager, Base::EntityID playerID);
+  void Init(const Base::SceneLayer *parentLayer, Base::EntityManager *entityManager);
+  Base::EntityID SpawnPlayer(Vector2 position);
+  void SpawnWave(float dt, Base::EntityID playerID);
   int GetToSpawnCount() const;
   void SetToSpawn(std::vector<EnemySpec> toSpawn);
 };

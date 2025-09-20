@@ -13,7 +13,6 @@ class WaveManager
 public:
 private:
   void GenerateWave();
-  void SpawnLight(std::shared_ptr<EntityDiedSignal> sig);
 
 private:
   // Enemy Weights

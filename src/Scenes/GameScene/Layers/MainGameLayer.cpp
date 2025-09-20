@@ -102,6 +102,8 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     popUp->SetTextColor(RED);
     popUp->SetFontSize(43);
     popUp->SetPosition(GetWorldToScreen(playerPos));
+    popUp->SetVAlignment(Base::VAlign::Center);
+    popUp->SetHAlignment(Base::HAlign::Center);
 
     float offsetTarget = 0;
     Vector2 min = GetScreenToWorld({0, 0});

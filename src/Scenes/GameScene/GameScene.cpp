@@ -6,7 +6,6 @@
 #include "ShaderEffects/Bloom/Bloom.hpp"
 #include "ShaderEffects/Vignette/Vignette.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
-#include "Systems/PowerUpSystem/PowerUpSystem.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
 #include "base/shaders/Shader.hpp"

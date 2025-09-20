@@ -14,7 +14,6 @@ set(SOURCES
   "./Systems/TrackingSystem/TrackingSystem.cpp"
   "./Systems/HealthSystem/HealthSystem.cpp"
   "./Systems/TransformEffectsSystem/TransformEffectsSystem.cpp"
-  "./Systems/PowerUpSystem/PowerUpSystem.cpp"
   "./Systems/LightCollectionSystem/LightCollectionSystem.cpp"
   "./Systems/DiveSystem/DiveSystem.cpp"
 

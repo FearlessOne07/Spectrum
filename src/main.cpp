@@ -5,7 +5,6 @@
 #include "Systems/DiveSystem/DiveSystem.hpp"
 #include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/LightCollectionSystem/LightCollectionSystem.hpp"
-#include "Systems/PowerUpSystem/PowerUpSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
 #include <base/game/Game.hpp>
@@ -35,7 +34,6 @@ int main(void)
   game.RegisterSystem<TransformEffectsSystem>();
   game.RegisterSystem<TrackingSystem>();
   game.RegisterSystem<HealthSystem>();
-  game.RegisterSystem<PowerUpSystem>();
   game.RegisterSystem<DiveSystem>();
 
   // Run game

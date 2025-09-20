@@ -5,11 +5,12 @@
 #include "Components/HealthComponent.hpp"
 #include "Components/KnockBackComponent.hpp"
 #include "Components/LightCollectorComponent.hpp"
-#include "Components/PowerUpComponent.hpp"
+#include "Components/LightComponent.hpp"
 #include "Components/ShootComponent.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
 #include "Components/TransformEffects.hpp"
+#include "Signals/EntityDiedSignal.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
 #include "base/components/AnimationComponent.hpp"
 #include "base/components/AreaComponent.hpp"
@@ -45,9 +46,16 @@ void Spawner::SetToSpawn(std::vector<EnemySpec> toSpawn)
   }
 }
 
-Spawner::Spawner(const Base::SceneLayer *parentLayer) : _parentLayer(parentLayer)
+void Spawner::Init(const Base::SceneLayer *parentLayer, Base::EntityManager *entityManager)
 {
+  _parentLayer = parentLayer;
+  _entityManager = entityManager;
   _spawnOffset = float(200 * _parentLayer->GetCameraZoom());
+
+  auto bus = Base::SignalBus::GetInstance();
+  bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {
+    this->SpawnLight(std::static_pointer_cast<EntityDiedSignal>(sig)); //
+  });
 }
 
 int Spawner::GetToSpawnCount() const
@@ -56,11 +64,10 @@ int Spawner::GetToSpawnCount() const
 }
 
 Base::EntityID Spawner::SpawnPlayer( //
-  Base::EntityManager *entityManager,
-  Vector2 position //
+  Vector2 position                   //
 )
 {
-  auto e = entityManager->CreateEntity();
+  auto e = _entityManager->CreateEntity();
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
 
   auto transcmp = e->GetComponent<Base::TransformComponent>();
@@ -111,8 +118,6 @@ Base::EntityID Spawner::SpawnPlayer( //
   abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
   abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
 
-  auto pucmp = e->AddComponent<PowerUpComponent>();
-
   auto inpcmp = e->AddComponent<Base::InputComponent>();
   inpcmp->BindKeyDown(KEY_A, [rbcmp]() { rbcmp->direction.x = -1; });
   inpcmp->BindKeyDown(KEY_D, [rbcmp]() { rbcmp->direction.x = 1; });
@@ -138,7 +143,7 @@ Base::EntityID Spawner::SpawnPlayer( //
   auto lightColCmp = e->AddComponent<LightCollectorComponent>();
   float baseRadius = abbcmp->radius / _parentLayer->GetCameraZoom();
   lightColCmp->collectionRaius = (baseRadius + (baseRadius * 0.5));
-  entityManager->AddEntity(e);
+  _entityManager->AddEntity(e);
 
   auto bus = Base::SignalBus::GetInstance();
   std::shared_ptr<PlayerSpawnedSignal> sig = std::make_shared<PlayerSpawnedSignal>();
@@ -150,20 +155,20 @@ Base::EntityID Spawner::SpawnPlayer( //
 }
 
 void Spawner::SpawnWave( //
-  float dt, Base::EntityManager *entityManager,
+  float dt,
   Base::EntityID playerID //
 )
 {
   if (_spawnTimer >= _spawnDuration && !_toSpawn.empty())
   {
+    std::random_device rd;
+    std::mt19937_64 gen(rd());
+
     _spawnTimer = 0.f;
     const Base::RenderContext *rctx = Base::RenderContextSingleton::GetInstance();
 
     EnemySpec &spec = _toSpawn.front();
     _toSpawn.pop();
-
-    std::random_device rd;
-    std::mt19937_64 gen(rd());
 
     std::uniform_int_distribution sideDist(1, 4);
     int side = sideDist(gen);
@@ -195,7 +200,7 @@ void Spawner::SpawnWave( //
       break;
     }
 
-    auto e = entityManager->CreateEntity();
+    auto e = _entityManager->CreateEntity();
     auto enemcmp = e->AddComponent<EnemyComponent>();
     enemcmp->type = spec.Type;
     enemcmp->value = spec.Value;
@@ -226,6 +231,7 @@ void Spawner::SpawnWave( //
     transfxcmp->lookAtTarget = _playerID;
 
     e->AddComponent<KnockBackComponent>(1000);
+    auto hlthcmp = e->AddComponent<HealthComponent>(spec.BaseHealth);
 
     // Sprite
     std::shared_ptr<Base::SpriteComponent> sprtcmp = nullptr;
@@ -242,7 +248,6 @@ void Spawner::SpawnWave( //
     switch (spec.Type)
     {
     case EnemyType::CHASER: {
-      auto hlthcmp = e->AddComponent<HealthComponent>(3.f);
       e->AddComponent<DamageComponent>(1);
       auto trckcmp = e->AddComponent<TrackingComponent>(_playerID);
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
@@ -257,7 +262,6 @@ void Spawner::SpawnWave( //
       break;
     }
     case EnemyType::SHOOTER: {
-      auto hlthcmp = e->AddComponent<HealthComponent>(4.f);
       e->AddComponent<DamageComponent>(2);
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
@@ -331,7 +335,6 @@ void Spawner::SpawnWave( //
       break;
     }
     case EnemyType::KAMIKAZE: {
-      auto hlthcmp = e->AddComponent<HealthComponent>(5.f);
       e->AddComponent<DamageComponent>(5);
       mvcmp->driveForce = 500;
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
@@ -415,10 +418,85 @@ void Spawner::SpawnWave( //
     }
 
     abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
-    entityManager->AddEntity(e);
+
+    _entityManager->AddEntity(e);
   }
   else
   {
     _spawnTimer += dt;
+  }
+}
+
+void Spawner::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
+{
+  if (!sig->entity->HasComponent<EnemyComponent>())
+  {
+    return;
+  }
+
+  int totalValue = sig->entity->GetComponent<EnemyComponent>()->value;
+  std::random_device _rd;
+  std::mt19937_64 _gen(_rd());
+
+  // First, split the value into chunks of at most 3
+  std::vector<int> chunks;
+  while (totalValue > 0)
+  {
+    int maxThis = std::min(3, totalValue);
+
+    // Randomly pick between 1 and maxThis
+    int v = std::uniform_int_distribution<int>(1, maxThis)(_gen);
+    chunks.push_back(v);
+    totalValue -= v;
+  }
+
+  // Shuffle so it's not always descending
+  std::shuffle(chunks.begin(), chunks.end(), _gen);
+
+  // Spawn each chunk as a light entity
+  for (int lightValue : chunks)
+  {
+    float targetSize = 16 + (lightValue - 1) * 4; // 1=16px, 2=20px, 3=24px
+
+    auto e = _entityManager->CreateEntity();
+    e->GetComponent<Base::TransformComponent>()->position =
+      sig->entity->GetComponent<Base::TransformComponent>()->position;
+
+    auto colcmp = e->AddComponent<Base::ColliderComponent>();
+    colcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
+    colcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
+    colcmp->radius = targetSize / 2;
+
+    e->AddComponent<Base::SpriteComponent>( //
+      Base::Sprite{
+        _parentLayer->GetAsset<Base::Texture>("power-ups"),
+        Vector2{16, 8},
+        Vector2{8, 8},
+        Vector2{targetSize, targetSize},
+      } //
+    );
+
+    auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
+    rbcmp->isKinematic = false;
+    rbcmp->drag = 4;
+    rbcmp->mass = 1;
+
+    auto mvcmp = e->AddComponent<Base::MoveComponent>();
+    mvcmp->driveForce = 0;
+
+    float angle = std::uniform_real_distribution<float>(0, 2 * PI)(_gen);
+    rbcmp->direction = {sin(angle), cos(angle)};
+
+    auto impcmp = e->AddComponent<Base::ImpulseComponent>();
+    impcmp->force = std::uniform_int_distribution<int>(200, 400)(_gen);
+    impcmp->direction = {sin(angle), cos(angle)};
+
+    auto transfx = e->AddComponent<TransformEffectsComponent>();
+    transfx->bind = true;
+    transfx->bindMin = _parentLayer->GetScreenToWorld({0, 0});
+    transfx->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
+
+    e->AddComponent<LightComponent>()->value = lightValue;
+    _entityManager->AddEntity(e);
   }
 }
