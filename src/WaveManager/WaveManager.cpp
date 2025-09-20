@@ -6,7 +6,7 @@
 #include "base/scenes/SceneLayer.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
-#include <base/scenes/SceneLayer.inl>
+#include <base/scenes/SceneLayer.tpp>
 #include <random>
 
 void WaveManager::Init(const Base::SceneLayer *parentLayer, Base::EntityManager *entityMan)

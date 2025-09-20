@@ -6,24 +6,24 @@
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
-#include "base/assets/AssetManager.hpp"
-#include "base/audio/signals/StopAudioStreamSignal.hpp"
-#include "base/entities/Entity.hpp"
-#include "base/entities/EntityManager.hpp"
-#include "base/input/Events/KeyEvent.hpp"
-#include "base/scenes/Scene.hpp"
-#include "base/scenes/SceneLayer.inl"
-#include "base/signals/SignalBus.hpp"
-#include "base/tween/Tween.hpp"
-#include "base/ui/UIElement.hpp"
-#include "base/ui/UILayer.hpp"
-#include "base/ui/elements/UIButton.hpp"
-#include "base/ui/elements/UIFlexContainer.hpp"
-#include "base/ui/elements/UILabel.hpp"
-#include "base/ui/elements/UIStackPanel.hpp"
-#include "base/ui/elements/UITextureRect.hpp"
 #include "raylib.h"
 #include <array>
+#include <base/assets/AssetManager.hpp>
+#include <base/audio/signals/StopAudioStreamSignal.hpp>
+#include <base/entities/Entity.hpp>
+#include <base/entities/EntityManager.hpp>
+#include <base/input/Events/KeyEvent.hpp>
+#include <base/scenes/Scene.hpp>
+#include <base/scenes/SceneLayer.tpp>
+#include <base/signals/SignalBus.hpp>
+#include <base/tween/Tween.hpp>
+#include <base/ui/UIElement.hpp>
+#include <base/ui/UILayer.hpp>
+#include <base/ui/elements/UIButton.hpp>
+#include <base/ui/elements/UIFlexContainer.hpp>
+#include <base/ui/elements/UILabel.hpp>
+#include <base/ui/elements/UIStackPanel.hpp>
+#include <base/ui/elements/UITextureRect.hpp>
 #include <format>
 #include <memory>
 #include <string>
@@ -318,7 +318,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
   float buyMenuEntryDuration = 0.5;
   float buyMenuExitDuration = 0.3;
   Base::NinePatchSprite cardSprite = {
-    GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 2,
+    GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 8,
   };
 
   _buyMenu = GetOwner()->GetUIManager()->AddLayer("buy-menu", GetSize());
@@ -517,6 +517,8 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
                     .priority = Base::TweenPriorityLevel::MEDIUM,
                   } //
                 );
+
+                // Tween Cards to the correct alpha
                 GetOwner()->GetTweenManager()->AddTween<float>(                   //
                   {card.get(), std::format("alpha-{0}", i)},                      //
                   [=](float pos) { card->GetRenderTransform().SetOpacity(pos); }, //

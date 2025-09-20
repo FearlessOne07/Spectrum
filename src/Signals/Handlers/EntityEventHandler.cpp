@@ -23,7 +23,7 @@
 #include <base/components/MoveComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
 #include <base/entities/signals/EntityCollisionSignal.hpp>
-#include <base/scenes/SceneLayer.inl>
+#include <base/scenes/SceneLayer.tpp>
 #include <base/signals/SignalBus.hpp>
 #include <memory>
 #include <raylib.h>

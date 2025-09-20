@@ -33,7 +33,7 @@
 #include <base/entities/EntityManager.hpp>
 #include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
-#include <base/scenes/SceneLayer.inl>
+#include <base/scenes/SceneLayer.tpp>
 #include <memory>
 #include <random>
 #include <raylib.h>
