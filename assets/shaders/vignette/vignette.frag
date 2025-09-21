@@ -4,10 +4,11 @@ in vec2 fragTexCoord;
 uniform sampler2D texture0;
 
 // custom
-const float uVignetteThickness = 0.1;
+const float uVignetteThickness = 0.07;
 
 uniform vec2 uResolution; // pass screen width/height
 uniform vec4 uVignetteColor;
+uniform float uVignetteStrength;
 
 out vec4 oFragColor;
 
@@ -27,5 +28,5 @@ void main()
 
     float distToEdge = roundedBoxSDF(uv, halfSize, 0.02);
     float vignette = smoothstep(0.0, uVignetteThickness, distToEdge);
-    oFragColor = mix(color, vec4(uVignetteColor.rgb, 1), vignette);
+    oFragColor = mix(color, vec4(uVignetteColor.rgb, 1), vignette * uVignetteStrength);
 }

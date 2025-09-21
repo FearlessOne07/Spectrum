@@ -1,8 +1,10 @@
 #include "MainGameLayer.hpp"
+#include "Components/HealthComponent.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Scenes/GameScene/SharedGameData.hpp"
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
+#include "ShaderEffects/Vignette/Vignette.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/input/InputEvent.hpp"
@@ -76,6 +78,24 @@ void MainGameLayer::Update(float dt)
   if (!IsPaused())
   {
     _waveManager.SpawnWaves(dt);
+
+    // Update Vingette
+    auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->playerId);
+    if (player)
+    {
+      auto vignette = GetRenderLayer()->GetShaderEffect<Vignette>();
+      auto hlthcmp = player->GetComponent<HealthComponent>();
+      if (hlthcmp->GetHealth() <= hlthcmp->GetMaxHealth() * 0.2)
+      {
+        vignette->SetMinStrength(0.2);
+        vignette->SetMaintain(true);
+      }
+      else
+      {
+        vignette->SetMinStrength(0);
+        vignette->SetMaintain(false);
+      }
+    }
   }
 }
 
@@ -148,5 +168,9 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
       );
     };
     rise();
+
+    // Flash Vignette
+    auto vignette = GetRenderLayer()->GetShaderEffect<Vignette>();
+    vignette->Flash();
   }
 }

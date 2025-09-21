@@ -4,6 +4,7 @@
 #include "Layers/ParticleLayer.hpp"
 #include "Scenes/GameScene/SharedGameData.hpp"
 #include "ShaderEffects/Bloom/Bloom.hpp"
+#include "ShaderEffects/Vignette/Vignette.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
@@ -54,9 +55,9 @@ void GameScene::Enter(Base::SceneData sceneData)
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);
 
-  // TODO: Fix Tone mapping??
+  // TODO: Fix Tone mapping for bloom??
   mainLayer->AddShaderEffect<Bloom>(1.2, 0.25, 1);
-  // mainLayer->AddShaderEffect<Vignette>(Color{123, 123, 231, 255});
+  mainLayer->AddShaderEffect<Vignette>(Color{255, 48, 48, 255}, 0.5f, 0.5);
 
   AttachLayer<MainGameLayer>(mainLayer);
   AttachLayer<ParticleLayer>(mainLayer);
