@@ -456,7 +456,7 @@ void Spawner::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
   // Spawn each chunk as a light entity
   for (int lightValue : chunks)
   {
-    float targetSize = 16 + (lightValue - 1) * 4; // 1=16px, 2=20px, 3=24px
+    float targetSize = 16 + (lightValue - 1) * 4;
 
     auto e = _entityManager->CreateEntity();
     e->GetComponent<Base::TransformComponent>()->position =
