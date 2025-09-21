@@ -137,8 +137,8 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     }
       */ 
 
-    // TODO: Deal with notifying object that a scene is now invalid
-    // On playe death, GetOwnerReturns an invalid pointer
+    // TODO: Deal with notifying objects that a scene is now invalid
+    // On player death, GetOwner returns an invalid pointer
 
     //auto shrink = [this, popUp, name, canvas]() {
     //  GetOwner()->GetTweenManager()->AddTween<float>(                          //
