@@ -111,9 +111,9 @@ void MainGameLayer::Render()
 void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
 {
   auto sig = std::static_pointer_cast<EntityDamagedSignal>(signal);
-  if (sig->entity->HasComponent<PlayerTag>())
+  if (sig->entity->HasComponent<PlayerTag>() && sig->entity->IsAlive())
   {
-    Vector2 playerPos = sig->entity->GetComponent<Base::TransformComponent>()->position;
+/*    Vector2 playerPos = sig->entity->GetComponent<Base::TransformComponent>()->position;
     std::string name = std::format("damage-popup-{}", _currentPopUp++);
     auto canvas = _inWorldUILayer->GetRootElement<Base::UICanvas>();
     auto popUp = canvas->AddChild<Base::UILabel>(name);
@@ -135,39 +135,43 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     {
       offsetTarget = 200;
     }
+      */ 
 
-    auto shrink = [this, popUp, name, canvas]() {
-      GetOwner()->GetTweenManager()->AddTween<float>(                          //
-        {popUp.get(), name + "-font"},                                         //
-        [popUp](float pos) { popUp->GetRenderTransform().SetFontScale(pos); }, //
-        {
-          .startValue = 1,
-          .endValue = 0,
-          .duration = 0.3,
-          .onTweenEnd =
-            [this, name, canvas]() {
-              if (canvas->HasChild(name))
-              {
-                canvas->RemoveChild(name);
-              }
-            },
-        } //
-      );
-    };
+    // TODO: Deal with notifying object that a scene is now invalid
+    // On playe death, GetOwnerReturns an invalid pointer
 
-    auto rise = [this, popUp, name, shrink, offsetTarget]() {
-      GetOwner()->GetTweenManager()->AddTween<float>(                        //
-        {popUp.get(), name + "-offsetY"},                                    //
-        [popUp](float pos) { popUp->GetRenderTransform().SetOffsetY(pos); }, //
-        {
-          .startValue = popUp->GetRenderTransform().GetOffsetY(),
-          .endValue = offsetTarget,
-          .duration = 0.8,
-          .onTweenEnd = shrink,
-        } //
-      );
-    };
-    rise();
+    //auto shrink = [this, popUp, name, canvas]() {
+    //  GetOwner()->GetTweenManager()->AddTween<float>(                          //
+    //    {popUp.get(), name + "-font"},                                         //
+    //    [popUp](float pos) { popUp->GetRenderTransform().SetFontScale(pos); }, //
+    //    {
+    //      .startValue = 1,
+    //      .endValue = 0,
+    //      .duration = 0.3,
+    //      .onTweenEnd =
+    //        [this, name, canvas]() {
+    //          if (canvas->HasChild(name))
+    //          {
+    //            canvas->RemoveChild(name);
+    //          }
+    //        },
+    //    } //
+    //  );
+    //};
+
+    //auto rise = [this, popUp, name, shrink, offsetTarget]() {
+    //  GetOwner()->GetTweenManager()->AddTween<float>(                        //
+    //    {popUp.get(), name + "-offsetY"},                                    //
+    //    [popUp](float pos) { popUp->GetRenderTransform().SetOffsetY(pos); }, //
+    //    {
+    //      .startValue = popUp->GetRenderTransform().GetOffsetY(),
+    //      .endValue = offsetTarget,
+    //      .duration = 0.8,
+    //      .onTweenEnd = shrink,
+    //    } //
+    //  );
+    //};
+    //rise();
 
     // Flash Vignette
     auto vignette = GetRenderLayer()->GetShaderEffect<Vignette>();
