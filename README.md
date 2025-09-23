@@ -33,10 +33,11 @@ Shoot Enemies, Collect Light, Upgrade in the Shop, Rinse and Repeat
 ## Building
 
 - Run `git clone https://github.com/FearlessOne07/Spectrum.git --recursive`
-- Make sure cmake and your desired generator are installed
-- Run `cmake -S . -B build` to generate build files in the `build` directory
+- Make sure cmake and your desired generator are installed.
+- Run `cd Spectrum` then `git submodules update --init` to get the engine code.
+- Run `cmake -S . -B build` to generate build files in the `build` directory.
 - Run `cmake --build build` to build the executable and libraries.
-- Executable will be in the `bin` directory
+- Executable will be in the `bin` directory.
 
 ## Credits
 
