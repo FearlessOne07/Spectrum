@@ -27,6 +27,7 @@ void MainLayer::OnAttach()
   deathMessage->SetTextColor(RED);
   deathMessage->SetFontSize(80);
   deathMessage->GetRenderTransform().SetOffsetY(-100);
+  deathMessage->SetVisibilityOff();
   deathMessage->onShow = [=, this]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
       {deathMessage.get(), "alpha"}, [=](float alpha) { deathMessage->GetRenderTransform().SetOpacity(alpha); },
@@ -61,6 +62,7 @@ void MainLayer::OnAttach()
   actionButtonContainer->SetPadding(50, 50);
   actionButtonContainer->GetRenderTransform().SetOffsetY(100);
   actionButtonContainer->GetRenderTransform().SetOpacity(0);
+  actionButtonContainer->SetVisibilityOff();
   actionButtonContainer->onShow = [=, this]() {
     GetOwner()->GetTweenManager()->AddTween<float>( //
       {actionButtonContainer.get(), "alpha"},
