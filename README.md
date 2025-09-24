@@ -37,7 +37,8 @@ Shoot Enemies, Collect Light, Upgrade in the Shop, Rinse and Repeat
 - Run `cmake -S . -B build` to generate build files in the `build` directory
 - Run `cmake --build build` to build the executable and libraries.
 - Executable will be in the `bin` directory
-
+- Run the executable from the `Spectrum` directory to play
+  
 ## Credits
 
 Made using [raylib](https://github.com/raysan5/raylib).
