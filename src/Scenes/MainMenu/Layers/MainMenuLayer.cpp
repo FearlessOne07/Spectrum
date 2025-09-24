@@ -6,7 +6,10 @@
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UIButton.hpp"
+#include "base/ui/elements/UIFlexContainer.hpp"
+#include "base/ui/elements/UIPanel.hpp"
 #include "base/ui/elements/UIStackPanel.hpp"
+#include "base/ui/elements/UITextureRect.hpp"
 
 void MainMenuLayer::OnAttach()
 {
@@ -21,6 +24,27 @@ void MainMenuLayer::OnAttach()
   container->SetVAlignment(Base::VAlign::Center);
   container->SetPadding(10);
   container->SetGap(25);
+  container->onHide = [this, container]() {
+    GetOwner()->GetTweenManager()->AddTween<float>(
+      {container.get(), "main-menu-alpha"}, [container](float pos) { container->GetRenderTransform().SetOpacity(pos); },
+      {
+        .startValue = container->GetRenderTransform().GetOpacity(),
+        .endValue = 0,
+        .duration = 1,
+        .onTweenEnd = [container]() { container->SetVisibilityOff(); },
+      } //
+    );
+  };
+  container->onShow = [this, container]() {
+    GetOwner()->GetTweenManager()->AddTween<float>(
+      {container.get(), "main-menu-alpha"}, [container](float pos) { container->GetRenderTransform().SetOpacity(pos); },
+      {
+        .startValue = container->GetRenderTransform().GetOpacity(),
+        .endValue = 1,
+        .duration = 1,
+      } //
+    );
+  };
 
   float hoverScale = 1.15;
 
@@ -32,9 +56,7 @@ void MainMenuLayer::OnAttach()
   playButton->SetVAlignment(Base::VAlign::Center);
   playButton->SetFontSize(55);
   playButton->SetPadding(10);
-  playButton->onClick = [this]() {
-    GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
-  };
+  playButton->onClick = [this]() { _mainMenu->Hide(); };
   playButton->SetSprite(buttonSprite);
   playButton->onHover = {
     [=, this]() {                                     //
@@ -96,11 +118,40 @@ void MainMenuLayer::OnAttach()
       );
     },
   };
+
+  // Ship Selection Menu
+  _shipSelection = GetOwner()->GetUIManager()->AddLayer("ship-selection", GetSize());
+  auto shipStack = _shipSelection->SetRootElement<Base::UIStackPanel>();
+  shipStack->SetOrientation(Base::UIStackPanel::Orientation::Horizontal);
+  shipStack->SetVAlignment(Base::VAlign::Center);
+  shipStack->SetHAlignment(Base::HAlign::Center);
+  shipStack->SetBackgroundColor(RED);
+  shipStack->SetPadding(10);
+
+  auto left = shipStack->AddChild<Base::UIPanel>("left");
+  left->SetSize({100, 100});
+  left->SetColor(BLUE);
+  left->SetVAlignment(Base::VAlign::Center);
+
+  auto cardContainer = shipStack->AddChild<Base::UIFlexContainer>("card-container");
+  cardContainer->SetSizeMode(Base::SizeMode::Fixed);
+  cardContainer->SetSize({300, 300});
+  cardContainer->SetBackgroundColor(GREEN);
+
+  // auto card = cardContainer->AddChild<Base::UIPanel>("card");
+  // card->SetSize({300, 300});
+  // card->SetColor(GREEN);
+
+  auto right = shipStack->AddChild<Base::UIPanel>("right");
+  right->SetSize({100, 100});
+  right->SetColor(BLUE);
+  right->SetVAlignment(Base::VAlign::Center);
 }
 
 void MainMenuLayer::Render()
 {
-  GetOwner()->GetUIManager()->RenderLayer("main-menu");
+  // GetOwner()->GetUIManager()->RenderLayer("main-menu");
+  GetOwner()->GetUIManager()->RenderLayer("ship-selection");
 }
 
 void MainMenuLayer::Update(float dt)
