@@ -18,6 +18,7 @@ void MainMenuLayer::OnAttach()
   };
 
   _mainMenu = GetOwner()->GetUIManager()->AddLayer("main-menu", GetSize());
+  _mainMenu->Hide();
   auto container = _mainMenu->SetRootElement<Base::UIStackPanel>();
   container->SetOrientation(Base::UIStackPanel::Orientation::Vertical);
   container->SetHAlignment(Base::HAlign::Center);
@@ -121,31 +122,14 @@ void MainMenuLayer::OnAttach()
 
   // Ship Selection Menu
   _shipSelection = GetOwner()->GetUIManager()->AddLayer("ship-selection", GetSize());
-  auto shipStack = _shipSelection->SetRootElement<Base::UIStackPanel>();
-  shipStack->SetOrientation(Base::UIStackPanel::Orientation::Horizontal);
+  auto shipStack = _shipSelection->SetRootElement<Base::UIFlexContainer>();
+  shipStack->SetOrientation(Base::UIFlexContainer::Orientation::Horizontal);
   shipStack->SetVAlignment(Base::VAlign::Center);
   shipStack->SetHAlignment(Base::HAlign::Center);
   shipStack->SetBackgroundColor(RED);
   shipStack->SetPadding(10);
 
-  auto left = shipStack->AddChild<Base::UIPanel>("left");
-  left->SetSize({100, 100});
-  left->SetColor(BLUE);
-  left->SetVAlignment(Base::VAlign::Center);
-
-  auto cardContainer = shipStack->AddChild<Base::UIFlexContainer>("card-container");
-  cardContainer->SetSizeMode(Base::SizeMode::Fixed);
-  cardContainer->SetSize({300, 300});
-  cardContainer->SetBackgroundColor(GREEN);
-
-  // auto card = cardContainer->AddChild<Base::UIPanel>("card");
-  // card->SetSize({300, 300});
-  // card->SetColor(GREEN);
-
-  auto right = shipStack->AddChild<Base::UIPanel>("right");
-  right->SetSize({100, 100});
-  right->SetColor(BLUE);
-  right->SetVAlignment(Base::VAlign::Center);
+  auto row1 = shipStack->AddChild<Base::UIFlexContainer>("row1");
 }
 
 void MainMenuLayer::Render()
