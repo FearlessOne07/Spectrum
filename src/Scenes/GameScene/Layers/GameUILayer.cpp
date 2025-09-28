@@ -132,7 +132,7 @@ void GameUILayer::InitPauseMenu()
         .startValue = container->GetRenderTransform().GetOffsetY(),
         .endValue = offset,
         .duration = 0.3,
-        .easingType = Base::TweenManager::EasingType::EASE_IN,
+        .easingType = Base::TweenManager::EasingType::EaseIn,
         .onTweenEnd = [container]() { container->SetVisibilityOff(); },
       } //
     );
@@ -160,7 +160,7 @@ void GameUILayer::InitPauseMenu()
           .startValue = resumeButton->GetRenderTransform().GetFontScale(),
           .endValue = hoverScale,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          .easingType = Base::TweenManager::EasingType::EaseOut,
         } //
       );
     },
@@ -172,7 +172,7 @@ void GameUILayer::InitPauseMenu()
           .startValue = resumeButton->GetRenderTransform().GetFontScale(), //
           .endValue = 1,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          .easingType = Base::TweenManager::EasingType::EaseOut,
         } //
       );
     },
@@ -191,7 +191,7 @@ void GameUILayer::InitPauseMenu()
     std::shared_ptr<Base::StopAudioStreamSignal> sig = std::make_shared<Base::StopAudioStreamSignal>();
     sig->streamHandle = GetAsset<Base::AudioStream>("game-track");
     bus->BroadCastSignal(sig);
-    GetOwner()->SetSceneTransition<MainMenu>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
+    GetOwner()->SetSceneTransition<MainMenu>(Base::SceneRequest::ReplaceCurrentScene);
   };
   mainMenuButton->SetSprite(buttonSprite);
   mainMenuButton->onHover = {
@@ -203,7 +203,7 @@ void GameUILayer::InitPauseMenu()
           .startValue = mainMenuButton->GetRenderTransform().GetFontScale(),
           .endValue = hoverScale,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          .easingType = Base::TweenManager::EasingType::EaseOut,
         } //
       );
     },
@@ -215,7 +215,7 @@ void GameUILayer::InitPauseMenu()
           .startValue = mainMenuButton->GetRenderTransform().GetFontScale(),
           .endValue = 1,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          .easingType = Base::TweenManager::EasingType::EaseOut,
         } //
       );
     },
@@ -235,7 +235,7 @@ void GameUILayer::InitPauseMenu()
         .startValue = pauseMenuPanel->GetRenderTransform().GetOpacity(),
         .endValue = 0,
         .duration = 0.3,
-        .easingType = Base::TweenManager::EasingType::EASE_IN,
+        .easingType = Base::TweenManager::EasingType::EaseIn,
         .onTweenEnd = [pauseMenuPanel]() { pauseMenuPanel->SetVisibilityOff(); },
       } //
     );
@@ -266,7 +266,7 @@ void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
   healtContainer->SetPadding(15, 10);
 
   auto heartIcon = healtContainer->AddChild<Base::UITextureRect>("heart-icon");
-  heartIcon->SetSprite({GetAsset<Base::Texture>("heart-ui"), {}, {2, 0}, {8, 8}});
+  heartIcon->SetSprite({GetAsset<Base::Texture>("heart-ui"), {}, {16, 0}, {8, 8}});
   heartIcon->SetSize({40, 40});
   heartIcon->SetVAlignment(Base::VAlign::Center);
   heartIcon->SetHAlignment(Base::HAlign::Center);
@@ -287,7 +287,7 @@ void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
   lightContainer->SetPadding(15, 10);
 
   auto lightIcon = lightContainer->AddChild<Base::UITextureRect>("light-icon");
-  lightIcon->SetSprite({GetAsset<Base::Texture>("power-ups"), {}, {2, 1}, {8, 8}});
+  lightIcon->SetSprite({GetAsset<Base::Texture>("power-ups"), {}, {16, 8}, {8, 8}});
   lightIcon->SetVAlignment(Base::VAlign::Center);
   lightIcon->SetHAlignment(Base::HAlign::Center);
   lightIcon->SetSize({40, 40});
@@ -335,7 +335,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
         .startValue = buyMenuPanel->GetRenderTransform().GetOpacity(), //
         .endValue = 1,
         .duration = buyMenuEntryDuration,
-        .easingType = Base::TweenManager::EasingType::EASE_OUT,
+        .easingType = Base::TweenManager::EasingType::EaseOut,
       } //
     );
   };
@@ -347,7 +347,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
       {.startValue = buyMenuPanel->GetRenderTransform().GetOpacity(),         //
        .endValue = 0,
        .duration = buyMenuExitDuration,
-       .easingType = Base::TweenManager::EasingType::EASE_IN,
+       .easingType = Base::TweenManager::EasingType::EaseIn,
        .onTweenEnd = [buyMenuPanel]() { buyMenuPanel->SetVisibilityOff(); }} //
     );
   };
@@ -378,7 +378,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
         .startValue = mainContainer->GetRenderTransform().GetOffsetY(),
         .endValue = offset,
         .duration = buyMenuExitDuration,
-        .easingType = Base::TweenManager::EasingType::EASE_IN,
+        .easingType = Base::TweenManager::EasingType::EaseIn,
         .onTweenEnd = [mainContainer]() { mainContainer->SetVisibilityOff(); },
       } //
     );
@@ -398,7 +398,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
         .startValue = lightContainer->GetRenderTransform().GetOpacity(), //
         .endValue = 1,
         .duration = buyMenuEntryDuration,
-        .easingType = Base::TweenManager::EasingType::EASE_OUT,
+        .easingType = Base::TweenManager::EasingType::EaseOut,
       } //
     );
   };
@@ -410,14 +410,14 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
         .startValue = lightContainer->GetRenderTransform().GetOpacity(), //
         .endValue = 0,
         .duration = buyMenuExitDuration,
-        .easingType = Base::TweenManager::EasingType::EASE_IN,
+        .easingType = Base::TweenManager::EasingType::EaseIn,
         .onTweenEnd = [lightContainer]() { lightContainer->SetVisibilityOff(); },
       } //
     );
   };
 
   auto lightIcon = lightContainer->AddChild<Base::UITextureRect>("light-icon");
-  lightIcon->SetSprite({GetAsset<Base::Texture>("power-ups"), {}, {2, 1}, {8, 8}});
+  lightIcon->SetSprite({GetAsset<Base::Texture>("power-ups"), {}, {16, 8}, {8, 8}});
   lightIcon->SetVAlignment(Base::VAlign::Center);
   lightIcon->SetHAlignment(Base::HAlign::Center);
   lightIcon->SetSize({40, 40});
@@ -460,7 +460,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
             .startValue = card->GetRenderTransform().GetOffsetY(),
             .endValue = -30,
             .duration = 0.1,
-            .easingType = Base::TweenManager::EasingType::EASE_OUT,
+            .easingType = Base::TweenManager::EasingType::EaseOut,
           } //
         );
       },
@@ -472,7 +472,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
             .startValue = card->GetRenderTransform().GetOffsetY(),
             .endValue = 0,
             .duration = 0.1,
-            .easingType = Base::TweenManager::EasingType::EASE_OUT,
+            .easingType = Base::TweenManager::EasingType::EaseOut,
           } //
         );
       },
@@ -487,8 +487,8 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
             .startValue = card->GetRenderTransform().GetOffsetY(), //
             .endValue = card->GetRenderTransform().GetOffsetY() - 50,
             .duration = fadeOutDuration,
-            .easingType = Base::TweenManager::EasingType::EASE_OUT,
-            .priority = Base::TweenPriorityLevel::MEDIUM,
+            .easingType = Base::TweenManager::EasingType::EaseOut,
+            .priority = Base::TweenPriorityLevel::Medium,
           } //
         );
 
@@ -499,7 +499,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
             .startValue = card->GetRenderTransform().GetOpacity(), //
             .endValue = 0,
             .duration = fadeOutDuration,
-            .easingType = Base::TweenManager::EasingType::EASE_OUT,
+            .easingType = Base::TweenManager::EasingType::EaseOut,
             .onTweenEnd =
               [=, this]() {
                 // Refresh Shop
@@ -513,8 +513,8 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
                     .startValue = card->GetRenderTransform().GetOffsetY(), //
                     .endValue = 0,
                     .duration = fadeInDuration,
-                    .easingType = Base::TweenManager::EasingType::EASE_OUT,
-                    .priority = Base::TweenPriorityLevel::MEDIUM,
+                    .easingType = Base::TweenManager::EasingType::EaseOut,
+                    .priority = Base::TweenPriorityLevel::Medium,
                   } //
                 );
 
@@ -526,12 +526,12 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
                     .startValue = card->GetRenderTransform().GetOpacity(), //
                     .endValue = alphas[i],
                     .duration = fadeInDuration,
-                    .easingType = Base::TweenManager::EasingType::EASE_OUT,
-                    .priority = Base::TweenPriorityLevel::MEDIUM,
+                    .easingType = Base::TweenManager::EasingType::EaseOut,
+                    .priority = Base::TweenPriorityLevel::Medium,
                   } //
                 );
               },
-            .priority = Base::TweenPriorityLevel::MEDIUM,
+            .priority = Base::TweenPriorityLevel::Medium,
           } //
         );
       };
@@ -546,7 +546,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
     name->SetTextColor(BLACK);
 
     auto icon = card->AddChild<Base::UITextureRect>("icon");
-    icon->SetSprite({GetAsset<Base::Texture>("heart-ui"), {}, {2, 0}, {8, 8}});
+    icon->SetSprite({GetAsset<Base::Texture>("heart-ui"), {}, {16, 0}, {8, 8}});
     icon->SetSize({128, 128});
     icon->SetVAlignment(Base::VAlign::Center);
     icon->SetHAlignment(Base::HAlign::Center);
@@ -559,7 +559,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
     price->SetPadding(15, 10);
 
     auto lightIcon = price->AddChild<Base::UITextureRect>("light-icon");
-    lightIcon->SetSprite({GetAsset<Base::Texture>("power-ups"), {}, {2, 1}, {8, 8}});
+    lightIcon->SetSprite({GetAsset<Base::Texture>("power-ups"), {}, {16, 8}, {8, 8}});
     lightIcon->SetVAlignment(Base::VAlign::Center);
     lightIcon->SetHAlignment(Base::HAlign::Center);
     lightIcon->SetSize({32, 32});
@@ -645,7 +645,7 @@ std::array<float, 3> GameUILayer::UpdateItems()
         .startValue = card->GetRenderTransform().GetOpacity(), //
         .endValue = alpha,
         .duration = 0.3,
-        .easingType = Base::TweenManager::EasingType::EASE_OUT,
+        .easingType = Base::TweenManager::EasingType::EaseOut,
       } //
     );
   }

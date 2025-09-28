@@ -15,7 +15,7 @@
 #include <memory>
 #include <raylib.h>
 
-void GameScene::Enter(Base::SceneData sceneData)
+void GameScene::Enter(const Base::SceneData &sceneData)
 {
   GetEntityManager()->Clear();
   StartSystems();

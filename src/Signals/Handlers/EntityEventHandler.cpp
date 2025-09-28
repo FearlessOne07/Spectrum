@@ -165,7 +165,7 @@ void EntitySignalHandler::DeathHandler(const std::shared_ptr<Base::Signal> signa
   {
     if (entityDiedSig->entity->HasComponent<PlayerTag>())
     {
-      _parentLayer->SetSceneTransition<DeathScreen>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
+      _parentLayer->SetSceneTransition<DeathScreen>(Base::SceneRequest::ReplaceCurrentScene);
     }
   }
 }

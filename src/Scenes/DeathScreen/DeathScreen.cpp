@@ -3,7 +3,7 @@
 #include "base/audio/signals/StopAudioStreamSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 
-void DeathScreen::Enter(Base::SceneData sceneData)
+void DeathScreen::Enter(const Base::SceneData& sceneData)
 {
   AttachLayer<MainLayer>(AddRenderLayer({1920, 1080}));
 }

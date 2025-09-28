@@ -4,7 +4,7 @@
 #include "base/audio/signals/StopAudioStreamSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 
-void MainMenu::Enter(Base::SceneData sceneData)
+void MainMenu::Enter(const Base::SceneData &sceneData)
 {
   AttachLayer<MainMenuLayer>(AddRenderLayer({1920, 1080}));
 

@@ -33,7 +33,7 @@ void MainMenuLayer::OnAttach()
   playButton->SetFontSize(55);
   playButton->SetPadding(10);
   playButton->onClick = [this]() {
-    GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
+    GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene);
   };
   playButton->SetSprite(buttonSprite);
   playButton->onHover = {
@@ -44,7 +44,7 @@ void MainMenuLayer::OnAttach()
           .startValue = playButton->GetRenderTransform().GetFontScale(),
           .endValue = hoverScale,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          .easingType = Base::TweenManager::EasingType::EaseOut,
         } //
       );
     },
@@ -56,7 +56,7 @@ void MainMenuLayer::OnAttach()
           .startValue = playButton->GetRenderTransform().GetFontScale(), //
           .endValue = 1,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          .easingType = Base::TweenManager::EasingType::EaseOut,
         } //
       );
     },
@@ -70,7 +70,7 @@ void MainMenuLayer::OnAttach()
   exitButton->SetHAlignment(Base::HAlign::Center);
   exitButton->SetVAlignment(Base::VAlign::Center);
   exitButton->SetPadding(10);
-  exitButton->onClick = [this]() { GetOwner()->SetSceneTransition(Base::SceneRequest::QUIT); };
+  exitButton->onClick = [this]() { GetOwner()->SetSceneTransition(Base::SceneRequest::Quit); };
   exitButton->SetSprite(buttonSprite);
   exitButton->onHover = {
     [=, this]() {                                     //
@@ -80,7 +80,7 @@ void MainMenuLayer::OnAttach()
           .startValue = exitButton->GetRenderTransform().GetFontScale(),
           .endValue = hoverScale,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          .easingType = Base::TweenManager::EasingType::EaseOut,
         } //
       );
     },
@@ -91,7 +91,7 @@ void MainMenuLayer::OnAttach()
           .startValue = exitButton->GetRenderTransform().GetFontScale(),
           .endValue = 1,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          .easingType = Base::TweenManager::EasingType::EaseOut,
         } //
       );
     },
