@@ -4,5 +4,6 @@
 class MainMenu : public Base::Scene
 {
 public:
-  void Enter(Base::SceneData sceneData = Base::SceneData()) override;
-  void Exit() override;};
+  void Enter(const Base::SceneData &sceneData = Base::SceneData()) override;
+  void Exit() override;
+};

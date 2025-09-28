@@ -34,7 +34,7 @@ void MainLayer::OnAttach()
         .startValue = 0,
         .endValue = 1,
         .duration = 1.5,
-        .easingType = Base::TweenManager::EasingType::EASE_IN_OUT,
+        .easingType = Base::TweenManager::EasingType::EaseInOut,
       } //
     );
     GetOwner()->GetTweenManager()->AddTween<float>( //
@@ -43,7 +43,7 @@ void MainLayer::OnAttach()
         .startValue = deathMessage->GetRenderTransform().GetOffsetY(),
         .endValue = 0,
         .duration = 1.5,
-        .easingType = Base::TweenManager::EasingType::EASE_IN_OUT,
+        .easingType = Base::TweenManager::EasingType::EaseInOut,
       } //
     );
   };
@@ -69,7 +69,7 @@ void MainLayer::OnAttach()
         .startValue = 0,
         .endValue = 1,
         .duration = 1,
-        .easingType = Base::TweenManager::EasingType::EASE_IN_OUT,
+        .easingType = Base::TweenManager::EasingType::EaseInOut,
       } //
     );
     GetOwner()->GetTweenManager()->AddTween<float>( //
@@ -79,7 +79,7 @@ void MainLayer::OnAttach()
         .startValue = actionButtonContainer->GetRenderTransform().GetOffsetY(),
         .endValue = 0,
         .duration = 1,
-        .easingType = Base::TweenManager::EasingType::EASE_IN_OUT,
+        .easingType = Base::TweenManager::EasingType::EaseInOut,
       } //
     );
   };
@@ -94,7 +94,7 @@ void MainLayer::OnAttach()
   mainMenuButton->SetVAlignment(Base::VAlign::Center);
   mainMenuButton->SetHAlignment(Base::HAlign::Center);
   mainMenuButton->onClick = [this]() {
-    GetOwner()->SetSceneTransition<MainMenu>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
+    GetOwner()->SetSceneTransition<MainMenu>(Base::SceneRequest::ReplaceCurrentScene);
   };
   mainMenuButton->SetSprite(buttonSprite);
   mainMenuButton->onHover = {
@@ -106,7 +106,7 @@ void MainLayer::OnAttach()
           .startValue = mainMenuButton->GetRenderTransform().GetFontScale(),
           .endValue = hoverScale,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          .easingType = Base::TweenManager::EasingType::EaseOut,
         } //
       );
     },
@@ -118,7 +118,7 @@ void MainLayer::OnAttach()
           .startValue = mainMenuButton->GetRenderTransform().GetFontScale(),
           .endValue = 1,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          .easingType = Base::TweenManager::EasingType::EaseOut,
         } //
       );
     },
@@ -130,7 +130,7 @@ void MainLayer::OnAttach()
   playButton->SetText("Retry");
   playButton->SetFontSize(55);
   playButton->onClick = [this]() {
-    GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::REPLACE_CURRENT_SCENE);
+    GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene);
   };
   playButton->SetHAlignment(Base::HAlign::Center);
   playButton->SetVAlignment(Base::VAlign::Center);
@@ -144,7 +144,7 @@ void MainLayer::OnAttach()
           .startValue = playButton->GetRenderTransform().GetFontScale(),
           .endValue = hoverScale,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          .easingType = Base::TweenManager::EasingType::EaseOut,
         } //
       );
     },
@@ -155,7 +155,7 @@ void MainLayer::OnAttach()
           .startValue = playButton->GetRenderTransform().GetFontScale(),
           .endValue = 1,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EASE_OUT,
+          .easingType = Base::TweenManager::EasingType::EaseOut,
         } //
       );
     },

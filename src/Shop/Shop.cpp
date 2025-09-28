@@ -23,7 +23,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
     Base::NinePatchSprite{
       _ownerLayer->GetAsset<Base::Texture>("power-ups"),
       {},
-      {5, 1},
+      {40, 8},
       {8, 8},
     },
     1, "Speed", basePriceDist(_gen) //
@@ -36,7 +36,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
     Base::NinePatchSprite{
       _ownerLayer->GetAsset<Base::Texture>("heart-ui"),
       {},
-      {2, 0},
+      {16, 0},
       {8, 8},
     },
     1, "Max Health", basePriceDist(_gen) //
@@ -49,7 +49,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
     Base::NinePatchSprite{
       _ownerLayer->GetAsset<Base::Texture>("heart-ui"),
       {},
-      {4, 0},
+      {32, 0},
       {8, 8},
     },
     1, "Heal", basePriceDist(_gen) //
@@ -62,7 +62,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
     Base::NinePatchSprite{
       _ownerLayer->GetAsset<Base::Texture>("power-ups"),
       {},
-      {4, 3},
+      {32, 24},
       {8, 8},
     },
     1, "Damage Boost", basePriceDist(_gen) //

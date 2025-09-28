@@ -4,6 +4,6 @@
 class DeathScreen : public Base::Scene
 {
 public:
-  void Enter(Base::SceneData sceneData = Base::SceneData()) override;
+  void Enter(const Base::SceneData& sceneData = Base::SceneData()) override;
   void Exit() override;
 };

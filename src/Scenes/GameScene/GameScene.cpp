@@ -15,7 +15,7 @@
 #include <memory>
 #include <raylib.h>
 
-void GameScene::Enter(Base::SceneData sceneData)
+void GameScene::Enter(const Base::SceneData &sceneData)
 {
   GetEntityManager()->Clear();
   StartSystems();
@@ -32,8 +32,6 @@ void GameScene::Enter(Base::SceneData sceneData)
   // Activate Systems
   LoadAsset<Base::Texture>("assets/textures/power-ups.png");
   LoadAsset<Base::Texture>("assets/textures/heart-ui.png");
-
-  LoadAsset<Base::Texture>("assets/textures/entities.png");
 
   LoadAsset<Base::Sound>("assets/sounds/bullet-fire.wav");
   LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
