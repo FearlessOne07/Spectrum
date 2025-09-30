@@ -158,6 +158,7 @@ void MainMenuLayer::InitShipSelection()
   std::vector<std::vector<Vector2>> ships = {
     {
       {24, 0},
+      {32, 0},
     },
   };
 
@@ -186,12 +187,14 @@ void MainMenuLayer::InitShipSelection()
   for (int i = 0; i < ships.size(); i++)
   {
     auto row = shipStack->AddChild<Base::UIFlexContainer>(std::format("row-{0}", i));
+
     row->SetOrientation(Base::UIFlexContainer::Orientation::Vertical);
+    row->SetBackgroundColor(RED);
 
     for (int j = 0; j < ships[i].size(); j++)
     {
       auto ship = row->AddChild<Base::UITextureRect>(std::format("ship-{0}-{1}", i, j));
-      ship->SetSize({128, 128});
+      ship->SetSize({64, 64});
       ship->SetSprite({
         shipTexture,
         {},

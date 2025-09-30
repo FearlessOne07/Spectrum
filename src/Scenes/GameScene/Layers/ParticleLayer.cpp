@@ -73,7 +73,7 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
     std::uniform_real_distribution<float> speedDist(0, 700);
 
     _emitter->isEmitting = true;
-    _emitter->initialisationFunction = [&, this](Base::ParticleEmitter &emitter) {
+    _emitter->initialisationFunction = [=, this](Base::ParticleEmitter &emitter) mutable {
       emitter.particleSprite = Base::Sprite(sprtcmp->GetSprite());
       emitter.particleLifeTime = lifeRange(_gen);
       float size = radiusRange(_gen) * 2;

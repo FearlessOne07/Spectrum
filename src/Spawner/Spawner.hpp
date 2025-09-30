@@ -1,5 +1,6 @@
 #pragma once
 #include "Components/EnemyComponent.hpp"
+#include "Ship/Ship.hpp"
 #include "Signals/EntityDiedSignal.hpp"
 #include "base/entities/Entity.hpp"
 #include "base/scenes/Scene.hpp"
@@ -32,7 +33,7 @@ private:
 public:
   Spawner() = default;
   void Init(const Base::SceneLayer *parentLayer, Base::EntityManager *entityManager);
-  Base::EntityID SpawnPlayer(Vector2 position);
+  Base::EntityID SpawnPlayer(Vector2 position, const Ship &);
   void SpawnWave(float dt, Base::EntityID playerID);
   int GetToSpawnCount() const;
   void SetToSpawn(std::vector<EnemySpec> toSpawn);

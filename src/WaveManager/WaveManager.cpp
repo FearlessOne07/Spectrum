@@ -129,9 +129,9 @@ void WaveManager::SpawnWaves(float dt)
   _spawner.SpawnWave(dt, _playerID);
 }
 
-Base::EntityID WaveManager::SpawnPlayer()
+Base::EntityID WaveManager::SpawnPlayer(const Ship &ship)
 {
-  _playerID = _spawner.SpawnPlayer({0, 0});
+  _playerID = _spawner.SpawnPlayer({0, 0}, ship);
   return _playerID;
 }
 
