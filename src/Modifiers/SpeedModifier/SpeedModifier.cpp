@@ -1,6 +1,5 @@
 #include "SpeedModifier.hpp"
 #include "base/components/MoveComponent.hpp"
-#include "base/components/RigidBodyComponent.hpp"
 #include <algorithm>
 
 void SpeedModifier::Apply(std::shared_ptr<Base::Entity> entity)
@@ -9,11 +8,7 @@ void SpeedModifier::Apply(std::shared_ptr<Base::Entity> entity)
   {
     auto mvcmp = entity->GetComponent<Base::MoveComponent>();
     mvcmp->driveForce *= (1 + _speedBoost);
-  }
-  else if (entity->HasComponent<Base::RigidBodyComponent>())
-  {
-    auto rbcmp = entity->GetComponent<Base::RigidBodyComponent>();
-    rbcmp->speed *= (1 + _speedBoost);
+    mvcmp->speed *= (1 + _speedBoost);
   }
 }
 
@@ -23,11 +18,7 @@ void SpeedModifier::Remove(std::shared_ptr<Base::Entity> entity)
   {
     auto mvcmp = entity->GetComponent<Base::MoveComponent>();
     mvcmp->driveForce /= (1 + _speedBoost);
-  }
-  else if (entity->HasComponent<Base::RigidBodyComponent>())
-  {
-    auto rbcmp = entity->GetComponent<Base::RigidBodyComponent>();
-    rbcmp->speed /= (1 + _speedBoost);
+    mvcmp->speed /= (1 + _speedBoost);
   }
 }
 

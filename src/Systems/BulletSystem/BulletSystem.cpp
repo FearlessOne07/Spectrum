@@ -68,10 +68,10 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
 
         auto rbcmp = bullet->AddComponent<Base::RigidBodyComponent>();
         rbcmp->isKinematic = true;
-        rbcmp->speed = shtcmp->bulletSpeed;
         rbcmp->direction = Vector2Subtract(targetPos, transcmp->position);
 
         auto mvcmp = bullet->AddComponent<Base::MoveComponent>();
+        mvcmp->speed = shtcmp->bulletSpeed;
 
         auto sprtcmp = bullet->AddComponent<Base::SpriteComponent>(shtcmp->bulletSprite);
 
