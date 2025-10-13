@@ -83,7 +83,6 @@ void BulletSystem::Update(float dt, Base::EntityManager *entityManager, const Ba
         auto abbcmp = bullet->AddComponent<Base::ColliderComponent>();
         abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
         abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
-        abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
 
         bullet->AddComponent<DamageComponent>(dmgcmp->GetDamage());
         entityManager->AddEntity(bullet);

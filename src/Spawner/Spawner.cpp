@@ -116,7 +116,6 @@ Base::EntityID Spawner::SpawnPlayer( //
   auto abbcmp = e->AddComponent<Base::ColliderComponent>();
   abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
   abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
-  abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
 
   auto inpcmp = e->AddComponent<Base::InputComponent>();
   inpcmp->BindKeyDown(KEY_A, [rbcmp]() { rbcmp->direction.x = -1; });
@@ -219,8 +218,6 @@ void Spawner::SpawnWave( //
 
     auto abbcmp = e->AddComponent<Base::ColliderComponent>();
     abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
-    abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HURTBOX);
-    abbcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
 
     auto transfxcmp = e->AddComponent<TransformEffectsComponent>();
     transfxcmp->rotate = true;
@@ -463,7 +460,6 @@ void Spawner::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
       sig->entity->GetComponent<Base::TransformComponent>()->position;
 
     auto colcmp = e->AddComponent<Base::ColliderComponent>();
-    colcmp->SetTypeFlag(Base::ColliderComponent::Type::HITBOX);
     colcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
     colcmp->radius = targetSize / 2;
 
