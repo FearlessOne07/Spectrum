@@ -38,10 +38,11 @@
 #include <random>
 #include <raylib.h>
 
-void Spawner::SetToSpawn(std::vector<EnemySpec> toSpawn)
+void Spawner::SetToSpawn(std::vector<EnemySpec> toSpawn, float difficultyScale)
 {
   for (EnemySpec &spec : toSpawn)
   {
+    _difficultyScale = difficultyScale;
     _toSpawn.push(spec);
   }
 }
@@ -228,7 +229,8 @@ void Spawner::SpawnWave( //
     transfxcmp->lookAtTarget = _playerID;
 
     e->AddComponent<KnockBackComponent>(1000);
-    auto hlthcmp = e->AddComponent<HealthComponent>(spec.BaseHealth);
+    e->AddComponent<HealthComponent>(spec.BaseHealth * _difficultyScale);
+    e->AddComponent<DamageComponent>(spec.BaseDamage * _difficultyScale);
 
     // Sprite
     std::shared_ptr<Base::SpriteComponent> sprtcmp = nullptr;
@@ -245,7 +247,6 @@ void Spawner::SpawnWave( //
     switch (spec.Type)
     {
     case EnemyType::CHASER: {
-      e->AddComponent<DamageComponent>(1);
       auto trckcmp = e->AddComponent<TrackingComponent>(_playerID);
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
@@ -259,7 +260,6 @@ void Spawner::SpawnWave( //
       break;
     }
     case EnemyType::SHOOTER: {
-      e->AddComponent<DamageComponent>(2);
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
           _parentLayer->GetAsset<Base::Texture>("entities"),
@@ -332,7 +332,6 @@ void Spawner::SpawnWave( //
       break;
     }
     case EnemyType::KAMIKAZE: {
-      e->AddComponent<DamageComponent>(5);
       mvcmp->driveForce = 500;
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{

@@ -1,11 +1,9 @@
 #pragma once
-#include "Signals/EntityDiedSignal.hpp"
 #include "Spawner/Spawner.hpp"
 #include "base/entities/Entity.hpp"
 #include "base/scenes/SceneLayer.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
-#include <memory>
 #include <vector>
 
 class WaveManager
@@ -23,7 +21,7 @@ private:
       .Cost = 1,
       .UnlockWave = 1,
       .Value = 2,
-      .BaseDamage = 1.5,
+      .BaseDamage = 1,
       .BaseHealth = 4,
     },
     EnemySpec{
@@ -32,14 +30,14 @@ private:
       .Cost = 2,
       .UnlockWave = 2,
       .Value = 3,
-      .BaseDamage = 1,
+      .BaseDamage = 2,
       .BaseHealth = 4,
     },
     EnemySpec{
       .Type = EnemyType::KAMIKAZE,
       .SpawnChance = 0.1f,
       .Cost = 3,
-      .UnlockWave = 3,
+      .UnlockWave = 4,
       .Value = 5,
       .BaseDamage = 5,
       .BaseHealth = 4,
@@ -52,6 +50,7 @@ private:
   int _baseWavePoints = 5;
   float _waveTime = 45;
   float _waveTimer = _waveTime;
+  float _difficulty = 1;
 
   // Random
 

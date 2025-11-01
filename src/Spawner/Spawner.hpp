@@ -18,6 +18,7 @@ private:
   float _spawnTimer = _spawnDuration;
   float _spawnOffset = -200;
   std::queue<EnemySpec> _toSpawn = {};
+  float _difficultyScale = 1;
 
   // Player
   Base::EntityID _playerID;
@@ -35,5 +36,5 @@ public:
   Base::EntityID SpawnPlayer(Vector2 position);
   void SpawnWave(float dt, Base::EntityID playerID);
   int GetToSpawnCount() const;
-  void SetToSpawn(std::vector<EnemySpec> toSpawn);
+  void SetToSpawn(std::vector<EnemySpec> toSpawn, float difficultyScale);
 };

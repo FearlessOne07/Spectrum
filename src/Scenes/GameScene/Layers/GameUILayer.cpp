@@ -51,7 +51,7 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {
   if (auto keyEvent = std::dynamic_pointer_cast<Base::KeyEvent>(event))
   {
-    if (keyEvent->key == KEY_ESCAPE && keyEvent->action == Base::InputEvent::Action::PRESSED)
+    if (keyEvent->key == KEY_ESCAPE && keyEvent->action == Base::InputEvent::Action::Pressed)
     {
       if (_buyMenu->IsVisible())
       {
@@ -70,7 +70,7 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
       }
       event->isHandled = true;
     }
-    else if (keyEvent->key == KEY_TAB && keyEvent->action == Base::InputEvent::Action::PRESSED)
+    else if (keyEvent->key == KEY_TAB && keyEvent->action == Base::InputEvent::Action::Pressed)
     {
       if (_buyMenu->IsVisible())
       {

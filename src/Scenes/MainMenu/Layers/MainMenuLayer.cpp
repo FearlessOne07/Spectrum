@@ -6,6 +6,7 @@
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UIButton.hpp"
+#include "base/ui/elements/UIGrid.hpp"
 #include "base/ui/elements/UIStackPanel.hpp"
 
 void MainMenuLayer::OnAttach()

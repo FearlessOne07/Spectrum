@@ -81,7 +81,7 @@ void WaveManager::GenerateWave()
         if (selectedChance <= runningSum)
         {
           _wavePoints -= spec.Cost;
-          _enemiesToSpawn.push_back(spec); // Fixed: removed asterisks
+          _enemiesToSpawn.push_back(spec);
           enemySelected = true;
           break;
         }
@@ -110,7 +110,13 @@ void WaveManager::GenerateWave()
     }
   }
 
-  _spawner.SetToSpawn(_enemiesToSpawn);
+  if (_currentWave % 3 == 0)
+  {
+    _difficulty = pow(std::uniform_real_distribution<float>(1.05, 1.1)(_gen), _currentWave / 3);
+  }
+
+  _spawner.SetToSpawn(_enemiesToSpawn, _difficulty);
+  _spawner.SetToSpawn(_enemiesToSpawn, _difficulty);
   _currentWave++;
 }
 
