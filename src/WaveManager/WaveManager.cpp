@@ -110,12 +110,11 @@ void WaveManager::GenerateWave()
     }
   }
 
-  if (_currentWave % 3 == 0)
+  if (_currentWave % _difficultyIncrement == 0)
   {
-    _difficulty = pow(std::uniform_real_distribution<float>(1.05, 1.1)(_gen), _currentWave / 3);
+    _difficulty = pow(std::uniform_real_distribution<float>(1.05, 1.1)(_gen), _currentWave / _difficultyIncrement);
   }
 
-  _spawner.SetToSpawn(_enemiesToSpawn, _difficulty);
   _spawner.SetToSpawn(_enemiesToSpawn, _difficulty);
   _currentWave++;
 }

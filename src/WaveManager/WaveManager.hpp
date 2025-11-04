@@ -22,7 +22,7 @@ private:
       .UnlockWave = 1,
       .Value = 2,
       .BaseDamage = 1,
-      .BaseHealth = 4,
+      .BaseHealth = 3,
     },
     EnemySpec{
       .Type = EnemyType::SHOOTER,
@@ -31,7 +31,7 @@ private:
       .UnlockWave = 2,
       .Value = 3,
       .BaseDamage = 2,
-      .BaseHealth = 4,
+      .BaseHealth = 3,
     },
     EnemySpec{
       .Type = EnemyType::KAMIKAZE,
@@ -51,8 +51,7 @@ private:
   float _waveTime = 45;
   float _waveTimer = _waveTime;
   float _difficulty = 1;
-
-  // Random
+  int _difficultyIncrement = 5;
 
   // EntityManager
   Base::EntityManager *_entityMan = nullptr;

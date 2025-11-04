@@ -34,6 +34,7 @@ void TransformEffectsSystem::Update(float dt, Base::EntityManager *entityManager
           float targetRotation = (angle * RAD2DEG) + 90;
           float delta = fmodf(targetRotation - transcmp->rotation + 540.0f, 360.0f) - 180.0f;
           transcmp->rotation += delta * Base::Easings::EaseOutCubic(dt);
+          transcmp->rotation = fmodf(transcmp->rotation, 360.f);
         }
       }
       else
