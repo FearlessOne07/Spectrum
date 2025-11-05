@@ -34,6 +34,7 @@ int main(void)
           Base::AssetType::Texture,
           {
             "assets/textures/button.png",
+            "assets/textures/ships.png",
           },
         },
       },
