@@ -37,6 +37,14 @@ int main(void)
             "assets/textures/ships.png",
           },
         },
+        {
+          Base::AssetType::Shader,
+          {
+            "assets/shaders/bloom/blur_pass.frag",
+            "assets/shaders/bloom/combine_pass.frag",
+            "assets/shaders/bloom/bright_pass.frag",
+          },
+        },
       },
   });
 

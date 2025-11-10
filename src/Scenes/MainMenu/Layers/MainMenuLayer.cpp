@@ -101,28 +101,11 @@ void MainMenuLayer::OnAttach()
     },
   };
   // _mainMenu->Hide();
-
-  _shipMenu = GetOwner()->GetUIManager()->AddLayer("ship-menu", GetSize());
-  auto shipGrid = _shipMenu->SetRootElement<Base::UIGrid>();
-  shipGrid->SetHAlignment(Base::HAlign::Center);
-  shipGrid->SetVAlignment(Base::VAlign::Center);
-
-  shipGrid->SetColumnDefinitions({
-    {Base::GridCellSizeMode::Auto},
-    {Base::GridCellSizeMode::Auto},
-  });
-
-  for (int i = 0; i < 2; i++)
-  {
-    auto shipText = shipGrid->AddGridElement<Base::UITextureRect>(std::format("ship-{0}", i), {i, 0});
-    shipText->SetSprite({GetAsset<Base::Texture>("ships"), {}, {i * 8.f, 0}, {8, 8}});
-  }
 }
 
 void MainMenuLayer::Render()
 {
-  GetOwner()->GetUIManager()->RenderLayer("main-menu");
-  GetOwner()->GetUIManager()->RenderLayer("ship-menu");
+  // GetOwner()->GetUIManager()->RenderLayer("main-menu");
 }
 
 void MainMenuLayer::Update(float dt)

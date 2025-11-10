@@ -6,6 +6,7 @@ set(SOURCES
   "./Scenes/GameScene/Layers/GameUILayer.cpp"
 
   "./Scenes/MainMenu/MainMenu.cpp"
+  "./Scenes/MainMenu/Layers/ShipSelectionLayer.cpp"
   "./Scenes/MainMenu/Layers/MainMenuLayer.cpp"
   "./Scenes/DeathScreen/Layers/MainLayer.cpp"
   "./Scenes/DeathScreen/DeathScreen.cpp"

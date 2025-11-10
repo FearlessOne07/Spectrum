@@ -1,0 +1,15 @@
+#pragma once
+#include "base/ui/UILayer.hpp"
+#include <base/scenes/SceneLayer.hpp>
+
+class ShipSelectionLayer : public Base::SceneLayer
+{
+  Base::UILayer *_shipMenu = nullptr;
+
+public:
+  void Update(float dt) override;
+  void Render() override;
+  void OnAttach() override;
+  void OnDetach() override;
+  void OnInputEvent(std::shared_ptr<Base::InputEvent> &event) override;
+};

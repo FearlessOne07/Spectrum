@@ -1,12 +1,26 @@
 #include "MainMenu.hpp"
 #include "Layers/MainMenuLayer.hpp"
+#include "Scenes/MainMenu/Layers/ShipSelectionLayer.hpp"
+#include "ShaderEffects/Bloom/Bloom.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
 #include "base/audio/signals/StopAudioStreamSignal.hpp"
+#include "base/renderer/RenderContextSingleton.hpp"
 #include "base/signals/SignalBus.hpp"
 
 void MainMenu::Enter(const Base::SceneData &sceneData)
 {
   AttachLayer<MainMenuLayer>(AddRenderLayer({1920, 1080}));
+
+  // MainRenderLayer
+  const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
+  Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight} / 4;
+  auto mainLayer = AddRenderLayer({mainLayerRes.x, mainLayerRes.y}, GetClearColor());
+  mainLayer->SetCameraZoom(mainLayerRes.x / rd->gameWidth);
+  mainLayer->SetCameraTarget({0, 0});
+  mainLayer->SetCameraRotation(0);
+  mainLayer->AddShaderEffect<Bloom>(1.2, 0.25, 1);
+
+  AttachLayer<ShipSelectionLayer>(mainLayer);
 
   auto bus = Base::SignalBus::GetInstance();
   std::shared_ptr<Base::PlayAudioStreamSignal> sig = std::make_shared<Base::PlayAudioStreamSignal>();

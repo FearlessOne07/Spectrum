@@ -10,7 +10,6 @@
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
 #include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
-#include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
 #include <memory>
 #include <raylib.h>
@@ -39,10 +38,7 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
   LoadAsset<Base::Sound>("assets/sounds/player-hit.wav");
 
-  LoadAsset<Base::BaseShader>("assets/shaders/bloom/bright_pass.frag");
-  LoadAsset<Base::BaseShader>("assets/shaders/bloom/blur_pass.frag");
-  LoadAsset<Base::BaseShader>("assets/shaders/bloom/combine_pass.frag");
-  LoadAsset<Base::BaseShader>("assets/shaders/vignette/vignette.frag");
+  LoadAsset<Base::BaseShader>("assets/shaders/vignette/vignette.frag ");
 
   auto uiLayer = AddRenderLayer({1920, 1080});
   AttachLayer<GameUILayer>(uiLayer);

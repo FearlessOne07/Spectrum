@@ -1,13 +1,10 @@
 #include "TrackingSystem.hpp"
-#include "Components/ShootComponent.hpp"
 #include "Components/TrackingComponent.hpp"
-#include "Components/TransformEffects.hpp"
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
 #include <base/components/TransformComponent.hpp>
 #include <base/entities/Entity.hpp>
 #include <base/entities/EntityManager.hpp>
-#include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
 #include <memory>
 #include <raylib.h>
