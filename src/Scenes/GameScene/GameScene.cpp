@@ -10,7 +10,6 @@
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
 #include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
-#include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
 #include <memory>
 #include <raylib.h>

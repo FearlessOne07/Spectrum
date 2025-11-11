@@ -13,7 +13,6 @@
 #include "base/sprites/Sprite.hpp"
 #include "raylib.h"
 #include <base/audio/signals/PlaySoundSignal.hpp>
-#include <base/renderer/RenderContext.hpp>
 #include <memory>
 #include <random>
 

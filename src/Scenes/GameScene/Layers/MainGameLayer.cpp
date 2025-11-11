@@ -15,7 +15,6 @@
 #include "base/ui/elements/UICanvas.hpp"
 #include "base/ui/elements/UILabel.hpp"
 #include "raylib.h"
-#include <base/renderer/RenderContext.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
 #include <format>
 #include <memory>
