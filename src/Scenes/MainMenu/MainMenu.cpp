@@ -13,7 +13,7 @@ void MainMenu::Enter(const Base::SceneData &sceneData)
 
   // MainRenderLayer
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight} / 4;
+  Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight};
   auto mainLayer = AddRenderLayer({mainLayerRes.x, mainLayerRes.y}, GetClearColor());
   mainLayer->SetCameraZoom(mainLayerRes.x / rd->gameWidth);
   mainLayer->SetCameraTarget({0, 0});
