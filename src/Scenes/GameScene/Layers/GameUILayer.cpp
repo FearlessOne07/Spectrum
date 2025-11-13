@@ -103,7 +103,7 @@ void GameUILayer::InitPauseMenu()
     GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 4,
   };
 
-  _pauseMenu = GetOwner()->GetUIManager()->AddLayer("pause-menu", GetSize());
+  _pauseMenu = GetOwner()->GetUIManager()->AddLayer("pause-menu", GetSize(), {0, 0}, *this);
   auto container = _pauseMenu->SetRootElement<Base::UIStackPanel>();
   container->SetVAlignment(Base::VAlign::Center);
   container->SetHAlignment(Base::HAlign::Center);
@@ -256,7 +256,7 @@ void GameUILayer::InitPauseMenu()
 
 void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
 {
-  _hud = GetOwner()->GetUIManager()->AddLayer("hud", GetSize());
+  _hud = GetOwner()->GetUIManager()->AddLayer("hud", GetSize(), {0, 0}, *this);
   auto hudStack = _hud->SetRootElement<Base::UIStackPanel>();
   hudStack->SetOrientation(Base::UIStackPanel::Orientation::Vertical);
 
@@ -321,7 +321,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
     GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 8,
   };
 
-  _buyMenu = GetOwner()->GetUIManager()->AddLayer("buy-menu", GetSize());
+  _buyMenu = GetOwner()->GetUIManager()->AddLayer("buy-menu", GetSize(), {0, 0}, *this);
   auto buyMenuPanel = _buyMenu->SetLayerBackPanel();
 
   buyMenuPanel->SetSize({GetSize().x, GetSize().y});

@@ -13,7 +13,7 @@ class MainGameLayer : public Base::SceneLayer
 
   // UILayer
   int _currentPopUp = 0;
-  Base::UILayer *_inWorldUILayer = nullptr;
+  Base::Ref<Base::UILayer> _inWorldUILayer;
 
 public:
   void Update(float dt) override;

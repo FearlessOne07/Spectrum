@@ -1,11 +1,12 @@
 #pragma once
 #include "base/ui/UILayer.hpp"
+#include "base/util/Ref.hpp"
 #include <base/scenes/SceneLayer.hpp>
 
 class MainLayer : public Base::SceneLayer
 {
 private:
-  Base::UILayer *_mainLayer = nullptr;
+  Base::Ref<Base::UILayer> _mainLayer;
   float _showMessageTimer = 0;
   float _showActionsTimer = 0;
   bool _messageVisible = false;

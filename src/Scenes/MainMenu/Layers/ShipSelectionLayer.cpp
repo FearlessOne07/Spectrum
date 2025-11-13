@@ -10,7 +10,7 @@
 
 void ShipSelectionLayer::OnAttach()
 {
-  _shipMenu = GetOwner()->GetUIManager()->AddLayer("ship-menu", GetSize());
+  _shipMenu = GetOwner()->GetUIManager()->AddLayer("ship-menu", GetSize(), {0, 0}, *this);
   auto shipGrid = _shipMenu->SetRootElement<Base::UIGrid>();
   shipGrid->SetHAlignment(Base::HAlign::Center);
   shipGrid->SetVAlignment(Base::VAlign::Center);

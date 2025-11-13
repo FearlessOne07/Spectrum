@@ -1,5 +1,5 @@
 #include "MainMenuLayer.hpp"
-#include "Scenes/MainMenu/Signals/ShipSelectionStartedSignal.hpp"
+#include "Scenes/GameScene/GameScene.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
@@ -18,7 +18,7 @@ void MainMenuLayer::OnAttach()
     GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 4,
   };
 
-  _mainMenu = GetOwner()->GetUIManager()->AddLayer("main-menu", GetSize());
+  _mainMenu = GetOwner()->GetUIManager()->AddLayer("main-menu", GetSize(), {0, 0}, *this);
   auto container = _mainMenu->SetRootElement<Base::UIStackPanel>();
   container->SetOrientation(Base::UIStackPanel::Orientation::Vertical);
   container->SetHAlignment(Base::HAlign::Center);
@@ -48,11 +48,11 @@ void MainMenuLayer::OnAttach()
   playButton->SetFontSize(55);
   playButton->SetPadding(10);
   playButton->onClick = [this]() {
-    // GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene);
-    _mainMenu->Hide();
-    auto bus = Base::SignalBus::GetInstance();
-    auto sig = std::make_shared<ShipSelectionStartedSignal>();
-    bus->BroadCastSignal(sig);
+    GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene);
+    // _mainMenu->Hide();
+    // auto bus = Base::SignalBus::GetInstance();
+    // auto sig = std::make_shared<ShipSelectionStartedSignal>();
+    // bus->BroadCastSignal(sig);
   };
   playButton->SetSprite(buttonSprite);
   playButton->onHover = {

@@ -52,8 +52,8 @@ void MainGameLayer::OnAttach()
 
   SetCameraPauseMask();
 
-  _inWorldUILayer = GetOwner()->GetUIManager()->AddLayer(                                                   //
-    "in-world-ui", {GetSize().x / GetCameraZoom(), GetSize().y / GetCameraZoom()}, GetScreenToWorld({0, 0}) //
+  _inWorldUILayer = GetOwner()->GetUIManager()->AddLayer(                                                          //
+    "in-world-ui", {GetSize().x / GetCameraZoom(), GetSize().y / GetCameraZoom()}, GetScreenToWorld({0, 0}), *this //
   );
   _inWorldUILayer->Hide();
 

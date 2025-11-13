@@ -2,6 +2,7 @@
 #include "Shop/Shop.hpp"
 #include "base/entities/Entity.hpp"
 #include "base/ui/UILayer.hpp"
+#include "base/util/Ref.hpp"
 #include <base/scenes/SceneLayer.hpp>
 #include <memory>
 
@@ -20,9 +21,9 @@ private:
   std::array<float, 3> UpdateItems();
   bool BuyItem(int index);
 
-  Base::UILayer *_hud;
-  Base::UILayer *_pauseMenu;
-  Base::UILayer *_buyMenu;
+  Base::Ref<Base::UILayer> _hud;
+  Base::Ref<Base::UILayer> _pauseMenu;
+  Base::Ref<Base::UILayer> _buyMenu;
 
   Shop _shop;
 

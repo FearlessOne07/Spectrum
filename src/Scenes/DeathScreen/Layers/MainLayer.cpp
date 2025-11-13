@@ -13,7 +13,7 @@
 
 void MainLayer::OnAttach()
 {
-  _mainLayer = GetOwner()->GetUIManager()->AddLayer("main-layer", GetSize());
+  _mainLayer = GetOwner()->GetUIManager()->AddLayer("main-layer", GetSize(), {0, 0}, *this);
   auto canvas = _mainLayer->SetRootElement<Base::UICanvas>();
   canvas->SetPosition({0, 0});
   canvas->SetSize({GetSize().x, GetSize().y});

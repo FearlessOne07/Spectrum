@@ -1,10 +1,11 @@
 #pragma once
 #include "base/ui/UILayer.hpp"
+#include "base/util/Ref.hpp"
 #include <base/scenes/SceneLayer.hpp>
 
 class ShipSelectionLayer : public Base::SceneLayer
 {
-  Base::UILayer *_shipMenu = nullptr;
+  Base::Ref<Base::UILayer> _shipMenu;
 
 public:
   void Update(float dt) override;
