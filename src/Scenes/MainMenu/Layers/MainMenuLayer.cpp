@@ -1,5 +1,6 @@
 #include "MainMenuLayer.hpp"
 #include "Scenes/GameScene/GameScene.hpp"
+#include "Scenes/MainMenu/Signals/ShipSelectionStartedSignal.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"

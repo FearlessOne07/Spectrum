@@ -85,7 +85,7 @@ void ParticleLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
           static_cast<float>(sin(angle * DEG2RAD)),
           static_cast<float>(cos(angle * DEG2RAD)),
         };
-        emitter.emissionPoint = GetLayerMousePosition();
+        emitter.emissionPoint = GetLayerCameraMousePosition();
       };
     }
   }

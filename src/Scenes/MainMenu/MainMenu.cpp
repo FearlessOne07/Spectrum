@@ -13,11 +13,8 @@ void MainMenu::Enter(const Base::SceneData &sceneData)
 
   // MainRenderLayer
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight};
+  Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight} / 4;
   auto mainLayer = AddRenderLayer({mainLayerRes.x, mainLayerRes.y}, GetClearColor());
-  mainLayer->SetCameraZoom(mainLayerRes.x / rd->gameWidth);
-  mainLayer->SetCameraTarget({0, 0});
-  mainLayer->SetCameraRotation(0);
   mainLayer->AddShaderEffect<Bloom>(1.2, 0.25, 1);
 
   AttachLayer<ShipSelectionLayer>(mainLayer);
