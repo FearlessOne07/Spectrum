@@ -131,7 +131,7 @@ Base::EntityID Spawner::SpawnPlayer( //
   inpcmp->BindMouseButtonDown(MOUSE_BUTTON_LEFT, [this, shtcmp]() {
     const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
     shtcmp->IsFiring = true;
-    shtcmp->targetPosition = _parentLayer->GetScreenToWorld(_parentLayer->GetLayerMousePosition());
+    shtcmp->targetPosition = _parentLayer->GetLayerMousePosition();
   });
   inpcmp->BindMouseButtonReleased(MOUSE_BUTTON_LEFT, [shtcmp]() { shtcmp->IsFiring = false; });
 
