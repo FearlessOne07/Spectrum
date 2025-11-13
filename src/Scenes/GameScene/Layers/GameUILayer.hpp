@@ -20,9 +20,9 @@ private:
   std::array<float, 3> UpdateItems();
   bool BuyItem(int index);
 
-  Base::UILayer *_hud;
-  Base::UILayer *_pauseMenu;
-  Base::UILayer *_buyMenu;
+  Base::Ref<Base::UILayer> _hud;
+  Base::Ref<Base::UILayer> _pauseMenu;
+  Base::Ref<Base::UILayer> _buyMenu;
 
   Shop _shop;
 

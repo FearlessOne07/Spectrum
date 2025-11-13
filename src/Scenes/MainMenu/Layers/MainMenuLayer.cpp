@@ -14,7 +14,7 @@ void MainMenuLayer::OnAttach()
     GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 4,
   };
 
-  _mainMenu = GetOwner()->GetUIManager()->AddLayer("main-menu", GetSize());
+  _mainMenu = GetOwner()->GetUIManager()->AddLayer("main-menu", GetSize(), {0, 0}, *this);
   auto container = _mainMenu->SetRootElement<Base::UIStackPanel>();
   container->SetOrientation(Base::UIStackPanel::Orientation::Vertical);
   container->SetHAlignment(Base::HAlign::Center);

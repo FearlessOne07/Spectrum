@@ -21,8 +21,8 @@ void ParticleLayer::OnAttach()
   _gen = std::mt19937_64(_rd());
   _emitter = GetOwner()->GetParticleManager()->AddEmitter();
   _emitter->burst = true;
-  _emitter->emissionType = Base::ParticleEmitter::EmissionType::POINT;
-  _emitter->particleShape = Base::ParticleEmitter::ParticleShape::TEXTURE;
+  _emitter->emissionType = Base::ParticleEmitter::EmissionType::Point;
+  _emitter->particleShape = Base::ParticleEmitter::ParticleShape::Texture;
   _emitter->burstEmissionCount = 60;
   _emitter->particleRotationSpeed = 180;
   _emitter->isEmitting = false;

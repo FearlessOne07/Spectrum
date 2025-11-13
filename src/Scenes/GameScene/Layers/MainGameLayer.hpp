@@ -2,6 +2,7 @@
 #include "Signals/Handlers/EntityEventHandler.hpp"
 #include "WaveManager/WaveManager.hpp"
 #include "base/ui/UILayer.hpp"
+#include "base/util/Ref.hpp"
 #include <base/scenes/SceneLayer.hpp>
 
 class MainGameLayer : public Base::SceneLayer
@@ -13,7 +14,7 @@ class MainGameLayer : public Base::SceneLayer
 
   // UILayer
   int _currentPopUp = 0;
-  Base::UILayer *_inWorldUILayer = nullptr;
+  Base::Ref<Base::UILayer> _inWorldUILayer;
 
 public:
   void Update(float dt) override;

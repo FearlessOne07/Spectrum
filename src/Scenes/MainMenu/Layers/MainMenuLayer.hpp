@@ -4,7 +4,7 @@
 
 class MainMenuLayer : public Base::SceneLayer
 {
-  Base::UILayer *_mainMenu = nullptr;
+  Base::Ref<Base::UILayer> _mainMenu;
 
 public:
   void Update(float dt) override;
