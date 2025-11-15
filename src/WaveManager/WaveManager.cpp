@@ -4,12 +4,13 @@
 #include "base/components/ColliderComponent.hpp"
 #include "base/entities/Entity.hpp"
 #include "base/scenes/SceneLayer.hpp"
+#include "base/util/Ref.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
 #include <base/scenes/SceneLayer.tpp>
 #include <random>
 
-void WaveManager::Init(const Base::SceneLayer *parentLayer, Base::EntityManager *entityMan)
+void WaveManager::Init(const Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager> entityMan)
 {
   _entityMan = entityMan;
   _parentLayer = parentLayer;

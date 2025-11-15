@@ -26,7 +26,7 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   // Register Events
   auto bus = Base::SignalBus::GetInstance();
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  Base::SystemManager *systemManager = GetSystemManager();
+  Base::Ref<Base::SystemManager> systemManager = GetSystemManager();
 
   // Activate Systems
   LoadAsset<Base::Texture>("assets/textures/power-ups.png");

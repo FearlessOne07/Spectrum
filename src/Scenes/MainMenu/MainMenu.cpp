@@ -15,7 +15,7 @@ void MainMenu::Enter(const Base::SceneData &sceneData)
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight} / 4;
   auto mainLayer = AddRenderLayer({mainLayerRes.x, mainLayerRes.y}, GetClearColor());
-  mainLayer->AddShaderEffect<Bloom>(1.2, 0.25, 1);
+  // mainLayer->AddShaderEffect<Bloom>(1.2, 0.25, 1);
 
   AttachLayer<ShipSelectionLayer>(mainLayer);
 

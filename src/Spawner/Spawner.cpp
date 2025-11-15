@@ -21,6 +21,7 @@
 #include "base/signals/SignalBus.hpp"
 #include "base/sprites/Sprite.hpp"
 #include "base/state/TransitionConditionBlock.hpp"
+#include "base/util/Ref.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
@@ -46,7 +47,7 @@ void Spawner::SetToSpawn(std::vector<EnemySpec> toSpawn, float difficultyScale)
   }
 }
 
-void Spawner::Init(const Base::SceneLayer *parentLayer, Base::EntityManager *entityManager)
+void Spawner::Init(const Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager> entityManager)
 {
   _parentLayer = parentLayer;
   _entityManager = entityManager;

@@ -14,6 +14,7 @@
 #include "base/sprites/Sprite.hpp"
 #include "raylib.h"
 #include <base/audio/signals/PlaySoundSignal.hpp>
+#include <base/particles/ParticleManager.hpp>
 #include <memory>
 #include <random>
 
@@ -40,7 +41,7 @@ void ParticleLayer::OnAttach()
   _testEmitter->particleRotationSpeed = 180;
   _testEmitter->isEmitting = false;
   _testEmitter->particleEndColor = {0, 0, 0, 0};
-  // _testEmitter->SetPauseMask(GetPauseMask());
+  _testEmitter->SetPauseMask(GetPauseMask());
 
   auto bus = Base::SignalBus::GetInstance();
   bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {

@@ -20,6 +20,8 @@ void ShipSelectionLayer::OnAttach()
   });
   shipGrid->GetRenderTransform().SetOpacity(0);
   shipGrid->SetVisibilityOff();
+  shipGrid->SetPadding(5);
+  shipGrid->SetCellGap(100);
   shipGrid->onShow = [this, shipGrid]() {
     GetOwner()->GetTweenManager()->AddTween<float>(
       {shipGrid.get(), "alpha"}, [shipGrid](float alpha) { shipGrid->GetRenderTransform().SetOpacity(alpha); },
@@ -32,7 +34,7 @@ void ShipSelectionLayer::OnAttach()
   };
 
   float hoverScale = 1.15;
-  for (int i = 0; i < 2; i++)
+  for (int i = 0; i < 1; i++)
   {
     std::string name = std::format("ship-{0}", i);
     auto shipText = shipGrid->AddGridElement<Base::UITextureRect>(name, {i, 0});

@@ -26,13 +26,13 @@ private:
   // Layer
   const Base::SceneLayer *_parentLayer = nullptr;
 
-  Base::EntityManager *_entityManager = nullptr;
+  Base::Ref<Base::EntityManager> _entityManager;
 
   void SpawnLight(std::shared_ptr<EntityDiedSignal> sig);
 
 public:
   Spawner() = default;
-  void Init(const Base::SceneLayer *parentLayer, Base::EntityManager *entityManager);
+  void Init(const Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager> entityManager);
   Base::EntityID SpawnPlayer(Vector2 position);
   void SpawnWave(float dt, Base::EntityID playerID);
   int GetToSpawnCount() const;
