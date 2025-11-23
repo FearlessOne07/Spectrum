@@ -52,8 +52,8 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   mainLayer->SetCameraRotation(0);
 
   // TODO: Fix Tone mapping for bloom??
-  mainLayer->AddShaderEffect<Bloom>(1.2, 0.25, 1);
-  mainLayer->AddShaderEffect<Vignette>(Color{255, 48, 48, 255}, 0.5f, 0.5);
+  mainLayer->AddShaderEffect<Bloom>(shared_from_this(), 1.2, 0.25, 1);
+  mainLayer->AddShaderEffect<Vignette>(shared_from_this(), Color{255, 48, 48, 255}, 0.5f, 0.5);
 
   AttachLayer<MainGameLayer>(mainLayer);
   AttachLayer<ParticleLayer>(mainLayer);

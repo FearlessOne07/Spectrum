@@ -3,6 +3,7 @@
 #include "base/shaders/Shader.hpp"
 #include "base/shaders/ShaderEffect.hpp"
 #include "raylib.h"
+#include <memory>
 
 class Vignette : public Base::ShaderEffect
 {
@@ -16,7 +17,7 @@ class Vignette : public Base::ShaderEffect
 
 public:
   Vignette(Color vignetteColor, float decayRate, float maxStrenth);
-  void Setup(const Base::Scene *layer) override;
+  void Setup(std::weak_ptr<const Base::Scene> layer) override;
   void Apply(RenderTexture2D *input, RenderTexture2D *output, Vector2 resolution) override;
   void Update(float dt) override;
   void Flash();

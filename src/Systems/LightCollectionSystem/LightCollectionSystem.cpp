@@ -9,7 +9,9 @@
 #include "raymath.h"
 #include <algorithm>
 
-void LightCollectionSystem::Update(float dt, Base::EntityManager *entityManager, const Base::Scene *currentScene)
+void LightCollectionSystem::Update(                                                                       ///
+  float dt, Base::Ref<Base::EntityManager> entityManager, std::shared_ptr<const Base::Scene> currentScene //
+)
 {
   auto entities = entityManager->Query<LightCollectorComponent>();
 
