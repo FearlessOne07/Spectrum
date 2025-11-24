@@ -6,6 +6,7 @@
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
+#include "base/input/Keys.hpp"
 #include "raylib.h"
 #include <array>
 #include <base/assets/AssetManager.hpp>
@@ -51,7 +52,7 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {
   if (auto keyEvent = std::dynamic_pointer_cast<Base::KeyEvent>(event))
   {
-    if (keyEvent->key == KEY_ESCAPE && keyEvent->action == Base::InputEvent::Action::Pressed)
+    if (keyEvent->Key == Base::Key::Escape && keyEvent->action == Base::InputEvent::Action::Pressed)
     {
       if (_buyMenu->IsVisible())
       {
@@ -70,7 +71,7 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
       }
       event->isHandled = true;
     }
-    else if (keyEvent->key == KEY_TAB && keyEvent->action == Base::InputEvent::Action::Pressed)
+    else if (keyEvent->Key == Base::Key::Tab && keyEvent->action == Base::InputEvent::Action::Pressed)
     {
       if (_buyMenu->IsVisible())
       {

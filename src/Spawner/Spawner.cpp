@@ -18,6 +18,7 @@
 #include "base/components/SpriteComponent.hpp"
 #include "base/components/StateComponent.hpp"
 #include "base/components/TimerComponent.hpp"
+#include "base/input/MouseButtons.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/sprites/Sprite.hpp"
 #include "base/state/TransitionConditionBlock.hpp"
@@ -119,22 +120,22 @@ Base::EntityID Spawner::SpawnPlayer( //
   abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
 
   auto inpcmp = e->AddComponent<Base::InputComponent>();
-  inpcmp->BindKeyDown(KEY_A, [rbcmp]() { rbcmp->direction.x = -1; });
-  inpcmp->BindKeyDown(KEY_D, [rbcmp]() { rbcmp->direction.x = 1; });
-  inpcmp->BindKeyDown(KEY_W, [rbcmp]() { rbcmp->direction.y = -1; });
-  inpcmp->BindKeyDown(KEY_S, [rbcmp]() { rbcmp->direction.y = 1; });
+  inpcmp->BindKeyDown(Base::Key::A, [rbcmp]() { rbcmp->direction.x = -1; });
+  inpcmp->BindKeyDown(Base::Key::D, [rbcmp]() { rbcmp->direction.x = 1; });
+  inpcmp->BindKeyDown(Base::Key::W, [rbcmp]() { rbcmp->direction.y = -1; });
+  inpcmp->BindKeyDown(Base::Key::S, [rbcmp]() { rbcmp->direction.y = 1; });
 
-  inpcmp->BindKeyReleased(KEY_A, [rbcmp]() { rbcmp->direction.x = 0; });
-  inpcmp->BindKeyReleased(KEY_D, [rbcmp]() { rbcmp->direction.x = 0; });
-  inpcmp->BindKeyReleased(KEY_S, [rbcmp]() { rbcmp->direction.y = 0; });
-  inpcmp->BindKeyReleased(KEY_W, [rbcmp]() { rbcmp->direction.y = 0; });
+  inpcmp->BindKeyReleased(Base::Key::A, [rbcmp]() { rbcmp->direction.x = 0; });
+  inpcmp->BindKeyReleased(Base::Key::D, [rbcmp]() { rbcmp->direction.x = 0; });
+  inpcmp->BindKeyReleased(Base::Key::S, [rbcmp]() { rbcmp->direction.y = 0; });
+  inpcmp->BindKeyReleased(Base::Key::W, [rbcmp]() { rbcmp->direction.y = 0; });
 
-  inpcmp->BindMouseButtonDown(MOUSE_BUTTON_LEFT, [this, shtcmp]() {
+  inpcmp->BindMouseButtonDown(Base::MouseKey::Left, [this, shtcmp]() {
     const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
     shtcmp->IsFiring = true;
     shtcmp->targetPosition = _parentLayer->GetLayerCameraMousePosition();
   });
-  inpcmp->BindMouseButtonReleased(MOUSE_BUTTON_LEFT, [shtcmp]() { shtcmp->IsFiring = false; });
+  inpcmp->BindMouseButtonReleased(Base::MouseKey::Left, [shtcmp]() { shtcmp->IsFiring = false; });
 
   auto dmgcmp = e->AddComponent<DamageComponent>(1);
   e->AddComponent<Base::ImpulseComponent>();

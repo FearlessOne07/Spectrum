@@ -2,7 +2,6 @@
 #include "Components/EnemyComponent.hpp"
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
-#include "base/assets/AssetManager.hpp"
 #include "base/components/SpriteComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
@@ -71,7 +70,7 @@ void ParticleLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {
   if (auto mouseEvent = std::dynamic_pointer_cast<Base::MouseButtonEvent>(event))
   {
-    if (mouseEvent->button == MOUSE_BUTTON_LEFT && mouseEvent->action == Base::MouseButtonEvent::Action::Pressed)
+    if (mouseEvent->Button == Base::MouseKey::Left && mouseEvent->action == Base::MouseButtonEvent::Action::Pressed)
     {
       std::uniform_real_distribution<float> lifeRange(0.5, 1);
       std::uniform_real_distribution<float> angleDist(0, 360);
