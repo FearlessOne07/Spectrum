@@ -1,4 +1,5 @@
 #pragma once
+#include "Ship/Ship.hpp"
 #include "Spawner/Spawner.hpp"
 #include "base/entities/Entity.hpp"
 #include "base/scenes/SceneLayer.hpp"
@@ -72,7 +73,7 @@ private:
 public:
   WaveManager() = default;
   void Init(const Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager> entityManager);
-  Base::EntityID SpawnPlayer();
+  Base::EntityID SpawnPlayer(const Ship &ship);
   ~WaveManager();
   void SpawnWaves(float dt);
 };

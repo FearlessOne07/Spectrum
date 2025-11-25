@@ -65,9 +65,7 @@ int Spawner::GetToSpawnCount() const
   return _toSpawn.size();
 }
 
-Base::EntityID Spawner::SpawnPlayer( //
-  Vector2 position                   //
-)
+Base::EntityID Spawner::SpawnPlayer(Vector2 position, const Ship &ship)
 {
   auto e = _entityManager->CreateEntity();
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
@@ -103,8 +101,8 @@ Base::EntityID Spawner::SpawnPlayer( //
   auto sprtcmp = e->AddComponent<Base::SpriteComponent>( //
     Base::Sprite{
       _parentLayer->GetAsset<Base::Texture>("ships"),
-      Vector2{0, 0},
-      Vector2{8, 8},
+      Vector2{ship.SpriteSource.x, ship.SpriteSource.y},
+      Vector2{ship.SpriteSource.width, ship.SpriteSource.height},
       Vector2{64, 64},
     } //
   );

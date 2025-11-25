@@ -1,5 +1,4 @@
 #include "MainMenuLayer.hpp"
-#include "Scenes/GameScene/GameScene.hpp"
 #include "Scenes/MainMenu/Signals/ShipSelectionStartedSignal.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/scenes/Scene.hpp"
@@ -49,11 +48,11 @@ void MainMenuLayer::OnAttach()
   playButton->SetFontSize(55);
   playButton->SetPadding(10);
   playButton->onClick = [this]() {
-    GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene);
-    // _mainMenu->Hide();
-    // auto bus = Base::SignalBus::GetInstance();
-    // auto sig = std::make_shared<ShipSelectionStartedSignal>();
-    // bus->BroadCastSignal(sig);
+    // GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene);
+    _mainMenu->Hide();
+    auto bus = Base::SignalBus::GetInstance();
+    auto sig = std::make_shared<ShipSelectionStartedSignal>();
+    bus->BroadCastSignal(sig);
   };
   playButton->SetSprite(buttonSprite);
   playButton->onHover = {

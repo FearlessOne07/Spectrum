@@ -1,8 +1,8 @@
 #pragma once
 
-#include "base/sprites/Sprite.hpp"
+#include "raylib.h"
 
 struct Ship
 {
-  Base::Sprite Sprite;
+  Rectangle SpriteSource = {0, 0, 0, 0};
 };

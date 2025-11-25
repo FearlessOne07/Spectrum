@@ -22,6 +22,7 @@ void GameScene::Enter(const Base::SceneData &sceneData)
 
   // Init Shared Data
   InitSharedData<SharedGameData>();
+  GetSharedData<SharedGameData>()->PlayerShip = sceneData.Get<Ship>();
 
   // Register Events
   auto bus = Base::SignalBus::GetInstance();

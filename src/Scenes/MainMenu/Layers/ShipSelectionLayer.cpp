@@ -1,12 +1,16 @@
 #include "ShipSelectionLayer.hpp"
+#include "Scenes/GameScene/GameScene.hpp"
 #include "Scenes/MainMenu/Signals/ShipSelectionStartedSignal.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/scenes/Scene.hpp"
+#include "base/scenes/SceneData.hpp"
 #include "base/signals/Signal.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/sprites/Sprite.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/elements/UIGrid.hpp"
 #include "base/ui/elements/UITextureRect.hpp"
+#include <memory>
 
 void ShipSelectionLayer::OnAttach()
 {
@@ -21,7 +25,7 @@ void ShipSelectionLayer::OnAttach()
   shipGrid->GetRenderTransform().SetOpacity(0);
   shipGrid->SetVisibilityOff();
   shipGrid->SetPadding(5);
-  shipGrid->SetCellGap(100);
+  shipGrid->SetCellGap(10);
   shipGrid->onShow = [this, shipGrid]() {
     GetOwner()->GetTweenManager()->AddTween<float>(
       {shipGrid.get(), "alpha"}, [shipGrid](float alpha) { shipGrid->GetRenderTransform().SetOpacity(alpha); },
@@ -34,7 +38,7 @@ void ShipSelectionLayer::OnAttach()
   };
 
   float hoverScale = 1.15;
-  for (int i = 0; i < 1; i++)
+  for (int i = 0; i < 2; i++)
   {
     std::string name = std::format("ship-{0}", i);
     auto shipText = shipGrid->AddGridElement<Base::UITextureRect>(name, {i, 0});
@@ -42,6 +46,11 @@ void ShipSelectionLayer::OnAttach()
     shipText->SetHAlignment(Base::HAlign::Center);
     shipText->SetVAlignment(Base::VAlign::Center);
     shipText->SetSize({16, 16});
+    shipText->onClick = [this, i]() {
+      Base::SceneData data;
+      data.Set(Ship({i * 8.f, 0, 8, 8}));
+      GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene, data);
+    };
     shipText->onHover = {
       [=, this]() {                                     //
         GetOwner()->GetTweenManager()->AddTween<float>( //

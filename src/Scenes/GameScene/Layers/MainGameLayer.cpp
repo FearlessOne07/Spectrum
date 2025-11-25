@@ -33,7 +33,7 @@ void MainGameLayer::OnAttach()
   _waveManager.Init(this, GetOwner()->GetEntityManager());
 
   auto sharedData = GetOwner()->GetSharedData<SharedGameData>();
-  sharedData->playerId = _waveManager.SpawnPlayer();
+  sharedData->PlayerId = _waveManager.SpawnPlayer(GetOwner()->GetSharedData<SharedGameData>()->PlayerShip);
   _entityEVH.Init(this);
 
   auto bus = Base::SignalBus::GetInstance();
@@ -78,7 +78,7 @@ void MainGameLayer::Update(float dt)
   _waveManager.SpawnWaves(dt);
 
   // Update Vingette
-  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->playerId);
+  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
   if (player)
   {
     auto vignette = GetRenderLayer()->GetShaderEffect<Vignette>();

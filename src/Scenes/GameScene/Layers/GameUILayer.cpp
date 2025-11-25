@@ -578,7 +578,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
 bool GameUILayer::BuyItem(int index)
 {
   ShopItem item = _shop.GetItem(index);
-  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->playerId);
+  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
   auto lightComp = player->GetComponent<LightCollectorComponent>();
 
   if (lightComp->value >= item.cost)
@@ -622,7 +622,7 @@ std::array<float, 3> GameUILayer::UpdateItems()
     _shop.ResetNewItems();
   }
 
-  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->playerId);
+  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
   std::array<float, 3> alphas;
   float alpha = 0;
   for (int i = 0; i < currentItems.size(); i++)
