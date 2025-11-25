@@ -9,7 +9,6 @@ class ParticleLayer : public Base::SceneLayer
   std::random_device _rd;
   std::mt19937_64 _gen;
   Base::Ref<Base::ParticleEmitter> _emitter;
-  Base::Ref<Base::ParticleEmitter> _testEmitter;
 
   void OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal);
 

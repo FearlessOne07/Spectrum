@@ -4,7 +4,6 @@
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "base/components/SpriteComponent.hpp"
 #include "base/components/TransformComponent.hpp"
-#include "base/input/Events/MouseButtonEvent.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleEmitter.hpp"
 #include "base/renderer/RenderContextSingleton.hpp"
@@ -29,18 +28,6 @@ void ParticleLayer::OnAttach()
   _emitter->isEmitting = false;
   _emitter->SetPauseMask(GetPauseMask());
   _emitter->particleEndColor = {255, 255, 255, 255};
-
-  _testEmitter = GetOwner()->GetParticleManager()->AddEmitter();
-  _testEmitter->burst = true;
-  _testEmitter->emissionType = Base::ParticleEmitter::EmissionType::Point;
-  _testEmitter->particleShape = Base::ParticleEmitter::ParticleShape::Circle;
-  _testEmitter->particleStartRadius = 20;
-  _testEmitter->particleEndRadius = 0;
-  _testEmitter->burstEmissionCount = 60;
-  _testEmitter->particleRotationSpeed = 180;
-  _testEmitter->isEmitting = false;
-  _testEmitter->particleEndColor = {0, 0, 0, 0};
-  _testEmitter->SetPauseMask(GetPauseMask());
 
   auto bus = Base::SignalBus::GetInstance();
   bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {
@@ -68,27 +55,6 @@ void ParticleLayer::Render()
 
 void ParticleLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {
-  if (auto mouseEvent = std::dynamic_pointer_cast<Base::MouseButtonEvent>(event))
-  {
-    if (mouseEvent->Button == Base::MouseKey::Left && mouseEvent->action == Base::MouseButtonEvent::Action::Pressed)
-    {
-      std::uniform_real_distribution<float> lifeRange(0.5, 1);
-      std::uniform_real_distribution<float> angleDist(0, 360);
-      std::uniform_real_distribution<float> speedDist(0, 700);
-
-      _testEmitter->isEmitting = true;
-      _testEmitter->initialisationFunction = [=, this](Base::ParticleEmitter &emitter) mutable {
-        emitter.particleLifeTime = lifeRange(_gen);
-        emitter.particleStartSpeed = speedDist(_gen);
-        float angle = angleDist(_gen);
-        emitter.particleDirection = {
-          static_cast<float>(sin(angle * DEG2RAD)),
-          static_cast<float>(cos(angle * DEG2RAD)),
-        };
-        emitter.emissionPoint = GetLayerCameraMousePosition();
-      };
-    }
-  }
 }
 
 void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
