@@ -12,5 +12,7 @@ private: // Hanlders
   void EntityCollisionHandler(const std::shared_ptr<Base::Signal> &);
 
 public:
-  virtual void Update(float dt, Base::EntityManager *entityManager, const Base::Scene *) override;
+  void Update(                                                                                              //
+    float dt, Base::Ref<Base::EntityManager> entityManager, std::shared_ptr<const Base::Scene> currentScene //
+    ) override;
 };

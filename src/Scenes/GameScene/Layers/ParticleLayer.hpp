@@ -1,4 +1,5 @@
 #include "Signals/EntityDiedSignal.hpp"
+#include "base/util/Ref.hpp"
 #include <base/particles/ParticleEmitter.hpp>
 #include <base/scenes/SceneLayer.hpp>
 #include <random>
@@ -7,7 +8,8 @@ class ParticleLayer : public Base::SceneLayer
 {
   std::random_device _rd;
   std::mt19937_64 _gen;
-  Base::ParticleEmitter *_emitter;
+  Base::Ref<Base::ParticleEmitter> _emitter;
+  Base::Ref<Base::ParticleEmitter> _testEmitter;
 
   void OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal);
 

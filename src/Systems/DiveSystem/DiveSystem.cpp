@@ -4,7 +4,9 @@
 #include "base/components/TransformComponent.hpp"
 #include "raymath.h"
 
-void DiveSystem::Update(float dt, Base::EntityManager *entityManager, const Base::Scene *currentScene)
+void DiveSystem::Update(                                                                                  //
+  float dt, Base::Ref<Base::EntityManager> entityManager, std::shared_ptr<const Base::Scene> currentScene //
+)
 {
   auto entities_dvcmp = entityManager->Query<DiveComponent>();
 

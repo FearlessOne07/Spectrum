@@ -6,6 +6,7 @@
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
+#include "base/input/Keys.hpp"
 #include "raylib.h"
 #include <array>
 #include <base/assets/AssetManager.hpp>
@@ -51,7 +52,7 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {
   if (auto keyEvent = std::dynamic_pointer_cast<Base::KeyEvent>(event))
   {
-    if (keyEvent->key == KEY_ESCAPE && keyEvent->action == Base::InputEvent::Action::Pressed)
+    if (keyEvent->Key == Base::Key::Escape && keyEvent->action == Base::InputEvent::Action::Pressed)
     {
       if (_buyMenu->IsVisible())
       {
@@ -70,7 +71,7 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
       }
       event->isHandled = true;
     }
-    else if (keyEvent->key == KEY_TAB && keyEvent->action == Base::InputEvent::Action::Pressed)
+    else if (keyEvent->Key == Base::Key::Tab && keyEvent->action == Base::InputEvent::Action::Pressed)
     {
       if (_buyMenu->IsVisible())
       {
@@ -577,7 +578,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
 bool GameUILayer::BuyItem(int index)
 {
   ShopItem item = _shop.GetItem(index);
-  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->playerId);
+  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
   auto lightComp = player->GetComponent<LightCollectorComponent>();
 
   if (lightComp->value >= item.cost)
@@ -621,7 +622,7 @@ std::array<float, 3> GameUILayer::UpdateItems()
     _shop.ResetNewItems();
   }
 
-  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->playerId);
+  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
   std::array<float, 3> alphas;
   float alpha = 0;
   for (int i = 0; i < currentItems.size(); i++)

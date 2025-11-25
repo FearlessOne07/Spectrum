@@ -16,6 +16,7 @@
 #include "base/ui/elements/UILabel.hpp"
 #include "raylib.h"
 #include <base/renderer/RenderContextSingleton.hpp>
+#include <base/systems/SystemManager.hpp>
 #include <format>
 #include <memory>
 
@@ -32,7 +33,7 @@ void MainGameLayer::OnAttach()
   _waveManager.Init(this, GetOwner()->GetEntityManager());
 
   auto sharedData = GetOwner()->GetSharedData<SharedGameData>();
-  sharedData->playerId = _waveManager.SpawnPlayer();
+  sharedData->PlayerId = _waveManager.SpawnPlayer(GetOwner()->GetSharedData<SharedGameData>()->PlayerShip);
   _entityEVH.Init(this);
 
   auto bus = Base::SignalBus::GetInstance();
@@ -74,26 +75,23 @@ void MainGameLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 
 void MainGameLayer::Update(float dt)
 {
-  if (!IsPaused())
-  {
-    _waveManager.SpawnWaves(dt);
+  _waveManager.SpawnWaves(dt);
 
-    // Update Vingette
-    auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->playerId);
-    if (player)
+  // Update Vingette
+  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
+  if (player)
+  {
+    auto vignette = GetRenderLayer()->GetShaderEffect<Vignette>();
+    auto hlthcmp = player->GetComponent<HealthComponent>();
+    if (hlthcmp->GetHealth() <= hlthcmp->GetMaxHealth() * 0.2)
     {
-      auto vignette = GetRenderLayer()->GetShaderEffect<Vignette>();
-      auto hlthcmp = player->GetComponent<HealthComponent>();
-      if (hlthcmp->GetHealth() <= hlthcmp->GetMaxHealth() * 0.2)
-      {
-        vignette->SetMinStrength(0.2);
-        vignette->SetMaintain(true);
-      }
-      else
-      {
-        vignette->SetMinStrength(0);
-        vignette->SetMaintain(false);
-      }
+      vignette->SetMinStrength(0.2);
+      vignette->SetMaintain(true);
+    }
+    else
+    {
+      vignette->SetMinStrength(0);
+      vignette->SetMaintain(false);
     }
   }
 }

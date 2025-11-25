@@ -22,11 +22,12 @@ void GameScene::Enter(const Base::SceneData &sceneData)
 
   // Init Shared Data
   InitSharedData<SharedGameData>();
+  GetSharedData<SharedGameData>()->PlayerShip = sceneData.Get<Ship>();
 
   // Register Events
   auto bus = Base::SignalBus::GetInstance();
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  Base::SystemManager *systemManager = GetSystemManager();
+  Base::Ref<Base::SystemManager> systemManager = GetSystemManager();
 
   // Activate Systems
   LoadAsset<Base::Texture>("assets/textures/power-ups.png");
@@ -38,10 +39,7 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
   LoadAsset<Base::Sound>("assets/sounds/player-hit.wav");
 
-  LoadAsset<Base::BaseShader>("assets/shaders/bloom/bright_pass.frag");
-  LoadAsset<Base::BaseShader>("assets/shaders/bloom/blur_pass.frag");
-  LoadAsset<Base::BaseShader>("assets/shaders/bloom/combine_pass.frag");
-  LoadAsset<Base::BaseShader>("assets/shaders/vignette/vignette.frag");
+  LoadAsset<Base::BaseShader>("assets/shaders/vignette/vignette.frag ");
 
   auto uiLayer = AddRenderLayer({1920, 1080});
   AttachLayer<GameUILayer>(uiLayer);
@@ -55,8 +53,8 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   mainLayer->SetCameraRotation(0);
 
   // TODO: Fix Tone mapping for bloom??
-  mainLayer->AddShaderEffect<Bloom>(1.2, 0.25, 1);
-  mainLayer->AddShaderEffect<Vignette>(Color{255, 48, 48, 255}, 0.5f, 0.5);
+  mainLayer->AddShaderEffect<Bloom>(shared_from_this(), 1.2, 0.25, 1);
+  mainLayer->AddShaderEffect<Vignette>(shared_from_this(), Color{255, 48, 48, 255}, 0.5f, 0.5);
 
   AttachLayer<MainGameLayer>(mainLayer);
   AttachLayer<ParticleLayer>(mainLayer);

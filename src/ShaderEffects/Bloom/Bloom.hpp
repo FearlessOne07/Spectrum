@@ -26,7 +26,7 @@ private:
   void SetUpBuffers(Vector2 resolution);
 
 public:
-  void Setup(const Base::Scene *layer) override;
+  void Setup(std::weak_ptr<const Base::Scene> shaderManager) override;
   void Apply(RenderTexture2D *input, RenderTexture2D *output, Vector2 resolution) override;
 
   Bloom(float bloomIntensity, float luminanceThresh, float blurResolutionScale);

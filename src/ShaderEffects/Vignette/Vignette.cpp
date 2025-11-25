@@ -7,15 +7,15 @@ Vignette::Vignette(Color vignetteColor, float decayRate, float maxStrength)
 {
 }
 
-void Vignette::Setup(const Base::Scene *scene)
+void Vignette::Setup(std::weak_ptr<const Base::Scene> scene)
 {
   _currentScene = scene;
-  _vignetteShader = scene->GetAsset<Base::BaseShader>("vignette");
+  _vignetteShader = scene.lock()->GetAsset<Base::BaseShader>("vignette");
 }
 
 void Vignette::Apply(RenderTexture2D *input, RenderTexture2D *output, Vector2 resolution)
 {
-  auto shaderMan = _currentScene->GetShaderManager();
+  auto shaderMan = _currentScene.lock()->GetShaderManager();
   BeginTextureMode(*output);
   shaderMan->ActivateShader(_vignetteShader);
   shaderMan->SetUniform(_vignetteShader, "uVignetteColor", _vignetteColor);

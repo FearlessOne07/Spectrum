@@ -34,6 +34,15 @@ int main(void)
           Base::AssetType::Texture,
           {
             "assets/textures/button.png",
+            "assets/textures/ships.png",
+          },
+        },
+        {
+          Base::AssetType::Shader,
+          {
+            "assets/shaders/bloom/blur_pass.frag",
+            "assets/shaders/bloom/combine_pass.frag",
+            "assets/shaders/bloom/bright_pass.frag",
           },
         },
       },

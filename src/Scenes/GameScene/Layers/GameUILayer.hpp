@@ -2,6 +2,7 @@
 #include "Shop/Shop.hpp"
 #include "base/entities/Entity.hpp"
 #include "base/ui/UILayer.hpp"
+#include "base/util/Ref.hpp"
 #include <base/scenes/SceneLayer.hpp>
 #include <memory>
 

@@ -1,12 +1,16 @@
 #include "MainMenuLayer.hpp"
-#include "Scenes/GameScene/GameScene.hpp"
+#include "Scenes/MainMenu/Signals/ShipSelectionStartedSignal.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/scenes/Scene.hpp"
+#include "base/signals/SignalBus.hpp"
 #include "base/sprites/NinePatchSprite.hpp"
+#include "base/textures/Texture.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UIButton.hpp"
+#include "base/ui/elements/UIGrid.hpp"
 #include "base/ui/elements/UIStackPanel.hpp"
+#include <memory>
 
 void MainMenuLayer::OnAttach()
 {
@@ -21,6 +25,17 @@ void MainMenuLayer::OnAttach()
   container->SetVAlignment(Base::VAlign::Center);
   container->SetPadding(10);
   container->SetGap(25);
+  container->onHide = [this, container]() {
+    GetOwner()->GetTweenManager()->AddTween<float>(
+      {container.get(), "alpha"}, [container](float alpha) { container->GetRenderTransform().SetOpacity(alpha); },
+      {
+        .startValue = container->GetRenderTransform().GetOpacity(),
+        .endValue = 0,
+        .duration = 0.4,
+        .onTweenEnd = [=]() { container->SetVisibilityOff(); },
+      } //
+    );
+  };
 
   float hoverScale = 1.15;
 
@@ -33,7 +48,11 @@ void MainMenuLayer::OnAttach()
   playButton->SetFontSize(55);
   playButton->SetPadding(10);
   playButton->onClick = [this]() {
-    GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene);
+    // GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene);
+    _mainMenu->Hide();
+    auto bus = Base::SignalBus::GetInstance();
+    auto sig = std::make_shared<ShipSelectionStartedSignal>();
+    bus->BroadCastSignal(sig);
   };
   playButton->SetSprite(buttonSprite);
   playButton->onHover = {

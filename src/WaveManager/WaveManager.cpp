@@ -1,15 +1,17 @@
 #include "WaveManager.hpp"
 #include "Components/EnemyComponent.hpp"
+#include "Ship/Ship.hpp"
 #include "Spawner/Spawner.hpp"
 #include "base/components/ColliderComponent.hpp"
 #include "base/entities/Entity.hpp"
 #include "base/scenes/SceneLayer.hpp"
+#include "base/util/Ref.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
 #include <base/scenes/SceneLayer.tpp>
 #include <random>
 
-void WaveManager::Init(const Base::SceneLayer *parentLayer, Base::EntityManager *entityMan)
+void WaveManager::Init(const Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager> entityMan)
 {
   _entityMan = entityMan;
   _parentLayer = parentLayer;
@@ -134,9 +136,9 @@ void WaveManager::SpawnWaves(float dt)
   _spawner.SpawnWave(dt, _playerID);
 }
 
-Base::EntityID WaveManager::SpawnPlayer()
+Base::EntityID WaveManager::SpawnPlayer(const Ship &ship)
 {
-  _playerID = _spawner.SpawnPlayer({0, 0});
+  _playerID = _spawner.SpawnPlayer({0, 0}, ship);
   return _playerID;
 }
 

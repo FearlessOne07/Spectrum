@@ -10,7 +10,9 @@
 #include <raylib.h>
 #include <raymath.h>
 
-void TrackingSystem::Update(float dt, Base::EntityManager *entityManager, const Base::Scene *currentScene)
+void TrackingSystem::Update(                                                                              //
+  float dt, Base::Ref<Base::EntityManager> entityManager, std::shared_ptr<const Base::Scene> currentScene //
+)
 {
   auto entities = entityManager->Query<TrackingComponent>();
 

@@ -1,7 +1,9 @@
 #pragma once
+#include "Ship/Ship.hpp"
 #include "Spawner/Spawner.hpp"
 #include "base/entities/Entity.hpp"
 #include "base/scenes/SceneLayer.hpp"
+#include "base/util/Ref.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
 #include <vector>
@@ -54,7 +56,7 @@ private:
   int _difficultyIncrement = 5;
 
   // EntityManager
-  Base::EntityManager *_entityMan = nullptr;
+  Base::Ref<Base::EntityManager> _entityMan;
 
   // Spawner
   Spawner _spawner = Spawner();
@@ -70,8 +72,8 @@ private:
 
 public:
   WaveManager() = default;
-  void Init(const Base::SceneLayer *parentLayer, Base::EntityManager *entityManager);
-  Base::EntityID SpawnPlayer();
+  void Init(const Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager> entityManager);
+  Base::EntityID SpawnPlayer(const Ship &ship);
   ~WaveManager();
   void SpawnWaves(float dt);
 };
