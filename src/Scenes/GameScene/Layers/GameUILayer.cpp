@@ -93,9 +93,9 @@ void GameUILayer::Update(float dt)
 
 void GameUILayer::Render()
 {
-  GetOwner()->GetUIManager()->RenderLayer("hud");
-  GetOwner()->GetUIManager()->RenderLayer("buy-menu");
-  GetOwner()->GetUIManager()->RenderLayer("pause-menu");
+  GetOwner()->GetUIManager()->RenderLayer(_hud);
+  GetOwner()->GetUIManager()->RenderLayer(_buyMenu);
+  GetOwner()->GetUIManager()->RenderLayer(_pauseMenu);
 }
 
 void GameUILayer::InitPauseMenu()

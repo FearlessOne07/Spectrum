@@ -1,4 +1,5 @@
 #include "MainMenuLayer.hpp"
+#include "Scenes/MainMenu/Signals/ShipSelectionAbortedSignal.hpp"
 #include "Scenes/MainMenu/Signals/ShipSelectionStartedSignal.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/scenes/Scene.hpp"
@@ -10,6 +11,7 @@
 #include "base/ui/elements/UIButton.hpp"
 #include "base/ui/elements/UIGrid.hpp"
 #include "base/ui/elements/UIStackPanel.hpp"
+#include "raylib.h"
 #include <memory>
 
 void MainMenuLayer::OnAttach()
@@ -18,21 +20,60 @@ void MainMenuLayer::OnAttach()
     GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 4,
   };
 
+  float layerFadeDuration = 0.5;
+
   _mainMenu = GetOwner()->GetUIManager()->AddLayer("main-menu", GetSize(), {0, 0}, *this);
+  auto mainMenuPanel = _mainMenu->SetLayerBackPanel();
+  mainMenuPanel->SetColor(BLACK);
+  mainMenuPanel->GetRenderTransform().SetOpacity(1);
+  mainMenuPanel->onHide = [mainMenuPanel, this, layerFadeDuration]() {
+    GetOwner()->GetTweenManager()->AddTween<float>(
+      {mainMenuPanel.get(), "alpha"},
+      [mainMenuPanel](float alpha) { mainMenuPanel->GetRenderTransform().SetOpacity(alpha); },
+      {
+        .startValue = mainMenuPanel->GetRenderTransform().GetOpacity(),
+        .endValue = 0,
+        .duration = layerFadeDuration,
+        .onTweenEnd = [=]() { mainMenuPanel->SetVisibilityOff(); },
+      } //
+    );
+  };
+  mainMenuPanel->onShow = [mainMenuPanel, this, layerFadeDuration]() {
+    GetOwner()->GetTweenManager()->AddTween<float>(
+      {mainMenuPanel.get(), "alpha"},
+      [mainMenuPanel](float alpha) { mainMenuPanel->GetRenderTransform().SetOpacity(alpha); },
+      {
+        .startValue = mainMenuPanel->GetRenderTransform().GetOpacity(),
+        .endValue = 1,
+        .duration = layerFadeDuration,
+      } //
+    );
+  };
+
   auto container = _mainMenu->SetRootElement<Base::UIStackPanel>();
   container->SetOrientation(Base::UIStackPanel::Orientation::Vertical);
   container->SetHAlignment(Base::HAlign::Center);
   container->SetVAlignment(Base::VAlign::Center);
   container->SetPadding(10);
   container->SetGap(25);
-  container->onHide = [this, container]() {
+  container->onHide = [this, container, layerFadeDuration]() {
     GetOwner()->GetTweenManager()->AddTween<float>(
       {container.get(), "alpha"}, [container](float alpha) { container->GetRenderTransform().SetOpacity(alpha); },
       {
         .startValue = container->GetRenderTransform().GetOpacity(),
         .endValue = 0,
-        .duration = 0.4,
+        .duration = layerFadeDuration,
         .onTweenEnd = [=]() { container->SetVisibilityOff(); },
+      } //
+    );
+  };
+  container->onShow = [this, container, layerFadeDuration]() {
+    GetOwner()->GetTweenManager()->AddTween<float>(
+      {container.get(), "alpha"}, [container](float alpha) { container->GetRenderTransform().SetOpacity(alpha); },
+      {
+        .startValue = container->GetRenderTransform().GetOpacity(),
+        .endValue = 1,
+        .duration = layerFadeDuration,
       } //
     );
   };
@@ -48,7 +89,6 @@ void MainMenuLayer::OnAttach()
   playButton->SetFontSize(55);
   playButton->SetPadding(10);
   playButton->onClick = [this]() {
-    // GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene);
     _mainMenu->Hide();
     auto bus = Base::SignalBus::GetInstance();
     auto sig = std::make_shared<ShipSelectionStartedSignal>();
@@ -115,11 +155,14 @@ void MainMenuLayer::OnAttach()
       );
     },
   };
+
+  auto bus = Base::SignalBus::GetInstance();
+  bus->SubscribeSignal<ShipSelectionAbortedSignal>([this](std::shared_ptr<Base::Signal> sig) { _mainMenu->Show(); });
 }
 
 void MainMenuLayer::Render()
 {
-  GetOwner()->GetUIManager()->RenderLayer("main-menu");
+  GetOwner()->GetUIManager()->RenderLayer(_mainMenu);
 }
 
 void MainMenuLayer::Update(float dt)

@@ -74,6 +74,7 @@ void WaveManager::GenerateWave()
     float selectedChance = std::uniform_real_distribution<float>(0, totalChance)(_gen);
     float runningSum = 0;
     bool enemySelected = false;
+    std::bernoulli_distribution bern(_healthPackerProbabilty);
 
     for (auto &[type, spec] : pool)
     {
@@ -82,6 +83,7 @@ void WaveManager::GenerateWave()
         runningSum += spec.SpawnChance;
         if (selectedChance <= runningSum)
         {
+          spec.IsHealthPacker = bern(_gen);
           _wavePoints -= spec.Cost;
           _enemiesToSpawn.push_back(spec);
           enemySelected = true;

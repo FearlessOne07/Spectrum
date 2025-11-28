@@ -21,6 +21,9 @@ struct EnemySpec
   int Value = 0;
   float BaseDamage = 0;
   float BaseHealth = 0;
+
+  // Runtime
+  bool IsHealthPacker = false;
 };
 
 struct EnemyComponent : public Base::Component

@@ -6,7 +6,6 @@
 class MainMenuLayer : public Base::SceneLayer
 {
   Base::Ref<Base::UILayer> _mainMenu;
-  Base::Ref<Base::UILayer> _shipMenu;
 
 public:
   void Update(float dt) override;

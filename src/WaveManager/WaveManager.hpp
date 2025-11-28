@@ -10,7 +10,6 @@
 
 class WaveManager
 {
-public:
 private:
   void GenerateWave();
 
@@ -55,6 +54,8 @@ private:
   float _difficulty = 1;
   int _difficultyIncrement = 5;
 
+  float _healthPackerProbabilty = 0.05;
+
   // EntityManager
   Base::Ref<Base::EntityManager> _entityMan;
 
@@ -74,6 +75,6 @@ public:
   WaveManager() = default;
   void Init(const Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager> entityManager);
   Base::EntityID SpawnPlayer(const Ship &ship);
-  ~WaveManager();
   void SpawnWaves(float dt);
+  ~WaveManager();
 };

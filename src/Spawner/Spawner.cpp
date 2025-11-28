@@ -7,6 +7,7 @@
 #include "Components/LightCollectorComponent.hpp"
 #include "Components/LightComponent.hpp"
 #include "Components/ShootComponent.hpp"
+#include "Components/Tags/HealthPacker.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
 #include "Components/TransformEffects.hpp"
@@ -200,6 +201,7 @@ void Spawner::SpawnWave( //
     }
 
     auto e = _entityManager->CreateEntity();
+
     auto enemcmp = e->AddComponent<EnemyComponent>();
     enemcmp->type = spec.Type;
     enemcmp->value = spec.Value;
@@ -226,6 +228,12 @@ void Spawner::SpawnWave( //
     transfxcmp->bind = false;
     transfxcmp->lookAt = true;
     transfxcmp->lookAtTarget = _playerID;
+
+    if (spec.IsHealthPacker)
+    {
+      transfxcmp->lookAt = false;
+      e->AddComponent<HealthPacker>();
+    }
 
     e->AddComponent<KnockBackComponent>(1000);
     e->AddComponent<HealthComponent>(spec.BaseHealth * _difficultyScale);

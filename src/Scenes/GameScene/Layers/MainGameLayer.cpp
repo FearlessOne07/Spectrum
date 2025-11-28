@@ -100,7 +100,7 @@ void MainGameLayer::Render()
 {
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   BeginCamera();
-  GetOwner()->GetUIManager()->RenderLayer("in-world-ui");
+  GetOwner()->GetUIManager()->RenderLayer(_inWorldUILayer);
   GetOwner()->GetSystemManager()->Render();
   EndCamera();
 }

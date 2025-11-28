@@ -1,41 +1,68 @@
 #include "ShipSelectionLayer.hpp"
 #include "Scenes/GameScene/GameScene.hpp"
+#include "Scenes/MainMenu/Signals/ShipSelectionAbortedSignal.hpp"
 #include "Scenes/MainMenu/Signals/ShipSelectionStartedSignal.hpp"
-#include "base/assets/AssetManager.hpp"
-#include "base/scenes/Scene.hpp"
+#include "base/input/Events/KeyEvent.hpp"
+#include "base/input/Keys.hpp"
 #include "base/scenes/SceneData.hpp"
 #include "base/signals/Signal.hpp"
 #include "base/signals/SignalBus.hpp"
-#include "base/sprites/Sprite.hpp"
 #include "base/tween/TweenManager.hpp"
+#include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UIGrid.hpp"
+#include "base/ui/elements/UILabel.hpp"
+#include "base/ui/elements/UIStackPanel.hpp"
 #include "base/ui/elements/UITextureRect.hpp"
 #include <memory>
 
 void ShipSelectionLayer::OnAttach()
 {
   _shipMenu = GetOwner()->GetUIManager()->AddLayer("ship-menu", GetSize(), {0, 0}, *this);
-  auto shipGrid = _shipMenu->SetRootElement<Base::UIGrid>();
+  auto shipMenuStack = _shipMenu->SetRootElement<Base::UIStackPanel>();
+  shipMenuStack->SetVisibilityOff();
+  shipMenuStack->GetRenderTransform().SetOpacity(0);
+  shipMenuStack->onShow = [this, shipMenuStack]() {
+    GetOwner()->GetTweenManager()->AddTween<float>(
+      {shipMenuStack.get(), "alpha"},
+      [shipMenuStack](float alpha) { shipMenuStack->GetRenderTransform().SetOpacity(alpha); },
+      {
+        .startValue = shipMenuStack->GetRenderTransform().GetOpacity(),
+        .endValue = 1,
+        .duration = 0.6,
+      } //
+    );
+  };
+  shipMenuStack->onHide = [this, shipMenuStack]() {
+    GetOwner()->GetTweenManager()->AddTween<float>(
+      {shipMenuStack.get(), "alpha"},
+      [shipMenuStack](float alpha) { shipMenuStack->GetRenderTransform().SetOpacity(alpha); },
+      {.startValue = shipMenuStack->GetRenderTransform().GetOpacity(),
+       .endValue = 0,
+       .duration = 0.6,
+       .onTweenEnd = [shipMenuStack]() { shipMenuStack->SetVisibilityOff(); }} //
+    );
+  };
+  shipMenuStack->SetHAlignment(Base::HAlign::Stretch);
+  shipMenuStack->SetVAlignment(Base::VAlign::Center);
+  shipMenuStack->SetGap(20);
+
+  auto shipMenuText = shipMenuStack->AddChild<Base::UILabel>("select-ship-label");
+  shipMenuText->SetText("Select A Ship");
+  shipMenuText->SetVAlignment(Base::VAlign::Center);
+  shipMenuText->SetHAlignment(Base::HAlign::Center);
+  shipMenuText->SetFont(GetAsset<Base::BaseFont>("main-font"));
+  shipMenuText->SetFontSize(20);
+
+  auto shipGrid = shipMenuStack->AddChild<Base::UIGrid>("ship-menu-grid");
   shipGrid->SetHAlignment(Base::HAlign::Center);
   shipGrid->SetVAlignment(Base::VAlign::Center);
   shipGrid->SetColumnDefinitions({
     {Base::GridCellSizeMode::Auto},
     {Base::GridCellSizeMode::Auto},
   });
-  shipGrid->GetRenderTransform().SetOpacity(0);
   shipGrid->SetVisibilityOff();
   shipGrid->SetPadding(5);
   shipGrid->SetCellGap(10);
-  shipGrid->onShow = [this, shipGrid]() {
-    GetOwner()->GetTweenManager()->AddTween<float>(
-      {shipGrid.get(), "alpha"}, [shipGrid](float alpha) { shipGrid->GetRenderTransform().SetOpacity(alpha); },
-      {
-        .startValue = shipGrid->GetRenderTransform().GetOpacity(),
-        .endValue = 1,
-        .duration = 0.6,
-      } //
-    );
-  };
 
   float hoverScale = 1.15;
   for (int i = 0; i < 2; i++)
@@ -91,7 +118,7 @@ void ShipSelectionLayer::OnAttach()
 
 void ShipSelectionLayer::Render()
 {
-  GetOwner()->GetUIManager()->RenderLayer("ship-menu");
+  GetOwner()->GetUIManager()->RenderLayer(_shipMenu);
 }
 
 void ShipSelectionLayer::Update(float dt)
@@ -104,5 +131,16 @@ void ShipSelectionLayer::OnDetach()
 
 void ShipSelectionLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {
+  if (auto keyEvent = std::dynamic_pointer_cast<Base::KeyEvent>(event))
+  {
+    if (keyEvent->Key == Base::Key::Escape && keyEvent->action == Base::KeyEvent::Action::Pressed)
+    {
+      _shipMenu->Hide();
+      auto bus = Base::SignalBus::GetInstance();
+      auto sig = std::make_shared<ShipSelectionAbortedSignal>();
+      bus->BroadCastSignal(sig);
+      keyEvent->isHandled = true;
+    }
+  }
   GetOwner()->GetUIManager()->OnInputEvent(event);
 }

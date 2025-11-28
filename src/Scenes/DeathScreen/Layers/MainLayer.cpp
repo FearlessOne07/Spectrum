@@ -1,8 +1,6 @@
 #include "MainLayer.hpp"
 #include "Scenes/GameScene/GameScene.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
-#include "base/assets/AssetManager.hpp"
-#include "base/scenes/Scene.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UIButton.hpp"
@@ -166,7 +164,7 @@ void MainLayer::OnAttach()
 
 void MainLayer::Render()
 {
-  GetOwner()->GetUIManager()->RenderLayer("main-layer");
+  GetOwner()->GetUIManager()->RenderLayer(_mainLayer);
 }
 
 void MainLayer::Update(float dt)
