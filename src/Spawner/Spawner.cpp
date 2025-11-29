@@ -7,6 +7,7 @@
 #include "Components/LightCollectorComponent.hpp"
 #include "Components/LightComponent.hpp"
 #include "Components/ShootComponent.hpp"
+#include "Components/Tags/HealthPack.hpp"
 #include "Components/Tags/HealthPacker.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
@@ -54,10 +55,14 @@ void Spawner::Init(const Base::SceneLayer *parentLayer, Base::Ref<Base::EntityMa
   _parentLayer = parentLayer;
   _entityManager = entityManager;
   _spawnOffset = float(200 * _parentLayer->GetCameraZoom());
+  _gen = std::mt19937_64(_rd());
 
   auto bus = Base::SignalBus::GetInstance();
   bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {
     this->SpawnLight(std::static_pointer_cast<EntityDiedSignal>(sig)); //
+  });
+  bus->SubscribeSignal<EntityDiedSignal>([this](std::shared_ptr<Base::Signal> sig) {
+    this->SpawnHealthPack(std::static_pointer_cast<EntityDiedSignal>(sig)); //
   });
 }
 
@@ -161,9 +166,6 @@ void Spawner::SpawnWave( //
 {
   if (_spawnTimer >= _spawnDuration && !_toSpawn.empty())
   {
-    std::random_device rd;
-    std::mt19937_64 gen(rd());
-
     _spawnTimer = 0.f;
     const Base::RenderContext *rctx = Base::RenderContextSingleton::GetInstance();
 
@@ -171,7 +173,7 @@ void Spawner::SpawnWave( //
     _toSpawn.pop();
 
     std::uniform_int_distribution sideDist(1, 4);
-    int side = sideDist(gen);
+    int side = sideDist(_gen);
 
     Vector2 min = {-_spawnOffset, -_spawnOffset};
     Vector2 max = {_parentLayer->GetSize().x + _spawnOffset, _parentLayer->GetSize().y + _spawnOffset};
@@ -183,19 +185,19 @@ void Spawner::SpawnWave( //
     switch (side)
     {
     case 1: // Right
-      ypos = std::uniform_real_distribution<float>(min.y, max.y)(gen);
+      ypos = std::uniform_real_distribution<float>(min.y, max.y)(_gen);
       position = _parentLayer->GetScreenToWorld({max.x, ypos});
       break;
     case 2: // Left
-      ypos = std::uniform_real_distribution<float>(min.y, max.y)(gen);
+      ypos = std::uniform_real_distribution<float>(min.y, max.y)(_gen);
       position = _parentLayer->GetScreenToWorld({min.x, ypos});
       break;
     case 3: // Up
-      xpos = std::uniform_real_distribution<float>(min.x, max.x)(gen);
+      xpos = std::uniform_real_distribution<float>(min.x, max.x)(_gen);
       position = _parentLayer->GetScreenToWorld({xpos, min.y});
       break;
     case 4: // Down
-      xpos = std::uniform_real_distribution<float>(min.x, max.x)(gen);
+      xpos = std::uniform_real_distribution<float>(min.x, max.x)(_gen);
       position = _parentLayer->GetScreenToWorld({xpos, max.y});
       break;
     }
@@ -263,7 +265,7 @@ void Spawner::SpawnWave( //
           Vector2{64, 64},
         } //
       );
-      mvcmp->driveForce = std::uniform_real_distribution<float>(400, 500)(gen);
+      mvcmp->driveForce = std::uniform_real_distribution<float>(400, 500)(_gen);
       break;
     }
     case EnemyType::SHOOTER: {
@@ -430,6 +432,55 @@ void Spawner::SpawnWave( //
   }
 }
 
+void Spawner::SpawnHealthPack(std::shared_ptr<EntityDiedSignal> sig)
+{
+  if (!sig->entity->HasComponent<EnemyComponent>() || !sig->entity->HasComponent<HealthPacker>())
+  {
+    return;
+  }
+
+  auto healthpck = sig->entity->GetComponent<HealthPacker>();
+  auto e = _entityManager->CreateEntity();
+  e->GetComponent<Base::TransformComponent>()->position =
+    sig->entity->GetComponent<Base::TransformComponent>()->position;
+
+  auto colcmp = e->AddComponent<Base::ColliderComponent>();
+  colcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
+  colcmp->radius = 16 / 2.f;
+
+  e->AddComponent<Base::SpriteComponent>( //
+    Base::Sprite{
+      _parentLayer->GetAsset<Base::Texture>("power-ups"),
+      Vector2{24, 8},
+      Vector2{8, 8},
+      Vector2{16, 16},
+    } //
+  );
+
+  auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
+  rbcmp->isKinematic = false;
+  rbcmp->drag = 4;
+  rbcmp->mass = 1;
+
+  auto mvcmp = e->AddComponent<Base::MoveComponent>();
+  mvcmp->driveForce = 0;
+
+  float angle = std::uniform_real_distribution<float>(0, 2 * PI)(_gen);
+  rbcmp->direction = {sin(angle), cos(angle)};
+
+  auto impcmp = e->AddComponent<Base::ImpulseComponent>();
+  impcmp->force = std::uniform_int_distribution<int>(200, 400)(_gen);
+  impcmp->direction = {sin(angle), cos(angle)};
+
+  auto transfx = e->AddComponent<TransformEffectsComponent>();
+  transfx->bind = true;
+  transfx->bindMin = _parentLayer->GetScreenToWorld({0, 0});
+  transfx->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
+
+  e->AddComponent<HealthPack>()->restorationPercentage = healthpck->restorationPercentage;
+  _entityManager->AddEntity(e);
+}
+
 void Spawner::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
 {
   if (!sig->entity->HasComponent<EnemyComponent>())
@@ -438,8 +489,6 @@ void Spawner::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
   }
 
   int totalValue = sig->entity->GetComponent<EnemyComponent>()->value;
-  std::random_device _rd;
-  std::mt19937_64 _gen(_rd());
 
   // First, split the value into chunks of at most 3
   std::vector<int> chunks;

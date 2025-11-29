@@ -23,4 +23,5 @@ public:
   void Flash();
   void SetMinStrength(float min);
   void SetMaintain(bool maintain);
+  void SetVignetteColor(Color color);
 };

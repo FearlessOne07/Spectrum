@@ -10,6 +10,7 @@
 #include "Components/Tags/ExplosionTag.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Scenes/DeathScreen/DeathScreen.hpp"
+#include "ShaderEffects/Vignette/Vignette.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
 #include "Signals/EntityDiedSignal.hpp"
 #include "base/audio/Sound.hpp"
@@ -121,17 +122,17 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
       auto lightcmp = attack->GetComponent<LightComponent>();
       lightcolcmp->value += lightcmp->value;
       attack->SetDead();
+
+      // auto vignette = _parentLayer->GetShaderEffect<Vignette>();
+      // vignette->SetVignetteColor(Color{235, 211, 32, 255});
+      // vignette->Flash();
     }
     else if (attack->HasComponent<ExplosionTag>())
     {
       auto expcmp = attack->GetComponent<ExplosionTag>();
       if (!expcmp->exploded)
       {
-        // expcmp->exploded = true;
         auto colcmp = attack->GetComponent<Base::ColliderComponent>();
-
-        // float radius = colcmp->radius / _parentLayer->GetCameraZoom();
-
         auto entities = _parentLayer->GetOwner()->GetEntityManager()->QueryArea(Circle{
           transAtt->position,
           colcmp->radius,

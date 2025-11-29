@@ -17,29 +17,36 @@
 
 void ShipSelectionLayer::OnAttach()
 {
+  float layerFadeDuration = 0.2;
   _shipMenu = GetOwner()->GetUIManager()->AddLayer("ship-menu", GetSize(), {0, 0}, *this);
   auto shipMenuStack = _shipMenu->SetRootElement<Base::UIStackPanel>();
   shipMenuStack->SetVisibilityOff();
   shipMenuStack->GetRenderTransform().SetOpacity(0);
-  shipMenuStack->onShow = [this, shipMenuStack]() {
+  shipMenuStack->onShow = [this, shipMenuStack, layerFadeDuration]() {
     GetOwner()->GetTweenManager()->AddTween<float>(
       {shipMenuStack.get(), "alpha"},
       [shipMenuStack](float alpha) { shipMenuStack->GetRenderTransform().SetOpacity(alpha); },
       {
         .startValue = shipMenuStack->GetRenderTransform().GetOpacity(),
         .endValue = 1,
-        .duration = 0.6,
+        .duration = layerFadeDuration,
       } //
     );
   };
-  shipMenuStack->onHide = [this, shipMenuStack]() {
+  shipMenuStack->onHide = [this, shipMenuStack, layerFadeDuration]() {
     GetOwner()->GetTweenManager()->AddTween<float>(
       {shipMenuStack.get(), "alpha"},
       [shipMenuStack](float alpha) { shipMenuStack->GetRenderTransform().SetOpacity(alpha); },
       {.startValue = shipMenuStack->GetRenderTransform().GetOpacity(),
        .endValue = 0,
-       .duration = 0.6,
-       .onTweenEnd = [shipMenuStack]() { shipMenuStack->SetVisibilityOff(); }} //
+       .duration = layerFadeDuration,
+       .onTweenEnd =
+         [shipMenuStack]() {
+           shipMenuStack->SetVisibilityOff();
+           auto bus = Base::SignalBus::GetInstance();
+           auto sig = std::make_shared<ShipSelectionAbortedSignal>();
+           bus->BroadCastSignal(sig);
+         }} //
     );
   };
   shipMenuStack->SetHAlignment(Base::HAlign::Stretch);
@@ -136,9 +143,6 @@ void ShipSelectionLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
     if (keyEvent->Key == Base::Key::Escape && keyEvent->action == Base::KeyEvent::Action::Pressed)
     {
       _shipMenu->Hide();
-      auto bus = Base::SignalBus::GetInstance();
-      auto sig = std::make_shared<ShipSelectionAbortedSignal>();
-      bus->BroadCastSignal(sig);
       keyEvent->isHandled = true;
     }
   }

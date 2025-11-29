@@ -17,10 +17,10 @@
 void MainMenuLayer::OnAttach()
 {
   Base::NinePatchSprite buttonSprite = {
-    GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 4,
+    GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 1,
   };
 
-  float layerFadeDuration = 0.5;
+  float layerFadeDuration = 0.2;
 
   _mainMenu = GetOwner()->GetUIManager()->AddLayer("main-menu", GetSize(), {0, 0}, *this);
   auto mainMenuPanel = _mainMenu->SetLayerBackPanel();
@@ -54,8 +54,8 @@ void MainMenuLayer::OnAttach()
   container->SetOrientation(Base::UIStackPanel::Orientation::Vertical);
   container->SetHAlignment(Base::HAlign::Center);
   container->SetVAlignment(Base::VAlign::Center);
-  container->SetPadding(10);
-  container->SetGap(25);
+  container->SetPadding(10 / 4.f);
+  container->SetGap(25 / 4.f);
   container->onHide = [this, container, layerFadeDuration]() {
     GetOwner()->GetTweenManager()->AddTween<float>(
       {container.get(), "alpha"}, [container](float alpha) { container->GetRenderTransform().SetOpacity(alpha); },
@@ -63,7 +63,13 @@ void MainMenuLayer::OnAttach()
         .startValue = container->GetRenderTransform().GetOpacity(),
         .endValue = 0,
         .duration = layerFadeDuration,
-        .onTweenEnd = [=]() { container->SetVisibilityOff(); },
+        .onTweenEnd =
+          [=]() {
+            container->SetVisibilityOff();
+            auto bus = Base::SignalBus::GetInstance();
+            auto sig = std::make_shared<ShipSelectionStartedSignal>();
+            bus->BroadCastSignal(sig);
+          },
       } //
     );
   };
@@ -86,15 +92,13 @@ void MainMenuLayer::OnAttach()
   playButton->SetText("Play");
   playButton->SetHAlignment(Base::HAlign::Center);
   playButton->SetVAlignment(Base::VAlign::Center);
-  playButton->SetFontSize(55);
-  playButton->SetPadding(10);
-  playButton->onClick = [this]() {
-    _mainMenu->Hide();
-    auto bus = Base::SignalBus::GetInstance();
-    auto sig = std::make_shared<ShipSelectionStartedSignal>();
-    bus->BroadCastSignal(sig);
-  };
-  playButton->SetSprite(buttonSprite);
+  playButton->SetFontSize(55 / 4.f);
+  playButton->SetPadding(10 / 4.f);
+  playButton->onClick = [this]() { _mainMenu->Hide(); };
+  // playButton->SetSprite(buttonSprite);
+  playButton->SetTextColor(WHITE);
+  playButton->SetBackgroundColor(BLANK);
+
   playButton->onHover = {
     [=, this]() {                                     //
       GetOwner()->GetTweenManager()->AddTween<float>( //
@@ -125,12 +129,14 @@ void MainMenuLayer::OnAttach()
   auto exitButton = container->AddChild<Base::UIButton>("exit-button");
   exitButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   exitButton->SetText("Exit");
-  exitButton->SetFontSize(55);
+  exitButton->SetFontSize(55 / 4.f);
   exitButton->SetHAlignment(Base::HAlign::Center);
   exitButton->SetVAlignment(Base::VAlign::Center);
-  exitButton->SetPadding(10);
+  exitButton->SetPadding(10 / 4.f);
   exitButton->onClick = [this]() { GetOwner()->SetSceneTransition(Base::SceneRequest::Quit); };
-  exitButton->SetSprite(buttonSprite);
+  // exitButton->SetSprite(buttonSprite);
+  exitButton->SetTextColor(WHITE);
+  exitButton->SetBackgroundColor(BLANK);
   exitButton->onHover = {
     [=, this]() {                                     //
       GetOwner()->GetTweenManager()->AddTween<float>( //

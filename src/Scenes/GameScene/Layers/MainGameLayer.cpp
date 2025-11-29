@@ -81,7 +81,7 @@ void MainGameLayer::Update(float dt)
   auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
   if (player)
   {
-    auto vignette = GetRenderLayer()->GetShaderEffect<Vignette>();
+    auto vignette = GetShaderEffect<Vignette>();
     auto hlthcmp = player->GetComponent<HealthComponent>();
     if (hlthcmp->GetHealth() <= hlthcmp->GetMaxHealth() * 0.2)
     {
@@ -167,7 +167,8 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     rise();
 
     // Flash Vignette
-    auto vignette = GetRenderLayer()->GetShaderEffect<Vignette>();
+    auto vignette = GetShaderEffect<Vignette>();
+    vignette->SetVignetteColor(Color{255, 48, 48, 255});
     vignette->Flash();
   }
 }

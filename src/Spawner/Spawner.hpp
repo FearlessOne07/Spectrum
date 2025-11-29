@@ -8,12 +8,16 @@
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
 #include <queue>
+#include <random>
 #include <raylib.h>
 #include <vector>
 
 class Spawner
 {
 private:
+  std::random_device _rd;
+  std::mt19937_64 _gen;
+
   // Spawming
   float _spawnDuration = 2.f;
   float _spawnTimer = _spawnDuration;
@@ -30,6 +34,7 @@ private:
   Base::Ref<Base::EntityManager> _entityManager;
 
   void SpawnLight(std::shared_ptr<EntityDiedSignal> sig);
+  void SpawnHealthPack(std::shared_ptr<EntityDiedSignal> sig);
 
 public:
   Spawner() = default;

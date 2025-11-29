@@ -9,7 +9,6 @@
 
 void MainMenu::Enter(const Base::SceneData &sceneData)
 {
-  AttachLayer<MainMenuLayer>(AddRenderLayer({1920, 1080}));
 
   // MainRenderLayer
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
@@ -17,6 +16,7 @@ void MainMenu::Enter(const Base::SceneData &sceneData)
   auto mainLayer = AddRenderLayer({mainLayerRes.x, mainLayerRes.y}, GetClearColor());
   mainLayer->AddShaderEffect<Bloom>(shared_from_this(), 1.2, 0.25, 1);
 
+  AttachLayer<MainMenuLayer>(mainLayer);
   AttachLayer<ShipSelectionLayer>(mainLayer);
 
   auto bus = Base::SignalBus::GetInstance();

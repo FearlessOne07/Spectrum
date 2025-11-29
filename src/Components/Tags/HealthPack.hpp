@@ -1,6 +1,5 @@
 #include "base/components/Component.hpp"
-
-class HealthPacker : public Base::Component
+class HealthPack : public Base::Component
 {
 public:
   float restorationPercentage = 0;

@@ -58,3 +58,8 @@ void Vignette::SetMaintain(bool maintain)
 {
   _maintain = maintain;
 }
+
+void Vignette::SetVignetteColor(Color color)
+{
+  _vignetteColor = color;
+}
