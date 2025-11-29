@@ -33,7 +33,7 @@ void MainLayer::OnAttach()
         .startValue = 0,
         .endValue = 1,
         .duration = 1.5,
-        .easingType = Base::TweenManager::EasingType::EaseInOut,
+        .easingType = Base::Easings::Type::EaseInOut,
       } //
     );
     GetOwner()->GetTweenManager()->AddTween<float>( //
@@ -42,7 +42,7 @@ void MainLayer::OnAttach()
         .startValue = deathMessage->GetRenderTransform().GetOffsetY(),
         .endValue = 0,
         .duration = 1.5,
-        .easingType = Base::TweenManager::EasingType::EaseInOut,
+        .easingType = Base::Easings::Type::EaseInOut,
       } //
     );
   };
@@ -69,7 +69,7 @@ void MainLayer::OnAttach()
         .startValue = 0,
         .endValue = 1,
         .duration = 1,
-        .easingType = Base::TweenManager::EasingType::EaseInOut,
+        .easingType = Base::Easings::Type::EaseInOut,
       } //
     );
     GetOwner()->GetTweenManager()->AddTween<float>( //
@@ -79,7 +79,7 @@ void MainLayer::OnAttach()
         .startValue = actionButtonContainer->GetRenderTransform().GetOffsetY(),
         .endValue = 0,
         .duration = 1,
-        .easingType = Base::TweenManager::EasingType::EaseInOut,
+        .easingType = Base::Easings::Type::EaseInOut,
       } //
     );
   };
@@ -106,7 +106,7 @@ void MainLayer::OnAttach()
           .startValue = mainMenuButton->GetRenderTransform().GetFontScale(),
           .endValue = hoverScale,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EaseOut,
+          .easingType = Base::Easings::Type::EaseOut,
         } //
       );
     },
@@ -118,7 +118,7 @@ void MainLayer::OnAttach()
           .startValue = mainMenuButton->GetRenderTransform().GetFontScale(),
           .endValue = 1,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EaseOut,
+          .easingType = Base::Easings::Type::EaseOut,
         } //
       );
     },
@@ -144,7 +144,7 @@ void MainLayer::OnAttach()
           .startValue = playButton->GetRenderTransform().GetFontScale(),
           .endValue = hoverScale,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EaseOut,
+          .easingType = Base::Easings::Type::EaseOut,
         } //
       );
     },
@@ -155,7 +155,7 @@ void MainLayer::OnAttach()
           .startValue = playButton->GetRenderTransform().GetFontScale(),
           .endValue = 1,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EaseOut,
+          .easingType = Base::Easings::Type::EaseOut,
         } //
       );
     },

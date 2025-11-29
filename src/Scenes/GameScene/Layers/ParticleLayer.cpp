@@ -10,6 +10,7 @@
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/sprites/Sprite.hpp"
+#include "base/util/Easings.hpp"
 #include "raylib.h"
 #include <base/audio/signals/PlaySoundSignal.hpp>
 #include <base/particles/ParticleManager.hpp>
@@ -22,6 +23,7 @@ void ParticleLayer::OnAttach()
   _emitter = GetOwner()->GetParticleManager()->AddEmitter();
   _emitter->burst = true;
   _emitter->emissionType = Base::ParticleEmitter::EmissionType::Point;
+  _emitter->easingType = Base::Easings::Type::EaseInOut;
   _emitter->particleShape = Base::ParticleEmitter::ParticleShape::Texture;
   _emitter->burstEmissionCount = 60;
   _emitter->particleRotationSpeed = 180;

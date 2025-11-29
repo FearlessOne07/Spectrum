@@ -103,7 +103,7 @@ void MainMenuLayer::OnAttach()
           .startValue = playButton->GetRenderTransform().GetFontScale(),
           .endValue = hoverScale,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EaseOut,
+          .easingType = Base::Easings::Type::EaseOut,
         } //
       );
     },
@@ -115,7 +115,7 @@ void MainMenuLayer::OnAttach()
           .startValue = playButton->GetRenderTransform().GetFontScale(), //
           .endValue = 1,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EaseOut,
+          .easingType = Base::Easings::Type::EaseOut,
         } //
       );
     },
@@ -139,7 +139,7 @@ void MainMenuLayer::OnAttach()
           .startValue = exitButton->GetRenderTransform().GetFontScale(),
           .endValue = hoverScale,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EaseOut,
+          .easingType = Base::Easings::Type::EaseOut,
         } //
       );
     },
@@ -150,7 +150,7 @@ void MainMenuLayer::OnAttach()
           .startValue = exitButton->GetRenderTransform().GetFontScale(),
           .endValue = 1,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EaseOut,
+          .easingType = Base::Easings::Type::EaseOut,
         } //
       );
     },

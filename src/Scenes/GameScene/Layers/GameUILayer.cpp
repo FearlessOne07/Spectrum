@@ -133,7 +133,7 @@ void GameUILayer::InitPauseMenu()
         .startValue = container->GetRenderTransform().GetOffsetY(),
         .endValue = offset,
         .duration = 0.3,
-        .easingType = Base::TweenManager::EasingType::EaseIn,
+        .easingType = Base::Easings::Type::EaseIn,
         .onTweenEnd = [container]() { container->SetVisibilityOff(); },
       } //
     );
@@ -161,7 +161,7 @@ void GameUILayer::InitPauseMenu()
           .startValue = resumeButton->GetRenderTransform().GetFontScale(),
           .endValue = hoverScale,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EaseOut,
+          .easingType = Base::Easings::Type::EaseOut,
         } //
       );
     },
@@ -173,7 +173,7 @@ void GameUILayer::InitPauseMenu()
           .startValue = resumeButton->GetRenderTransform().GetFontScale(), //
           .endValue = 1,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EaseOut,
+          .easingType = Base::Easings::Type::EaseOut,
         } //
       );
     },
@@ -204,7 +204,7 @@ void GameUILayer::InitPauseMenu()
           .startValue = mainMenuButton->GetRenderTransform().GetFontScale(),
           .endValue = hoverScale,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EaseOut,
+          .easingType = Base::Easings::Type::EaseOut,
         } //
       );
     },
@@ -216,7 +216,7 @@ void GameUILayer::InitPauseMenu()
           .startValue = mainMenuButton->GetRenderTransform().GetFontScale(),
           .endValue = 1,
           .duration = 0.1,
-          .easingType = Base::TweenManager::EasingType::EaseOut,
+          .easingType = Base::Easings::Type::EaseOut,
         } //
       );
     },
@@ -236,7 +236,7 @@ void GameUILayer::InitPauseMenu()
         .startValue = pauseMenuPanel->GetRenderTransform().GetOpacity(),
         .endValue = 0,
         .duration = 0.3,
-        .easingType = Base::TweenManager::EasingType::EaseIn,
+        .easingType = Base::Easings::Type::EaseIn,
         .onTweenEnd = [pauseMenuPanel]() { pauseMenuPanel->SetVisibilityOff(); },
       } //
     );
@@ -336,7 +336,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
         .startValue = buyMenuPanel->GetRenderTransform().GetOpacity(), //
         .endValue = 1,
         .duration = buyMenuEntryDuration,
-        .easingType = Base::TweenManager::EasingType::EaseOut,
+        .easingType = Base::Easings::Type::EaseOut,
       } //
     );
   };
@@ -348,7 +348,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
       {.startValue = buyMenuPanel->GetRenderTransform().GetOpacity(),         //
        .endValue = 0,
        .duration = buyMenuExitDuration,
-       .easingType = Base::TweenManager::EasingType::EaseIn,
+       .easingType = Base::Easings::Type::EaseIn,
        .onTweenEnd = [buyMenuPanel]() { buyMenuPanel->SetVisibilityOff(); }} //
     );
   };
@@ -379,7 +379,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
         .startValue = mainContainer->GetRenderTransform().GetOffsetY(),
         .endValue = offset,
         .duration = buyMenuExitDuration,
-        .easingType = Base::TweenManager::EasingType::EaseIn,
+        .easingType = Base::Easings::Type::EaseIn,
         .onTweenEnd = [mainContainer]() { mainContainer->SetVisibilityOff(); },
       } //
     );
@@ -399,7 +399,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
         .startValue = lightContainer->GetRenderTransform().GetOpacity(), //
         .endValue = 1,
         .duration = buyMenuEntryDuration,
-        .easingType = Base::TweenManager::EasingType::EaseOut,
+        .easingType = Base::Easings::Type::EaseOut,
       } //
     );
   };
@@ -411,7 +411,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
         .startValue = lightContainer->GetRenderTransform().GetOpacity(), //
         .endValue = 0,
         .duration = buyMenuExitDuration,
-        .easingType = Base::TweenManager::EasingType::EaseIn,
+        .easingType = Base::Easings::Type::EaseIn,
         .onTweenEnd = [lightContainer]() { lightContainer->SetVisibilityOff(); },
       } //
     );
@@ -461,7 +461,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
             .startValue = card->GetRenderTransform().GetOffsetY(),
             .endValue = -30,
             .duration = 0.1,
-            .easingType = Base::TweenManager::EasingType::EaseOut,
+            .easingType = Base::Easings::Type::EaseOut,
           } //
         );
       },
@@ -473,7 +473,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
             .startValue = card->GetRenderTransform().GetOffsetY(),
             .endValue = 0,
             .duration = 0.1,
-            .easingType = Base::TweenManager::EasingType::EaseOut,
+            .easingType = Base::Easings::Type::EaseOut,
           } //
         );
       },
@@ -488,7 +488,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
             .startValue = card->GetRenderTransform().GetOffsetY(), //
             .endValue = card->GetRenderTransform().GetOffsetY() - 50,
             .duration = fadeOutDuration,
-            .easingType = Base::TweenManager::EasingType::EaseOut,
+            .easingType = Base::Easings::Type::EaseOut,
             .priority = Base::TweenPriorityLevel::Medium,
           } //
         );
@@ -500,7 +500,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
             .startValue = card->GetRenderTransform().GetOpacity(), //
             .endValue = 0,
             .duration = fadeOutDuration,
-            .easingType = Base::TweenManager::EasingType::EaseOut,
+            .easingType = Base::Easings::Type::EaseOut,
             .onTweenEnd =
               [=, this]() {
                 // Refresh Shop
@@ -514,7 +514,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
                     .startValue = card->GetRenderTransform().GetOffsetY(), //
                     .endValue = 0,
                     .duration = fadeInDuration,
-                    .easingType = Base::TweenManager::EasingType::EaseOut,
+                    .easingType = Base::Easings::Type::EaseOut,
                     .priority = Base::TweenPriorityLevel::Medium,
                   } //
                 );
@@ -527,7 +527,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
                     .startValue = card->GetRenderTransform().GetOpacity(), //
                     .endValue = alphas[i],
                     .duration = fadeInDuration,
-                    .easingType = Base::TweenManager::EasingType::EaseOut,
+                    .easingType = Base::Easings::Type::EaseOut,
                     .priority = Base::TweenPriorityLevel::Medium,
                   } //
                 );
@@ -646,7 +646,7 @@ std::array<float, 3> GameUILayer::UpdateItems()
         .startValue = card->GetRenderTransform().GetOpacity(), //
         .endValue = alpha,
         .duration = 0.3,
-        .easingType = Base::TweenManager::EasingType::EaseOut,
+        .easingType = Base::Easings::Type::EaseOut,
       } //
     );
   }

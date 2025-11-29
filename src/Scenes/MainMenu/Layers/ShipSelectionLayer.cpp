@@ -90,7 +90,7 @@ void ShipSelectionLayer::OnAttach()
             .startValue = shipText->GetRenderTransform().GetScaleX(),
             .endValue = hoverScale,
             .duration = 0.1,
-            .easingType = Base::TweenManager::EasingType::EaseOut,
+            .easingType = Base::Easings::Type::EaseOut,
           } //
         );
       },
@@ -105,7 +105,7 @@ void ShipSelectionLayer::OnAttach()
             .startValue = shipText->GetRenderTransform().GetScaleX(),
             .endValue = 1,
             .duration = 0.1,
-            .easingType = Base::TweenManager::EasingType::EaseOut,
+            .easingType = Base::Easings::Type::EaseOut,
           } //
         );
       },
