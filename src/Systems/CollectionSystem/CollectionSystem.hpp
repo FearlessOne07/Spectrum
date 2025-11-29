@@ -1,6 +1,6 @@
 #include "base/systems/System.hpp"
 
-class LightCollectionSystem : public Base::System
+class CollectionSystem : public Base::System
 {
 public:
   void Update(                                                                                              //

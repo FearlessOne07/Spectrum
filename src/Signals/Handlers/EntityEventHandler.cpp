@@ -8,6 +8,7 @@
 #include "Components/LightComponent.hpp"
 #include "Components/ShootComponent.hpp"
 #include "Components/Tags/ExplosionTag.hpp"
+#include "Components/Tags/HealthPack.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Scenes/DeathScreen/DeathScreen.hpp"
 #include "ShaderEffects/Vignette/Vignette.hpp"
@@ -122,10 +123,17 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
       auto lightcmp = attack->GetComponent<LightComponent>();
       lightcolcmp->value += lightcmp->value;
       attack->SetDead();
+    }
+    else if (attack->HasComponent<HealthPack>())
+    {
+      auto healthpck = attack->GetComponent<HealthPack>();
+      auto healthcmp = defence->GetComponent<HealthComponent>();
+      healthcmp->SetHealth(healthcmp->GetHealth() + (healthcmp->GetMaxHealth() * healthpck->restorationPercentage));
+      attack->SetDead();
 
-      // auto vignette = _parentLayer->GetShaderEffect<Vignette>();
-      // vignette->SetVignetteColor(Color{235, 211, 32, 255});
-      // vignette->Flash();
+      auto vignette = _parentLayer->GetShaderEffect<Vignette>();
+      vignette->SetVignetteColor(Color{73, 162, 105, 255});
+      vignette->Flash();
     }
     else if (attack->HasComponent<ExplosionTag>())
     {

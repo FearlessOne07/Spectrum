@@ -2,9 +2,9 @@
 #include "Scenes/GameScene/GameScene.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
+#include "Systems/CollectionSystem/CollectionSystem.hpp"
 #include "Systems/DiveSystem/DiveSystem.hpp"
 #include "Systems/HealthSystem/HealthSystem.hpp"
-#include "Systems/LightCollectionSystem/LightCollectionSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
 #include "base/assets/BaseAsset.hpp"
@@ -55,7 +55,7 @@ int main(void)
 
   // Custom Systems
   game.RegisterSystem<BulletSystem>();
-  game.RegisterSystem<LightCollectionSystem>();
+  game.RegisterSystem<CollectionSystem>();
   game.RegisterSystem<TransformEffectsSystem>();
   game.RegisterSystem<TrackingSystem>();
   game.RegisterSystem<HealthSystem>();

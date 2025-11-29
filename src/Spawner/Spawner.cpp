@@ -1,4 +1,5 @@
 #include "Spawner.hpp"
+#include "Components/CollectableComponent.hpp"
 #include "Components/DamageComponent.hpp"
 #include "Components/DiveComponent.hpp"
 #include "Components/EnemyComponent.hpp"
@@ -7,6 +8,7 @@
 #include "Components/LightCollectorComponent.hpp"
 #include "Components/LightComponent.hpp"
 #include "Components/ShootComponent.hpp"
+#include "Components/Tags/Collector.hpp"
 #include "Components/Tags/HealthPack.hpp"
 #include "Components/Tags/HealthPacker.hpp"
 #include "Components/Tags/PlayerTag.hpp"
@@ -145,9 +147,10 @@ Base::EntityID Spawner::SpawnPlayer(Vector2 position, const Ship &ship)
   e->AddComponent<Base::ImpulseComponent>();
   e->AddComponent<PlayerTag>();
 
-  auto lightColCmp = e->AddComponent<LightCollectorComponent>();
+  e->AddComponent<LightCollectorComponent>();
+  auto colcmp = e->AddComponent<Collector>();
   float baseRadius = abbcmp->radius / _parentLayer->GetCameraZoom();
-  lightColCmp->collectionRaius = (baseRadius + (baseRadius * 0.5));
+  colcmp->collectionRadius = (baseRadius + (baseRadius * 0.5));
   _entityManager->AddEntity(e);
 
   auto bus = Base::SignalBus::GetInstance();
@@ -440,9 +443,13 @@ void Spawner::SpawnHealthPack(std::shared_ptr<EntityDiedSignal> sig)
   }
 
   auto healthpck = sig->entity->GetComponent<HealthPacker>();
+  healthpck->restorationPercentage = 0.35;
+
   auto e = _entityManager->CreateEntity();
   e->GetComponent<Base::TransformComponent>()->position =
     sig->entity->GetComponent<Base::TransformComponent>()->position;
+
+  e->AddComponent<CollectableComponent>();
 
   auto colcmp = e->AddComponent<Base::ColliderComponent>();
   colcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
@@ -548,6 +555,7 @@ void Spawner::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
     transfx->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
 
     e->AddComponent<LightComponent>()->value = lightValue;
+    e->AddComponent<CollectableComponent>();
     _entityManager->AddEntity(e);
   }
 }

@@ -15,7 +15,7 @@ set(SOURCES
   "./Systems/TrackingSystem/TrackingSystem.cpp"
   "./Systems/HealthSystem/HealthSystem.cpp"
   "./Systems/TransformEffectsSystem/TransformEffectsSystem.cpp"
-  "./Systems/LightCollectionSystem/LightCollectionSystem.cpp"
+  "./Systems/CollectionSystem/CollectionSystem.cpp"
   "./Systems/DiveSystem/DiveSystem.cpp"
 
   "./Signals/Handlers/EntityEventHandler.cpp"
