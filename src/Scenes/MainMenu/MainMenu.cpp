@@ -12,9 +12,9 @@ void MainMenu::Enter(const Base::SceneData &sceneData)
 
   // MainRenderLayer
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight} / 4;
+  Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight};
   auto mainLayer = AddRenderLayer({mainLayerRes.x, mainLayerRes.y}, GetClearColor());
-  mainLayer->AddShaderEffect<Bloom>(shared_from_this(), 1.2, 0.25, 1);
+  mainLayer->AddShaderEffect<Bloom>(shared_from_this(), 1.2, 0.25, 0.25);
 
   AttachLayer<MainMenuLayer>(mainLayer);
   AttachLayer<ShipSelectionLayer>(mainLayer);

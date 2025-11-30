@@ -41,7 +41,7 @@ void GameScene::Enter(const Base::SceneData &sceneData)
 
   LoadAsset<Base::BaseShader>("assets/shaders/vignette/vignette.frag ");
 
-  auto uiLayer = AddRenderLayer({1920, 1080});
+  auto uiLayer = AddRenderLayer(Vector2{1920, 1080});
   AttachLayer<GameUILayer>(uiLayer);
 
   // MainRenderLayer
@@ -53,11 +53,12 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   mainLayer->SetCameraRotation(0);
 
   // TODO: Fix Tone mapping for bloom??
-  mainLayer->AddShaderEffect<Bloom>(shared_from_this(), 1.2, 0.25, 1);
   mainLayer->AddShaderEffect<Vignette>(shared_from_this(), Color{255, 48, 48, 255}, 0.5f, 0.5);
 
   AttachLayer<MainGameLayer>(mainLayer);
   AttachLayer<ParticleLayer>(mainLayer);
+
+  auto bloom = AddPostProcessingEffect<Bloom>(1.2, 0.25, 0.25);
 
   std::shared_ptr<Base::PlayAudioStreamSignal> sig = std::make_shared<Base::PlayAudioStreamSignal>();
   sig->streamHandle = GetAsset<Base::AudioStream>("game-track");

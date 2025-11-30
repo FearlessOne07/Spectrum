@@ -58,7 +58,7 @@ void ShipSelectionLayer::OnAttach()
   shipMenuText->SetVAlignment(Base::VAlign::Center);
   shipMenuText->SetHAlignment(Base::HAlign::Center);
   shipMenuText->SetFont(GetAsset<Base::BaseFont>("main-font"));
-  shipMenuText->SetFontSize(20);
+  shipMenuText->SetFontSize(40);
 
   auto shipGrid = shipMenuStack->AddChild<Base::UIGrid>("ship-menu-grid");
   shipGrid->SetHAlignment(Base::HAlign::Center);
@@ -68,8 +68,8 @@ void ShipSelectionLayer::OnAttach()
     {Base::GridCellSizeMode::Auto},
   });
   shipGrid->SetVisibilityOff();
-  shipGrid->SetPadding(5);
-  shipGrid->SetCellGap(10);
+  shipGrid->SetPadding(20);
+  shipGrid->SetCellGap(40);
 
   float hoverScale = 1.15;
   for (int i = 0; i < 2; i++)
@@ -79,7 +79,7 @@ void ShipSelectionLayer::OnAttach()
     shipText->SetSprite({GetAsset<Base::Texture>("ships"), {}, {i * 8.f, 0}, {8, 8}});
     shipText->SetHAlignment(Base::HAlign::Center);
     shipText->SetVAlignment(Base::VAlign::Center);
-    shipText->SetSize({16, 16});
+    shipText->SetSize({16 * 4, 16 * 4});
     shipText->onClick = [this, i]() {
       Base::SceneData data;
       data.Set(Ship({i * 8.f, 0, 8, 8}));

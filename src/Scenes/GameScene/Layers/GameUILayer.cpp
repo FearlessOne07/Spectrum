@@ -100,10 +100,6 @@ void GameUILayer::Render()
 
 void GameUILayer::InitPauseMenu()
 {
-  Base::NinePatchSprite buttonSprite = {
-    GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 4,
-  };
-
   _pauseMenu = GetOwner()->GetUIManager()->AddLayer("pause-menu", GetSize(), {0, 0}, *this);
   auto container = _pauseMenu->SetRootElement<Base::UIStackPanel>();
   container->SetVAlignment(Base::VAlign::Center);
@@ -152,7 +148,8 @@ void GameUILayer::InitPauseMenu()
     _pauseMenu->Hide();
     UnPause();
   };
-  resumeButton->SetSprite(buttonSprite);
+  resumeButton->SetBackgroundColor(BLANK);
+  resumeButton->SetTextColor(WHITE);
   resumeButton->onHover = {
     [=, this]() {                                     //
       GetOwner()->GetTweenManager()->AddTween<float>( //
@@ -194,7 +191,8 @@ void GameUILayer::InitPauseMenu()
     bus->BroadCastSignal(sig);
     GetOwner()->SetSceneTransition<MainMenu>(Base::SceneRequest::ReplaceCurrentScene);
   };
-  mainMenuButton->SetSprite(buttonSprite);
+  mainMenuButton->SetBackgroundColor(BLANK);
+  mainMenuButton->SetTextColor(WHITE);
   mainMenuButton->onHover = {
     [=, this]() {                                     //
       GetOwner()->GetTweenManager()->AddTween<float>( //
@@ -319,7 +317,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
   float buyMenuEntryDuration = 0.5;
   float buyMenuExitDuration = 0.3;
   Base::NinePatchSprite cardSprite = {
-    GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 8,
+    GetAsset<Base::Texture>("button"), {.top = 2, .bottom = 2, .left = 2, .right = 2}, {0, 0}, {16, 8}, 8,
   };
 
   _buyMenu = GetOwner()->GetUIManager()->AddLayer("buy-menu", GetSize(), {0, 0}, *this);
@@ -544,7 +542,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
     name->SetText("Max Health");
     name->SetVAlignment(Base::VAlign::Center);
     name->SetHAlignment(Base::HAlign::Center);
-    name->SetTextColor(BLACK);
+    name->SetTextColor(WHITE);
 
     auto icon = card->AddChild<Base::UITextureRect>("icon");
     icon->SetSprite({GetAsset<Base::Texture>("heart-ui"), {}, {16, 0}, {8, 8}});
@@ -570,7 +568,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
     lightCost->SetVAlignment(Base::VAlign::Center);
     lightCost->SetHAlignment(Base::HAlign::Center);
     lightCost->SetFontSize(30);
-    lightCost->SetTextColor(BLACK);
+    lightCost->SetTextColor(WHITE);
   }
   _buyMenu->Hide();
 }

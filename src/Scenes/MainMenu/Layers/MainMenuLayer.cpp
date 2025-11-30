@@ -4,8 +4,6 @@
 #include "base/assets/AssetManager.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
-#include "base/sprites/NinePatchSprite.hpp"
-#include "base/textures/Texture.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UIButton.hpp"
@@ -16,12 +14,7 @@
 
 void MainMenuLayer::OnAttach()
 {
-  Base::NinePatchSprite buttonSprite = {
-    GetAsset<Base::Texture>("button"), {.top = 1, .bottom = 1, .left = 1, .right = 1}, {0, 0}, {16, 8}, 1,
-  };
-
   float layerFadeDuration = 0.2;
-
   _mainMenu = GetOwner()->GetUIManager()->AddLayer("main-menu", GetSize(), {0, 0}, *this);
   auto mainMenuPanel = _mainMenu->SetLayerBackPanel();
   mainMenuPanel->SetColor(BLACK);
@@ -54,8 +47,8 @@ void MainMenuLayer::OnAttach()
   container->SetOrientation(Base::UIStackPanel::Orientation::Vertical);
   container->SetHAlignment(Base::HAlign::Center);
   container->SetVAlignment(Base::VAlign::Center);
-  container->SetPadding(10 / 4.f);
-  container->SetGap(25 / 4.f);
+  container->SetPadding(10);
+  container->SetGap(25);
   container->onHide = [this, container, layerFadeDuration]() {
     GetOwner()->GetTweenManager()->AddTween<float>(
       {container.get(), "alpha"}, [container](float alpha) { container->GetRenderTransform().SetOpacity(alpha); },
@@ -92,8 +85,8 @@ void MainMenuLayer::OnAttach()
   playButton->SetText("Play");
   playButton->SetHAlignment(Base::HAlign::Center);
   playButton->SetVAlignment(Base::VAlign::Center);
-  playButton->SetFontSize(55 / 4.f);
-  playButton->SetPadding(10 / 4.f);
+  playButton->SetFontSize(55);
+  playButton->SetPadding(10);
   playButton->onClick = [this]() { _mainMenu->Hide(); };
   // playButton->SetSprite(buttonSprite);
   playButton->SetTextColor(WHITE);
@@ -129,10 +122,10 @@ void MainMenuLayer::OnAttach()
   auto exitButton = container->AddChild<Base::UIButton>("exit-button");
   exitButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
   exitButton->SetText("Exit");
-  exitButton->SetFontSize(55 / 4.f);
+  exitButton->SetFontSize(55);
   exitButton->SetHAlignment(Base::HAlign::Center);
   exitButton->SetVAlignment(Base::VAlign::Center);
-  exitButton->SetPadding(10 / 4.f);
+  exitButton->SetPadding(10);
   exitButton->onClick = [this]() { GetOwner()->SetSceneTransition(Base::SceneRequest::Quit); };
   // exitButton->SetSprite(buttonSprite);
   exitButton->SetTextColor(WHITE);
