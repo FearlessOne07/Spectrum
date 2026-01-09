@@ -24,7 +24,6 @@
 #include "base/components/TimerComponent.hpp"
 #include "base/input/MouseButtons.hpp"
 #include "base/signals/SignalBus.hpp"
-#include "base/sprites/Sprite.hpp"
 #include "base/state/TransitionConditionBlock.hpp"
 #include "base/util/Ref.hpp"
 #include <base/assets/AssetManager.hpp>
@@ -38,7 +37,6 @@
 #include <base/entities/Entity.hpp>
 #include <base/entities/EntityManager.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
-#include <base/scenes/SceneLayer.tpp>
 #include <memory>
 #include <random>
 #include <raylib.h>
@@ -52,7 +50,7 @@ void Spawner::SetToSpawn(std::vector<EnemySpec> toSpawn, float difficultyScale)
   }
 }
 
-void Spawner::Init(const Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager> entityManager)
+void Spawner::Init(Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager> entityManager)
 {
   _parentLayer = parentLayer;
   _entityManager = entityManager;
@@ -108,14 +106,14 @@ Base::EntityID Spawner::SpawnPlayer(Vector2 position, const Ship &ship)
 
   auto sprtcmp = e->AddComponent<Base::SpriteComponent>( //
     Base::Sprite{
-      _parentLayer->GetAsset<Base::Texture>("ships"),
+      _parentLayer->GameCtx().Assets->GetGlobalAsset<Base::Texture>("ships"),
       Vector2{ship.SpriteSource.x, ship.SpriteSource.y},
       Vector2{ship.SpriteSource.width, ship.SpriteSource.height},
       Vector2{64, 64},
     } //
   );
   shtcmp->bulletSprite = {
-    _parentLayer->GetAsset<Base::Texture>("entities"),
+    _parentLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("entities"),
     {0, 8},
     Vector2{8, 8},
     Vector2{32, 32},
@@ -262,7 +260,7 @@ void Spawner::SpawnWave( //
       auto trckcmp = e->AddComponent<TrackingComponent>(_playerID);
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
-          _parentLayer->GetAsset<Base::Texture>("entities"),
+          _parentLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("entities"),
           Vector2{0, 0},
           Vector2{8, 8},
           Vector2{64, 64},
@@ -274,7 +272,7 @@ void Spawner::SpawnWave( //
     case EnemyType::SHOOTER: {
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
-          _parentLayer->GetAsset<Base::Texture>("entities"),
+          _parentLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("entities"),
           Vector2{8, 0},
           Vector2{8, 8},
           Vector2{64, 64},
@@ -287,7 +285,7 @@ void Spawner::SpawnWave( //
       shtcmp->bulletKnockbackForce = 800;
       shtcmp->bulletSpeed = 1000.f;
       shtcmp->bulletSprite = {
-        _parentLayer->GetAsset<Base::Texture>("entities"),
+        _parentLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("entities"),
         {8, 8},
         Vector2{8, 8},
         Vector2{32, 32},
@@ -347,7 +345,7 @@ void Spawner::SpawnWave( //
       mvcmp->driveForce = 500;
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
-          _parentLayer->GetAsset<Base::Texture>("entities"),
+          _parentLayer->GameCtx().Assets->GetGlobalAsset<Base::Texture>("entities"),
           Vector2{16, 0},
           Vector2{8, 8},
           Vector2{64, 64},
@@ -457,7 +455,7 @@ void Spawner::SpawnHealthPack(std::shared_ptr<EntityDiedSignal> sig)
 
   e->AddComponent<Base::SpriteComponent>( //
     Base::Sprite{
-      _parentLayer->GetAsset<Base::Texture>("power-ups"),
+      _parentLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("power-ups"),
       Vector2{24, 8},
       Vector2{8, 8},
       Vector2{16, 16},
@@ -527,7 +525,7 @@ void Spawner::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
 
     e->AddComponent<Base::SpriteComponent>( //
       Base::Sprite{
-        _parentLayer->GetAsset<Base::Texture>("power-ups"),
+        _parentLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("power-ups"),
         Vector2{16, 8},
         Vector2{8, 8},
         Vector2{targetSize, targetSize},

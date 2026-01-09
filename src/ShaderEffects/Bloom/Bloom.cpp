@@ -24,14 +24,14 @@ void Bloom::SetUpBuffers(Vector2 resolution)
 void Bloom::Setup(std::weak_ptr<const Base::Scene> scene)
 {
   _currentScene = scene;
-  _brightShader = scene.lock()->GetAsset<Base::BaseShader>("bright_pass");
-  _blurShader = scene.lock()->GetAsset<Base::BaseShader>("blur_pass");
-  _combineShader = scene.lock()->GetAsset<Base::BaseShader>("combine_pass");
+  _brightShader = scene.lock()->GameCtx().Assets->GetGlobalAsset<Base::BaseShader>("bright_pass");
+  _blurShader = scene.lock()->GameCtx().Assets->GetGlobalAsset<Base::BaseShader>("blur_pass");
+  _combineShader = scene.lock()->GameCtx().Assets->GetGlobalAsset<Base::BaseShader>("combine_pass");
 }
 
 void Bloom::Apply(RenderTexture2D *input, RenderTexture2D *output, Vector2 resolution)
 {
-  auto shaderMan = _currentScene.lock()->GetShaderManager();
+  auto shaderMan = _currentScene.lock()->GameCtx().Shaders;
   if (!_buffersSetUp)
   {
     SetUpBuffers(resolution);

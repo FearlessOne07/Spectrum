@@ -15,12 +15,12 @@
 void MainMenuLayer::OnAttach()
 {
   float layerFadeDuration = 0.2;
-  _mainMenu = GetOwner()->GetUIManager()->AddLayer("main-menu", GetSize(), {0, 0}, *this);
+  _mainMenu = GameCtx().Ui->AddLayer("main-menu", GetSize(), {0, 0}, *this);
   auto mainMenuPanel = _mainMenu->SetLayerBackPanel();
   mainMenuPanel->SetColor(BLACK);
   mainMenuPanel->GetRenderTransform().SetOpacity(1);
   mainMenuPanel->onHide = [mainMenuPanel, this, layerFadeDuration]() {
-    GetOwner()->GetTweenManager()->AddTween<float>(
+    GameCtx().Tweens->AddTween<float>(
       {mainMenuPanel.get(), "alpha"},
       [mainMenuPanel](float alpha) { mainMenuPanel->GetRenderTransform().SetOpacity(alpha); },
       {
@@ -32,7 +32,7 @@ void MainMenuLayer::OnAttach()
     );
   };
   mainMenuPanel->onShow = [mainMenuPanel, this, layerFadeDuration]() {
-    GetOwner()->GetTweenManager()->AddTween<float>(
+    GameCtx().Tweens->AddTween<float>(
       {mainMenuPanel.get(), "alpha"},
       [mainMenuPanel](float alpha) { mainMenuPanel->GetRenderTransform().SetOpacity(alpha); },
       {
@@ -50,7 +50,7 @@ void MainMenuLayer::OnAttach()
   container->SetPadding(10);
   container->SetGap(25);
   container->onHide = [this, container, layerFadeDuration]() {
-    GetOwner()->GetTweenManager()->AddTween<float>(
+    GameCtx().Tweens->AddTween<float>( //
       {container.get(), "alpha"}, [container](float alpha) { container->GetRenderTransform().SetOpacity(alpha); },
       {
         .startValue = container->GetRenderTransform().GetOpacity(),
@@ -67,7 +67,7 @@ void MainMenuLayer::OnAttach()
     );
   };
   container->onShow = [this, container, layerFadeDuration]() {
-    GetOwner()->GetTweenManager()->AddTween<float>(
+    GameCtx().Tweens->AddTween<float>( //
       {container.get(), "alpha"}, [container](float alpha) { container->GetRenderTransform().SetOpacity(alpha); },
       {
         .startValue = container->GetRenderTransform().GetOpacity(),
@@ -81,7 +81,7 @@ void MainMenuLayer::OnAttach()
 
   // Resume Button
   auto playButton = container->AddChild<Base::UIButton>("play-button");
-  playButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
+  playButton->SetFont(GetOwner()->GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
   playButton->SetText("Play");
   playButton->SetHAlignment(Base::HAlign::Center);
   playButton->SetVAlignment(Base::VAlign::Center);
@@ -93,8 +93,8 @@ void MainMenuLayer::OnAttach()
   playButton->SetBackgroundColor(BLANK);
 
   playButton->onHover = {
-    [=, this]() {                                     //
-      GetOwner()->GetTweenManager()->AddTween<float>( //
+    [=, this]() {                        //
+      GameCtx().Tweens->AddTween<float>( //
         {playButton.get(), "font-size"}, [=](float size) { playButton->GetRenderTransform().SetFontScale(size); },
         {
           .startValue = playButton->GetRenderTransform().GetFontScale(),
@@ -105,7 +105,7 @@ void MainMenuLayer::OnAttach()
       );
     },
     [=, this]() {                                                                 //
-      GetOwner()->GetTweenManager()->AddTween<float>(                             //
+      GameCtx().Tweens->AddTween<float>(                                          //
         {playButton.get(), "font-size"},                                          //
         [=](float size) { playButton->GetRenderTransform().SetFontScale(size); }, //
         {
@@ -120,7 +120,7 @@ void MainMenuLayer::OnAttach()
 
   // Exit Button
   auto exitButton = container->AddChild<Base::UIButton>("exit-button");
-  exitButton->SetFont(GetOwner()->GetAsset<Base::BaseFont>("main-font"));
+  exitButton->SetFont(GetOwner()->GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
   exitButton->SetText("Exit");
   exitButton->SetFontSize(55);
   exitButton->SetHAlignment(Base::HAlign::Center);
@@ -131,8 +131,8 @@ void MainMenuLayer::OnAttach()
   exitButton->SetTextColor(WHITE);
   exitButton->SetBackgroundColor(BLANK);
   exitButton->onHover = {
-    [=, this]() {                                     //
-      GetOwner()->GetTweenManager()->AddTween<float>( //
+    [=, this]() {                        //
+      GameCtx().Tweens->AddTween<float>( //
         {exitButton.get(), "font-size"}, [=](float size) { exitButton->GetRenderTransform().SetFontScale(size); },
         {
           .startValue = exitButton->GetRenderTransform().GetFontScale(),
@@ -142,8 +142,8 @@ void MainMenuLayer::OnAttach()
         } //
       );
     },
-    [=, this]() {                                     //
-      GetOwner()->GetTweenManager()->AddTween<float>( //
+    [=, this]() {                        //
+      GameCtx().Tweens->AddTween<float>( //
         {exitButton.get(), "font-size"}, [=](float size) { exitButton->GetRenderTransform().SetFontScale(size); },
         {
           .startValue = exitButton->GetRenderTransform().GetFontScale(),
@@ -161,7 +161,7 @@ void MainMenuLayer::OnAttach()
 
 void MainMenuLayer::Render()
 {
-  GetOwner()->GetUIManager()->RenderLayer(_mainMenu);
+  GameCtx().Ui->RenderLayer(_mainMenu);
 }
 
 void MainMenuLayer::Update(float dt)
@@ -174,5 +174,5 @@ void MainMenuLayer::OnDetach()
 
 void MainMenuLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {
-  GetOwner()->GetUIManager()->OnInputEvent(event);
+  GameCtx().Ui->OnInputEvent(event);
 }

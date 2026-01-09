@@ -93,7 +93,7 @@ void BulletSystem::Update( //
         // Emmit sound signal
         auto bus = Base::SignalBus::GetInstance();
         std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
-        sig->soundHandle = currentScene->GetAsset<Base::Sound>("bullet-fire");
+        sig->soundHandle = currentScene->GameCtx().Assets->GetLocalAsset<Base::Sound>("bullet-fire");
         sig->soundVolume = 0.5;
         bus->BroadCastSignal(sig);
       }

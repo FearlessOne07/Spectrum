@@ -18,12 +18,12 @@
 void ShipSelectionLayer::OnAttach()
 {
   float layerFadeDuration = 0.2;
-  _shipMenu = GetOwner()->GetUIManager()->AddLayer("ship-menu", GetSize(), {0, 0}, *this);
+  _shipMenu = GameCtx().Ui->AddLayer("ship-menu", GetSize(), {0, 0}, *this);
   auto shipMenuStack = _shipMenu->SetRootElement<Base::UIStackPanel>();
   shipMenuStack->SetVisibilityOff();
   shipMenuStack->GetRenderTransform().SetOpacity(0);
   shipMenuStack->onShow = [this, shipMenuStack, layerFadeDuration]() {
-    GetOwner()->GetTweenManager()->AddTween<float>(
+    GameCtx().Tweens->AddTween<float>(
       {shipMenuStack.get(), "alpha"},
       [shipMenuStack](float alpha) { shipMenuStack->GetRenderTransform().SetOpacity(alpha); },
       {
@@ -34,7 +34,7 @@ void ShipSelectionLayer::OnAttach()
     );
   };
   shipMenuStack->onHide = [this, shipMenuStack, layerFadeDuration]() {
-    GetOwner()->GetTweenManager()->AddTween<float>(
+    GameCtx().Tweens->AddTween<float>(
       {shipMenuStack.get(), "alpha"},
       [shipMenuStack](float alpha) { shipMenuStack->GetRenderTransform().SetOpacity(alpha); },
       {.startValue = shipMenuStack->GetRenderTransform().GetOpacity(),
@@ -57,7 +57,7 @@ void ShipSelectionLayer::OnAttach()
   shipMenuText->SetText("Select A Ship");
   shipMenuText->SetVAlignment(Base::VAlign::Center);
   shipMenuText->SetHAlignment(Base::HAlign::Center);
-  shipMenuText->SetFont(GetAsset<Base::BaseFont>("main-font"));
+  shipMenuText->SetFont(GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
   shipMenuText->SetFontSize(40);
 
   auto shipGrid = shipMenuStack->AddChild<Base::UIGrid>("ship-menu-grid");
@@ -76,7 +76,7 @@ void ShipSelectionLayer::OnAttach()
   {
     std::string name = std::format("ship-{0}", i);
     auto shipText = shipGrid->AddGridElement<Base::UITextureRect>(name, {i, 0});
-    shipText->SetSprite({GetAsset<Base::Texture>("ships"), {}, {i * 8.f, 0}, {8, 8}});
+    shipText->SetSprite({GameCtx().Assets->GetGlobalAsset<Base::Texture>("ships"), {}, {i * 8.f, 0}, {8, 8}});
     shipText->SetHAlignment(Base::HAlign::Center);
     shipText->SetVAlignment(Base::VAlign::Center);
     shipText->SetSize({16 * 4, 16 * 4});
@@ -86,8 +86,8 @@ void ShipSelectionLayer::OnAttach()
       GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene, data);
     };
     shipText->onHover = {
-      [=, this]() {                                     //
-        GetOwner()->GetTweenManager()->AddTween<float>( //
+      [=, this]() {                        //
+        GameCtx().Tweens->AddTween<float>( //
           {shipText.get(), name + "-scale"},
           [=](float size) {
             shipText->GetRenderTransform().SetScaleY(size);
@@ -101,8 +101,8 @@ void ShipSelectionLayer::OnAttach()
           } //
         );
       },
-      [=, this]() {                                     //
-        GetOwner()->GetTweenManager()->AddTween<float>( //
+      [=, this]() {                        //
+        GameCtx().Tweens->AddTween<float>( //
           {shipText.get(), name + "-scale"},
           [=](float size) {
             shipText->GetRenderTransform().SetScaleY(size);
@@ -125,7 +125,7 @@ void ShipSelectionLayer::OnAttach()
 
 void ShipSelectionLayer::Render()
 {
-  GetOwner()->GetUIManager()->RenderLayer(_shipMenu);
+  GameCtx().Ui->RenderLayer(_shipMenu);
 }
 
 void ShipSelectionLayer::Update(float dt)
@@ -146,5 +146,5 @@ void ShipSelectionLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
       keyEvent->isHandled = true;
     }
   }
-  GetOwner()->GetUIManager()->OnInputEvent(event);
+  GameCtx().Ui->OnInputEvent(event);
 }

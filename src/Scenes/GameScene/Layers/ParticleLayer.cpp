@@ -20,7 +20,7 @@
 void ParticleLayer::OnAttach()
 {
   _gen = std::mt19937_64(_rd());
-  _emitter = GetOwner()->GetParticleManager()->AddEmitter();
+  _emitter = GameCtx().Particles->AddEmitter();
   _emitter->burst = true;
   _emitter->emissionType = Base::ParticleEmitter::EmissionType::Point;
   _emitter->easingType = Base::Easings::Type::EaseInOut;
@@ -51,7 +51,7 @@ void ParticleLayer::Render()
 {
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   BeginCamera();
-  GetOwner()->GetParticleManager()->Render();
+  GameCtx().Particles->Render();
   EndCamera();
 }
 
@@ -97,7 +97,7 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
 
     auto bus = Base::SignalBus::GetInstance();
     std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
-    sig->soundHandle = GetOwner()->GetAsset<Base::Sound>("enemy-die");
+    sig->soundHandle = GetOwner()->GameCtx().Assets->GetLocalAsset<Base::Sound>("enemy-die");
     bus->BroadCastSignal(sig);
   }
 }

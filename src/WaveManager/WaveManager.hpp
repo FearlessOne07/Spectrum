@@ -69,11 +69,11 @@ private:
   Base::EntityID _playerID;
 
   // Layer
-  const Base::SceneLayer *_parentLayer = nullptr;
+  Base::SceneLayer *_parentLayer = nullptr;
 
 public:
   WaveManager() = default;
-  void Init(const Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager> entityManager);
+  void Init(Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager> entityManager);
   Base::EntityID SpawnPlayer(const Ship &ship);
   void SpawnWaves(float dt);
   ~WaveManager();

@@ -25,7 +25,6 @@
 #include <base/components/MoveComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
 #include <base/entities/signals/EntityCollisionSignal.hpp>
-#include <base/scenes/SceneLayer.tpp>
 #include <base/signals/SignalBus.hpp>
 #include <memory>
 #include <raylib.h>
@@ -62,7 +61,7 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
 
     auto bus = Base::SignalBus::GetInstance();
     std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
-    sig->soundHandle = _parentLayer->GetAsset<Base::Sound>("player-hit");
+    sig->soundHandle = _parentLayer->GameCtx().Assets->GetLocalAsset<Base::Sound>("player-hit");
     sig->soundVolume = 0.75;
 
     if (                                                                                                   //
@@ -141,7 +140,7 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
       if (!expcmp->exploded)
       {
         auto colcmp = attack->GetComponent<Base::ColliderComponent>();
-        auto entities = _parentLayer->GetOwner()->GetEntityManager()->QueryArea(Circle{
+        auto entities = _parentLayer->GameCtx().Entities->QueryArea(Circle{
           transAtt->position,
           colcmp->radius,
         });
@@ -174,7 +173,7 @@ void EntitySignalHandler::DeathHandler(const std::shared_ptr<Base::Signal> signa
   {
     if (entityDiedSig->entity->HasComponent<PlayerTag>())
     {
-      _parentLayer->SetSceneTransition<DeathScreen>(Base::SceneRequest::ReplaceCurrentScene);
+      _parentLayer->GetOwner()->SetSceneTransition<DeathScreen>(Base::SceneRequest::ReplaceCurrentScene);
     }
   }
 }

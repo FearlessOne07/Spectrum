@@ -3,7 +3,6 @@
 #include "Ship/Ship.hpp"
 #include "Signals/EntityDiedSignal.hpp"
 #include "base/entities/Entity.hpp"
-#include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneLayer.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
@@ -29,7 +28,7 @@ private:
   Base::EntityID _playerID;
 
   // Layer
-  const Base::SceneLayer *_parentLayer = nullptr;
+  Base::SceneLayer *_parentLayer = nullptr;
 
   Base::Ref<Base::EntityManager> _entityManager;
 
@@ -38,7 +37,7 @@ private:
 
 public:
   Spawner() = default;
-  void Init(const Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager> entityManager);
+  void Init(Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager> entityManager);
   Base::EntityID SpawnPlayer(Vector2 position, const Ship &ship);
   void SpawnWave(float dt, Base::EntityID playerID);
   int GetToSpawnCount() const;

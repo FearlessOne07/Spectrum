@@ -16,8 +16,8 @@
 
 void GameScene::Enter(const Base::SceneData &sceneData)
 {
-  GetEntityManager()->Clear();
-  StartSystems();
+  GameCtx().Entities->Clear();
+  GameCtx().Systems->StartSystems();
   SetClearColor({7, 7, 15, 255});
 
   // Init Shared Data
@@ -27,26 +27,27 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   // Register Events
   auto bus = Base::SignalBus::GetInstance();
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  Base::Ref<Base::SystemManager> systemManager = GetSystemManager();
+  Base::Ref<Base::SystemManager> systemManager = GameCtx().Systems;
 
   // Activate Systems
-  LoadAsset<Base::Texture>("assets/textures/power-ups.png");
-  LoadAsset<Base::Texture>("assets/textures/heart-ui.png");
+  GameCtx().Assets->LoadLocalAsset<Base::Texture>("assets/textures/power-ups.png");
+  GameCtx().Assets->LoadLocalAsset<Base::Texture>("assets/textures/heart-ui.png");
 
-  LoadAsset<Base::Texture>("assets/textures/entities.png");
+  GameCtx().Assets->LoadLocalAsset<Base::Texture>("assets/textures/entities.png");
 
-  LoadAsset<Base::Sound>("assets/sounds/bullet-fire.wav");
-  LoadAsset<Base::Sound>("assets/sounds/enemy-die.wav");
-  LoadAsset<Base::Sound>("assets/sounds/player-hit.wav");
+  GameCtx().Assets->LoadLocalAsset<Base::Sound>("assets/sounds/bullet-fire.wav");
+  GameCtx().Assets->LoadLocalAsset<Base::Sound>("assets/sounds/enemy-die.wav");
+  GameCtx().Assets->LoadLocalAsset<Base::Sound>("assets/sounds/player-hit.wav");
 
-  LoadAsset<Base::BaseShader>("assets/shaders/vignette/vignette.frag ");
+  GameCtx().Assets->LoadLocalAsset<Base::BaseShader>("assets/shaders/vignette/vignette.frag ");
 
-  auto uiLayer = AddRenderLayer(Vector2{1920, 1080});
+  auto uiLayer = GameCtx().Rendering->InitLayer(shared_from_this(), {0, 0}, Vector2{1920, 1080}, BLANK);
   AttachLayer<GameUILayer>(uiLayer);
 
   // MainRenderLayer
   Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight} / 4;
-  auto mainLayer = AddRenderLayer({mainLayerRes.x, mainLayerRes.y}, GetClearColor());
+  auto mainLayer =
+    GameCtx().Rendering->InitLayer(shared_from_this(), {0, 0}, {mainLayerRes.x, mainLayerRes.y}, GetClearColor());
   mainLayer->SetCameraOffset({mainLayerRes.x / 2, mainLayerRes.y / 2});
   mainLayer->SetCameraZoom(mainLayerRes.x / rd->gameWidth);
   mainLayer->SetCameraTarget({0, 0});
@@ -61,7 +62,7 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   auto bloom = AddPostProcessingEffect<Bloom>(1.2, 0.25, 0.25);
 
   std::shared_ptr<Base::PlayAudioStreamSignal> sig = std::make_shared<Base::PlayAudioStreamSignal>();
-  sig->streamHandle = GetAsset<Base::AudioStream>("game-track");
+  sig->streamHandle = GameCtx().Assets->GetGlobalAsset<Base::AudioStream>("game-track");
   sig->streamPan = 0.5;
   sig->streamVolume = 0.5;
   sig->loopStream = true;
@@ -70,8 +71,8 @@ void GameScene::Enter(const Base::SceneData &sceneData)
 
 void GameScene::Exit()
 {
-  StopSystems();
-  GetEntityManager()->Clear();
+  GameCtx().Systems->StopSystems();
+  GameCtx().Entities->Clear();
 }
 
 void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)
@@ -80,12 +81,12 @@ void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)
 
 void GameScene::Suspend()
 {
-  SuspendSystems();
+  GameCtx().Systems->Suspend();
 }
 
 void GameScene::Resume()
 {
-  UnsuspendSystems();
+  GameCtx().Systems->Unsuspend();
 };
 
 void GameScene::Pause()

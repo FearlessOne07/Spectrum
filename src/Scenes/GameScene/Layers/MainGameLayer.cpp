@@ -29,8 +29,8 @@ void MainGameLayer::OnAttach()
     GetSize().y + 400,
   };
 
-  GetOwner()->GetEntityManager()->SetWorldBounds(worldBounds);
-  _waveManager.Init(this, GetOwner()->GetEntityManager());
+  GameCtx().Entities->SetWorldBounds(worldBounds);
+  _waveManager.Init(this, GameCtx().Entities);
 
   auto sharedData = GetOwner()->GetSharedData<SharedGameData>();
   sharedData->PlayerId = _waveManager.SpawnPlayer(GetOwner()->GetSharedData<SharedGameData>()->PlayerShip);
@@ -43,17 +43,17 @@ void MainGameLayer::OnAttach()
 
   bus->SubscribeSignal<GamePausedSignal>([this](std::shared_ptr<Base::Signal>) {
     Pause();
-    GetOwner()->SuspendSystems();
+    GameCtx().Systems->Suspend();
   });
 
   bus->SubscribeSignal<GameResumedSignal>([this](std::shared_ptr<Base::Signal>) {
     UnPause();
-    GetOwner()->UnsuspendSystems();
+    GameCtx().Systems->Unsuspend();
   });
 
   SetCameraPauseMask();
 
-  _inWorldUILayer = GetOwner()->GetUIManager()->AddLayer(                                                          //
+  _inWorldUILayer = GameCtx().Ui->AddLayer(                                                                        //
     "in-world-ui", {GetSize().x / GetCameraZoom(), GetSize().y / GetCameraZoom()}, GetScreenToWorld({0, 0}), *this //
   );
   _inWorldUILayer->Hide();
@@ -70,7 +70,7 @@ void MainGameLayer::OnDetach()
 
 void MainGameLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {
-  GetOwner()->GetSystemManager()->OnInputEvent(event);
+  GameCtx().Systems->OnInputEvent(event);
 }
 
 void MainGameLayer::Update(float dt)
@@ -78,7 +78,7 @@ void MainGameLayer::Update(float dt)
   _waveManager.SpawnWaves(dt);
 
   // Update Vingette
-  auto player = GetOwner()->GetEntityManager()->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
+  auto player = GameCtx().Entities->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
   if (player)
   {
     auto vignette = GetShaderEffect<Vignette>();
@@ -100,8 +100,8 @@ void MainGameLayer::Render()
 {
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   BeginCamera();
-  GetOwner()->GetUIManager()->RenderLayer(_inWorldUILayer);
-  GetOwner()->GetSystemManager()->Render();
+  GameCtx().Ui->RenderLayer(_inWorldUILayer);
+  GameCtx().Systems->Render();
   EndCamera();
 }
 
@@ -115,7 +115,7 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     auto canvas = _inWorldUILayer->GetRootElement<Base::UICanvas>();
     auto popUp = canvas->AddChild<Base::UILabel>(name);
     popUp->SetText(std::format("-{0}", sig->damageTaken));
-    popUp->SetFont(GetAsset<Base::BaseFont>("main-font"));
+    popUp->SetFont(GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
     popUp->SetTextColor(RED);
     popUp->SetFontSize(43);
     popUp->SetPosition(GetWorldToScreen(playerPos));
@@ -134,7 +134,7 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     }
 
     auto shrink = [this, popUp, name, canvas]() {
-      GetOwner()->GetTweenManager()->AddTween<float>(                          //
+      GameCtx().Tweens->AddTween<float>(                                       //
         {popUp.get(), name + "-font"},                                         //
         [popUp](float pos) { popUp->GetRenderTransform().SetFontScale(pos); }, //
         {
@@ -153,7 +153,7 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     };
 
     auto rise = [this, popUp, name, shrink, offsetTarget]() {
-      GetOwner()->GetTweenManager()->AddTween<float>(                        //
+      GameCtx().Tweens->AddTween<float>(                                     //
         {popUp.get(), name + "-offsetY"},                                    //
         [popUp](float pos) { popUp->GetRenderTransform().SetOffsetY(pos); }, //
         {
