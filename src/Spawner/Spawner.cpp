@@ -39,7 +39,6 @@
 #include <base/renderer/RenderContextSingleton.hpp>
 #include <memory>
 #include <random>
-#include <raylib.h>
 
 void Spawner::SetToSpawn(std::vector<EnemySpec> toSpawn, float difficultyScale)
 {

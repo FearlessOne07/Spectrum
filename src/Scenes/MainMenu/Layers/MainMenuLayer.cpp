@@ -9,7 +9,6 @@
 #include "base/ui/elements/UIButton.hpp"
 #include "base/ui/elements/UIGrid.hpp"
 #include "base/ui/elements/UIStackPanel.hpp"
-#include "raylib.h"
 #include <memory>
 
 void MainMenuLayer::OnAttach()

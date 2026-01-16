@@ -1,10 +1,10 @@
 #include <base/components/Component.hpp>
-#include <raylib.h>
+#include <base/util/Type.hpp>
 
 struct BulletComponent : public Base::Component
 {
   float lifeTimer = 0.f;
   float lifeTime = 0.f;
-  Vector2 target = {.x = 0, .y = 0};
+  Base::Vector2 target = {0, 0};
   std::shared_ptr<Base::Entity> sender = nullptr;
 };

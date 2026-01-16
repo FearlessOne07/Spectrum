@@ -8,7 +8,6 @@
 #include <base/entities/EntityManager.hpp>
 #include <queue>
 #include <random>
-#include <raylib.h>
 #include <vector>
 
 class Spawner
@@ -38,7 +37,7 @@ private:
 public:
   Spawner() = default;
   void Init(Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager> entityManager);
-  Base::EntityID SpawnPlayer(Vector2 position, const Ship &ship);
+  Base::EntityID SpawnPlayer(Base::Vector2 position, const Ship &ship);
   void SpawnWave(float dt, Base::EntityID playerID);
   int GetToSpawnCount() const;
   void SetToSpawn(std::vector<EnemySpec> toSpawn, float difficultyScale);

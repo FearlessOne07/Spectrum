@@ -7,7 +7,7 @@
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
 #include "base/input/Keys.hpp"
-#include "raylib.h"
+#include "base/util/Colors.hpp"
 #include <array>
 #include <base/assets/AssetManager.hpp>
 #include <base/audio/signals/StopAudioStreamSignal.hpp>
@@ -36,11 +36,11 @@ void GameUILayer::OnAttach()
   _shop.Init(this);
 
   auto bus = Base::SignalBus::GetInstance();
-  bus->SubscribeSignal<PlayerSpawnedSignal>([this](std::shared_ptr<Base::Signal> sig)
-                                            {
+  bus->SubscribeSignal<PlayerSpawnedSignal>([this](std::shared_ptr<Base::Signal> sig) {
     auto pSpawn = std::static_pointer_cast<PlayerSpawnedSignal>(sig);
     InitHud(pSpawn->player);
-    InitShopMenu(pSpawn->player); });
+    InitShopMenu(pSpawn->player);
+  });
 }
 
 void GameUILayer::OnDetach()
@@ -83,7 +83,7 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
       event->isHandled = true;
     }
   }
-  GameCtx().Ui->OnInputEvent(event);
+  GetOwner()->Engine().Ui->OnInputEvent(event);
 }
 
 void GameUILayer::Update(float dt)
@@ -92,14 +92,14 @@ void GameUILayer::Update(float dt)
 
 void GameUILayer::Render()
 {
-  GameCtx().Ui->RenderLayer(_hud);
-  GameCtx().Ui->RenderLayer(_buyMenu);
-  GameCtx().Ui->RenderLayer(_pauseMenu);
+  GetOwner()->Engine().Ui->RenderLayer(_hud);
+  GetOwner()->Engine().Ui->RenderLayer(_buyMenu);
+  GetOwner()->Engine().Ui->RenderLayer(_pauseMenu);
 }
 
 void GameUILayer::InitPauseMenu()
 {
-  _pauseMenu = GameCtx().Ui->AddLayer("pause-menu", GetSize(), {0, 0}, *this);
+  _pauseMenu = GetOwner()->Engine().Ui->AddLayer("pause-menu", GetSize(), {0, 0}, *this);
   auto container = _pauseMenu->SetRootElement<Base::UIStackPanel>();
   container->SetVAlignment(Base::VAlign::Center);
   container->SetHAlignment(Base::HAlign::Center);
@@ -108,161 +108,145 @@ void GameUILayer::InitPauseMenu()
 
   float offset = -(100 + (GetSize().y / 2));
   container->GetRenderTransform().SetOffsetY(offset);
-  container->onShow = [this, container, offset]()
-  {
-    GameCtx().Tweens->AddTween<float>( //
-        Base::TweenKey{container.get(), "pause-menu-container-y-offset"},
-        [container, this](float pos)
-        { container->GetRenderTransform().SetOffsetY(pos); },
-        {
-            .startValue = container->GetRenderTransform().GetOffsetY(),
-            .endValue = 0,
-            .duration = 0.5,
-        } //
+  container->onShow = [this, container, offset]() {
+    GetOwner()->Engine().Tweens->AddTween<float>( //
+      Base::TweenKey{container.get(), "pause-menu-container-y-offset"},
+      [container, this](float pos) { container->GetRenderTransform().SetOffsetY(pos); },
+      {
+        .startValue = container->GetRenderTransform().GetOffsetY(),
+        .endValue = 0,
+        .duration = 0.5,
+      } //
     );
   };
 
-  container->onHide = [this, container, offset]()
-  {
-    GameCtx().Tweens->AddTween<float>( //
-        Base::TweenKey{container.get(), "pause-menu-container-y-offset"},
-        [container, this](float pos)
-        { container->GetRenderTransform().SetOffsetY(pos); },
-        {
-            .startValue = container->GetRenderTransform().GetOffsetY(),
-            .endValue = offset,
-            .duration = 0.3,
-            .easingType = Base::Easings::Type::EaseIn,
-            .onTweenEnd = [container]()
-            { container->SetVisibilityOff(); },
-        } //
+  container->onHide = [this, container, offset]() {
+    GetOwner()->Engine().Tweens->AddTween<float>( //
+      Base::TweenKey{container.get(), "pause-menu-container-y-offset"},
+      [container, this](float pos) { container->GetRenderTransform().SetOffsetY(pos); },
+      {
+        .startValue = container->GetRenderTransform().GetOffsetY(),
+        .endValue = offset,
+        .duration = 0.3,
+        .easingType = Base::Easings::Type::EaseIn,
+        .onTweenEnd = [container]() { container->SetVisibilityOff(); },
+      } //
     );
   };
 
   // Resume Button
   float hoverScale = 1.1;
   auto resumeButton = container->AddChild<Base::UIButton>("resume-button");
-  resumeButton->SetFont(GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
-  resumeButton->SetText("Resume");
+  resumeButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  resumeButton->SetText(L"Resume");
   resumeButton->SetFontSize(50);
   resumeButton->SetVAlignment(Base::VAlign::Center);
   resumeButton->SetHAlignment(Base::HAlign::Center);
   resumeButton->SetPadding(10);
-  resumeButton->onClick = [this]()
-  {
+  resumeButton->onClick = [this]() {
     _pauseMenu->Hide();
     UnPause();
   };
-  resumeButton->SetBackgroundColor(BLANK);
-  resumeButton->SetTextColor(WHITE);
+  resumeButton->SetBackgroundColor(Base::Blank);
+  resumeButton->SetTextColor(Base::White);
   resumeButton->onHover = {
-      [=, this]() {                        //
-        GameCtx().Tweens->AddTween<float>( //
-            {resumeButton.get(), "font-size"}, [=](float size)
-            { resumeButton->GetRenderTransform().SetFontScale(size); },
-            {
-                .startValue = resumeButton->GetRenderTransform().GetFontScale(),
-                .endValue = hoverScale,
-                .duration = 0.1,
-                .easingType = Base::Easings::Type::EaseOut,
-            } //
-        );
-      },
-      [=, this]() {                            //
-        GameCtx().Tweens->AddTween<float>(     //
-            {resumeButton.get(), "font-size"}, //
-            [=](float size)
-            { resumeButton->GetRenderTransform().SetFontScale(size); }, //
-            {
-                .startValue = resumeButton->GetRenderTransform().GetFontScale(), //
-                .endValue = 1,
-                .duration = 0.1,
-                .easingType = Base::Easings::Type::EaseOut,
-            } //
-        );
-      },
+    [=, this]() {                                   //
+      GetOwner()->Engine().Tweens->AddTween<float>( //
+        {resumeButton.get(), "font-size"}, [=](float size) { resumeButton->GetRenderTransform().SetFontScale(size); },
+        {
+          .startValue = resumeButton->GetRenderTransform().GetFontScale(),
+          .endValue = hoverScale,
+          .duration = 0.1,
+          .easingType = Base::Easings::Type::EaseOut,
+        } //
+      );
+    },
+    [=, this]() {                                                                   //
+      GetOwner()->Engine().Tweens->AddTween<float>(                                 //
+        {resumeButton.get(), "font-size"},                                          //
+        [=](float size) { resumeButton->GetRenderTransform().SetFontScale(size); }, //
+        {
+          .startValue = resumeButton->GetRenderTransform().GetFontScale(), //
+          .endValue = 1,
+          .duration = 0.1,
+          .easingType = Base::Easings::Type::EaseOut,
+        } //
+      );
+    },
   };
 
   // Exit Button
   auto mainMenuButton = container->AddChild<Base::UIButton>("main-menu-button");
-  mainMenuButton->SetFont(GetOwner()->GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
-  mainMenuButton->SetText("Main Menu");
+  mainMenuButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  mainMenuButton->SetText(L"Main Menu");
   mainMenuButton->SetFontSize(50);
   mainMenuButton->SetPadding(10);
   mainMenuButton->SetVAlignment(Base::VAlign::Center);
   mainMenuButton->SetHAlignment(Base::HAlign::Center);
-  mainMenuButton->onClick = [this]()
-  {
+  mainMenuButton->onClick = [this]() {
     auto bus = Base::SignalBus::GetInstance();
     std::shared_ptr<Base::StopAudioStreamSignal> sig = std::make_shared<Base::StopAudioStreamSignal>();
-    sig->streamHandle = GameCtx().Assets->GetGlobalAsset<Base::AudioStream>("game-track");
+    sig->streamHandle = GetOwner()->Engine().Assets->GetAsset<Base::AudioStream>("game-track", true);
     bus->BroadCastSignal(sig);
     GetOwner()->SetSceneTransition<MainMenu>(Base::SceneRequest::ReplaceCurrentScene);
   };
-  mainMenuButton->SetBackgroundColor(BLANK);
-  mainMenuButton->SetTextColor(WHITE);
+  mainMenuButton->SetBackgroundColor(Base::Blank);
+  mainMenuButton->SetTextColor(Base::White);
   mainMenuButton->onHover = {
-      [=, this]() {                        //
-        GameCtx().Tweens->AddTween<float>( //
-            {mainMenuButton.get(), "font-size"},
-            [=](float size)
-            { mainMenuButton->GetRenderTransform().SetFontScale(size); },
-            {
-                .startValue = mainMenuButton->GetRenderTransform().GetFontScale(),
-                .endValue = hoverScale,
-                .duration = 0.1,
-                .easingType = Base::Easings::Type::EaseOut,
-            } //
-        );
-      },
-      [=, this]() {                        //
-        GameCtx().Tweens->AddTween<float>( //
-            {mainMenuButton.get(), "font-size"},
-            [=](float size)
-            { mainMenuButton->GetRenderTransform().SetFontScale(size); },
-            {
-                .startValue = mainMenuButton->GetRenderTransform().GetFontScale(),
-                .endValue = 1,
-                .duration = 0.1,
-                .easingType = Base::Easings::Type::EaseOut,
-            } //
-        );
-      },
+    [=, this]() {                                   //
+      GetOwner()->Engine().Tweens->AddTween<float>( //
+        {mainMenuButton.get(), "font-size"},
+        [=](float size) { mainMenuButton->GetRenderTransform().SetFontScale(size); },
+        {
+          .startValue = mainMenuButton->GetRenderTransform().GetFontScale(),
+          .endValue = hoverScale,
+          .duration = 0.1,
+          .easingType = Base::Easings::Type::EaseOut,
+        } //
+      );
+    },
+    [=, this]() {                                   //
+      GetOwner()->Engine().Tweens->AddTween<float>( //
+        {mainMenuButton.get(), "font-size"},
+        [=](float size) { mainMenuButton->GetRenderTransform().SetFontScale(size); },
+        {
+          .startValue = mainMenuButton->GetRenderTransform().GetFontScale(),
+          .endValue = 1,
+          .duration = 0.1,
+          .easingType = Base::Easings::Type::EaseOut,
+        } //
+      );
+    },
   };
 
   auto pauseMenuPanel = _pauseMenu->SetLayerBackPanel();
-  Color panelColor = {7, 7, 10, 255};
+  Base::Color panelColor = {7, 7, 10, 255};
   panelColor = {panelColor.r, panelColor.g, panelColor.b, 0};
   pauseMenuPanel->GetRenderTransform().SetOpacity(0);
   pauseMenuPanel->SetColor(panelColor);
   pauseMenuPanel->SetSize({GetSize().x, GetSize().y});
-  pauseMenuPanel->onHide = [=, this]()
-  {
-    GameCtx().Tweens->AddTween<float>( //
-        Base::TweenKey{pauseMenuPanel.get(), "pause-menu-panel-alpha"},
-        [this, pauseMenuPanel, panelColor](float alpha)
-        { pauseMenuPanel->GetRenderTransform().SetOpacity(alpha); },
-        {
-            .startValue = pauseMenuPanel->GetRenderTransform().GetOpacity(),
-            .endValue = 0,
-            .duration = 0.3,
-            .easingType = Base::Easings::Type::EaseIn,
-            .onTweenEnd = [pauseMenuPanel]()
-            { pauseMenuPanel->SetVisibilityOff(); },
-        } //
+  pauseMenuPanel->onHide = [=, this]() {
+    GetOwner()->Engine().Tweens->AddTween<float>( //
+      Base::TweenKey{pauseMenuPanel.get(), "pause-menu-panel-alpha"},
+      [this, pauseMenuPanel, panelColor](float alpha) { pauseMenuPanel->GetRenderTransform().SetOpacity(alpha); },
+      {
+        .startValue = pauseMenuPanel->GetRenderTransform().GetOpacity(),
+        .endValue = 0,
+        .duration = 0.3,
+        .easingType = Base::Easings::Type::EaseIn,
+        .onTweenEnd = [pauseMenuPanel]() { pauseMenuPanel->SetVisibilityOff(); },
+      } //
     );
   };
-  pauseMenuPanel->onShow = [=, this]()
-  {
-    GameCtx().Tweens->AddTween<float>( //
-        Base::TweenKey{pauseMenuPanel.get(), "pause-menu-panel-alpha"},
-        [this, pauseMenuPanel, panelColor](float alpha)
-        { pauseMenuPanel->GetRenderTransform().SetOpacity(alpha); },
-        {
-            .startValue = pauseMenuPanel->GetRenderTransform().GetOpacity(),
-            .endValue = 0.85,
-            .duration = 0.5,
-        } //
+  pauseMenuPanel->onShow = [=, this]() {
+    GetOwner()->Engine().Tweens->AddTween<float>( //
+      Base::TweenKey{pauseMenuPanel.get(), "pause-menu-panel-alpha"},
+      [this, pauseMenuPanel, panelColor](float alpha) { pauseMenuPanel->GetRenderTransform().SetOpacity(alpha); },
+      {
+        .startValue = pauseMenuPanel->GetRenderTransform().GetOpacity(),
+        .endValue = 0.85,
+        .duration = 0.5,
+      } //
     );
   };
   _pauseMenu->Hide();
@@ -270,7 +254,7 @@ void GameUILayer::InitPauseMenu()
 
 void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
 {
-  _hud = GameCtx().Ui->AddLayer("hud", GetSize(), {0, 0}, *this);
+  _hud = GetOwner()->Engine().Ui->AddLayer("hud", GetSize(), {0, 0}, *this);
   auto hudStack = _hud->SetRootElement<Base::UIStackPanel>();
   hudStack->SetOrientation(Base::UIStackPanel::Orientation::Vertical);
 
@@ -280,20 +264,21 @@ void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
   healtContainer->SetPadding(15, 10);
 
   auto heartIcon = healtContainer->AddChild<Base::UITextureRect>("heart-icon");
-  heartIcon->SetSprite({GameCtx().Assets->GetLocalAsset<Base::Texture>("heart-ui"), {}, {16, 0}, {8, 8}});
+  heartIcon->SetSprite({GetOwner()->Engine().Assets->GetAsset<Base::Texture>("heart-ui"), {}, {16, 0}, {8, 8}});
   heartIcon->SetSize({40, 40});
   heartIcon->SetVAlignment(Base::VAlign::Center);
   heartIcon->SetHAlignment(Base::HAlign::Center);
 
   auto hlthcmp = player->GetComponent<HealthComponent>();
   auto playerHealth = healtContainer->AddChild<Base::UILabel>("player-health");
-  playerHealth->SetFont(GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
+  playerHealth->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
   playerHealth->SetFontSize(40);
   playerHealth->SetVAlignment(Base::VAlign::Center);
   playerHealth->SetHAlignment(Base::HAlign::Center);
   playerHealth->Bind({
-      [hlthcmp]() -> std::string
-      { return std::format("{:.0f}/{:.0f}", hlthcmp->GetHealth(), hlthcmp->GetMaxHealth()); },
+    [hlthcmp]() -> std::wstring {
+      return std::format(L"{:.0f}/{:.0f}", hlthcmp->GetHealth(), hlthcmp->GetMaxHealth());
+    },
   });
 
   auto lightContainer = hudStack->AddChild<Base::UIStackPanel>("light-stack");
@@ -302,19 +287,18 @@ void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
   lightContainer->SetPadding(15, 10);
 
   auto lightIcon = lightContainer->AddChild<Base::UITextureRect>("light-icon");
-  lightIcon->SetSprite({GameCtx().Assets->GetLocalAsset<Base::Texture>("power-ups"), {}, {16, 8}, {8, 8}});
+  lightIcon->SetSprite({GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups"), {}, {16, 8}, {8, 8}});
   lightIcon->SetVAlignment(Base::VAlign::Center);
   lightIcon->SetHAlignment(Base::HAlign::Center);
   lightIcon->SetSize({40, 40});
 
   auto lightcmp = player->GetComponent<LightCollectorComponent>();
   auto playerLight = lightContainer->AddChild<Base::UILabel>("player-light");
-  playerLight->SetFont(GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
+  playerLight->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
   playerLight->SetVAlignment(Base::VAlign::Center);
   playerLight->SetHAlignment(Base::HAlign::Center);
   playerLight->SetFontSize(40);
-  playerLight->Bind({[lightcmp]() -> std::string
-                     { return std::format("{}", lightcmp->value); }});
+  playerLight->Bind({[lightcmp]() -> std::wstring { return std::format(L"{}", lightcmp->value); }});
 
   auto fpsContainer = hudStack->AddChild<Base::UIStackPanel>("fps-stack");
   fpsContainer->SetOrientation(Base::UIStackPanel::Orientation::Horizontal);
@@ -322,12 +306,11 @@ void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
   fpsContainer->SetPadding(15, 10);
 
   auto fps = fpsContainer->AddChild<Base::UILabel>("fps");
-  fps->SetFont(GetOwner()->GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
+  fps->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
   fps->SetFontSize(40);
   fps->SetVAlignment(Base::VAlign::Center);
   fps->SetHAlignment(Base::HAlign::Center);
-  fps->Bind({[]()
-             { return std::format("FPS:{}", GetFPS()); }});
+  fps->Bind({[]() -> std::wstring { return std::format(L"FPS:{}", 0); }});
 }
 
 void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
@@ -335,46 +318,41 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
   float buyMenuEntryDuration = 0.5;
   float buyMenuExitDuration = 0.3;
   Base::NinePatchSprite cardSprite = {
-      GameCtx().Assets->GetGlobalAsset<Base::Texture>("button"),
-      {.top = 2, .bottom = 2, .left = 2, .right = 2},
-      {0, 0},
-      {16, 8},
-      8,
+    GetOwner()->Engine().Assets->GetAsset<Base::Texture>("button", true),
+    {.top = 2, .bottom = 2, .left = 2, .right = 2},
+    {0, 0},
+    {16, 8},
+    8,
   };
 
-  _buyMenu = GameCtx().Ui->AddLayer("buy-menu", GetSize(), {0, 0}, *this);
+  _buyMenu = GetOwner()->Engine().Ui->AddLayer("buy-menu", GetSize(), {0, 0}, *this);
   auto buyMenuPanel = _buyMenu->SetLayerBackPanel();
 
   buyMenuPanel->SetSize({GetSize().x, GetSize().y});
   buyMenuPanel->SetColor(GetOwner()->GetClearColor());
   buyMenuPanel->GetRenderTransform().SetOpacity(0);
-  buyMenuPanel->onShow = [this, buyMenuPanel, buyMenuEntryDuration]()
-  {
-    GameCtx().Tweens->AddTween<float>(          //
-        {buyMenuPanel.get(), "buy-menu-alpha"}, //
-        [=](float pos)
-        { buyMenuPanel->GetRenderTransform().SetOpacity(pos); }, //
-        {
-            .startValue = buyMenuPanel->GetRenderTransform().GetOpacity(), //
-            .endValue = 1,
-            .duration = buyMenuEntryDuration,
-            .easingType = Base::Easings::Type::EaseOut,
-        } //
+  buyMenuPanel->onShow = [this, buyMenuPanel, buyMenuEntryDuration]() {
+    GetOwner()->Engine().Tweens->AddTween<float>(                             //
+      {buyMenuPanel.get(), "buy-menu-alpha"},                                 //
+      [=](float pos) { buyMenuPanel->GetRenderTransform().SetOpacity(pos); }, //
+      {
+        .startValue = buyMenuPanel->GetRenderTransform().GetOpacity(), //
+        .endValue = 1,
+        .duration = buyMenuEntryDuration,
+        .easingType = Base::Easings::Type::EaseOut,
+      } //
     );
   };
 
-  buyMenuPanel->onHide = [this, buyMenuPanel, buyMenuExitDuration]()
-  {
-    GameCtx().Tweens->AddTween<float>(          //
-        {buyMenuPanel.get(), "buy-menu-alpha"}, //
-        [=](float pos)
-        { buyMenuPanel->GetRenderTransform().SetOpacity(pos); },        //
-        {.startValue = buyMenuPanel->GetRenderTransform().GetOpacity(), //
-         .endValue = 0,
-         .duration = buyMenuExitDuration,
-         .easingType = Base::Easings::Type::EaseIn,
-         .onTweenEnd = [buyMenuPanel]()
-         { buyMenuPanel->SetVisibilityOff(); }} //
+  buyMenuPanel->onHide = [this, buyMenuPanel, buyMenuExitDuration]() {
+    GetOwner()->Engine().Tweens->AddTween<float>(                             //
+      {buyMenuPanel.get(), "buy-menu-alpha"},                                 //
+      [=](float pos) { buyMenuPanel->GetRenderTransform().SetOpacity(pos); }, //
+      {.startValue = buyMenuPanel->GetRenderTransform().GetOpacity(),         //
+       .endValue = 0,
+       .duration = buyMenuExitDuration,
+       .easingType = Base::Easings::Type::EaseIn,
+       .onTweenEnd = [buyMenuPanel]() { buyMenuPanel->SetVisibilityOff(); }} //
     );
   };
 
@@ -385,33 +363,28 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
   mainContainer->SetOrientation(Base::UIStackPanel::Orientation::Vertical);
   mainContainer->GetRenderTransform().SetOffsetY(offset);
   mainContainer->SetGap(150);
-  mainContainer->onShow = [this, mainContainer, buyMenuEntryDuration]()
-  {
-    GameCtx().Tweens->AddTween<float>( //
-        Base::TweenKey{mainContainer.get(), "shop-menu-container-position"},
-        [mainContainer, this](float pos)
-        { mainContainer->GetRenderTransform().SetOffsetY(pos); }, //
-        {
-            .startValue = mainContainer->GetRenderTransform().GetOffsetY(),
-            .endValue = 0,
-            .duration = buyMenuEntryDuration,
-        } //
+  mainContainer->onShow = [this, mainContainer, buyMenuEntryDuration]() {
+    GetOwner()->Engine().Tweens->AddTween<float>( //
+      Base::TweenKey{mainContainer.get(), "shop-menu-container-position"},
+      [mainContainer, this](float pos) { mainContainer->GetRenderTransform().SetOffsetY(pos); }, //
+      {
+        .startValue = mainContainer->GetRenderTransform().GetOffsetY(),
+        .endValue = 0,
+        .duration = buyMenuEntryDuration,
+      } //
     );
   };
-  mainContainer->onHide = [this, mainContainer, buyMenuExitDuration, offset]()
-  {
-    GameCtx().Tweens->AddTween<float>( //
-        Base::TweenKey{mainContainer.get(), "shop-menu-container-position"},
-        [mainContainer, this](float pos)
-        { mainContainer->GetRenderTransform().SetOffsetY(pos); },
-        {
-            .startValue = mainContainer->GetRenderTransform().GetOffsetY(),
-            .endValue = offset,
-            .duration = buyMenuExitDuration,
-            .easingType = Base::Easings::Type::EaseIn,
-            .onTweenEnd = [mainContainer]()
-            { mainContainer->SetVisibilityOff(); },
-        } //
+  mainContainer->onHide = [this, mainContainer, buyMenuExitDuration, offset]() {
+    GetOwner()->Engine().Tweens->AddTween<float>( //
+      Base::TweenKey{mainContainer.get(), "shop-menu-container-position"},
+      [mainContainer, this](float pos) { mainContainer->GetRenderTransform().SetOffsetY(pos); },
+      {
+        .startValue = mainContainer->GetRenderTransform().GetOffsetY(),
+        .endValue = offset,
+        .duration = buyMenuExitDuration,
+        .easingType = Base::Easings::Type::EaseIn,
+        .onTweenEnd = [mainContainer]() { mainContainer->SetVisibilityOff(); },
+      } //
     );
   };
 
@@ -421,51 +394,45 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
   lightContainer->SetPadding(15, 10);
   lightContainer->SetVAlignment(Base::VAlign::Center);
   lightContainer->SetHAlignment(Base::HAlign::Left);
-  lightContainer->onShow = [this, lightContainer, buyMenuEntryDuration]()
-  {
-    GameCtx().Tweens->AddTween<float>(                   //
-        {lightContainer.get(), "light-container-alpha"}, //
-        [=](float pos)
-        { lightContainer->GetRenderTransform().SetOpacity(pos); }, //
-        {
-            .startValue = lightContainer->GetRenderTransform().GetOpacity(), //
-            .endValue = 1,
-            .duration = buyMenuEntryDuration,
-            .easingType = Base::Easings::Type::EaseOut,
-        } //
+  lightContainer->onShow = [this, lightContainer, buyMenuEntryDuration]() {
+    GetOwner()->Engine().Tweens->AddTween<float>(                               //
+      {lightContainer.get(), "light-container-alpha"},                          //
+      [=](float pos) { lightContainer->GetRenderTransform().SetOpacity(pos); }, //
+      {
+        .startValue = lightContainer->GetRenderTransform().GetOpacity(), //
+        .endValue = 1,
+        .duration = buyMenuEntryDuration,
+        .easingType = Base::Easings::Type::EaseOut,
+      } //
     );
   };
-  lightContainer->onHide = [this, lightContainer, buyMenuExitDuration]()
-  {
-    GameCtx().Tweens->AddTween<float>(                   //
-        {lightContainer.get(), "light-container-alpha"}, //
-        [=](float pos)
-        { lightContainer->GetRenderTransform().SetOpacity(pos); }, //
-        {
-            .startValue = lightContainer->GetRenderTransform().GetOpacity(), //
-            .endValue = 0,
-            .duration = buyMenuExitDuration,
-            .easingType = Base::Easings::Type::EaseIn,
-            .onTweenEnd = [lightContainer]()
-            { lightContainer->SetVisibilityOff(); },
-        } //
+  lightContainer->onHide = [this, lightContainer, buyMenuExitDuration]() {
+    GetOwner()->Engine().Tweens->AddTween<float>(                               //
+      {lightContainer.get(), "light-container-alpha"},                          //
+      [=](float pos) { lightContainer->GetRenderTransform().SetOpacity(pos); }, //
+      {
+        .startValue = lightContainer->GetRenderTransform().GetOpacity(), //
+        .endValue = 0,
+        .duration = buyMenuExitDuration,
+        .easingType = Base::Easings::Type::EaseIn,
+        .onTweenEnd = [lightContainer]() { lightContainer->SetVisibilityOff(); },
+      } //
     );
   };
 
   auto lightIcon = lightContainer->AddChild<Base::UITextureRect>("light-icon");
-  lightIcon->SetSprite({GameCtx().Assets->GetLocalAsset<Base::Texture>("power-ups"), {}, {16, 8}, {8, 8}});
+  lightIcon->SetSprite({GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups"), {}, {16, 8}, {8, 8}});
   lightIcon->SetVAlignment(Base::VAlign::Center);
   lightIcon->SetHAlignment(Base::HAlign::Center);
   lightIcon->SetSize({40, 40});
 
   auto lightcmp = player->GetComponent<LightCollectorComponent>();
   auto playerLight = lightContainer->AddChild<Base::UILabel>("player-light");
-  playerLight->SetFont(GetOwner()->GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
+  playerLight->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font"));
   playerLight->SetVAlignment(Base::VAlign::Center);
   playerLight->SetHAlignment(Base::HAlign::Center);
   playerLight->SetFontSize(40);
-  playerLight->Bind({[lightcmp]() -> std::string
-                     { return std::format("{}", lightcmp->value); }});
+  playerLight->Bind({[lightcmp]() -> std::wstring { return std::format(L"{}", lightcmp->value); }});
 
   auto cardStack = mainContainer->AddChild<Base::UIFlexContainer>("card-stack");
   cardStack->SetOrientation(Base::UIFlexContainer::Orientation::Horizontal);
@@ -489,111 +456,101 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
     card->SetPadding(100, 100);
     card->SetGap(60);
     card->onHover = {
-        [=, this]()
-        {
-          GameCtx().Tweens->AddTween<float>(                    //
-              {card.get(), std::format("y-pos-offset-{0}", i)}, //
-              [=](float pos)
-              { card->GetRenderTransform().SetOffsetY(pos); }, //
-              {
-                  .startValue = card->GetRenderTransform().GetOffsetY(),
-                  .endValue = -30,
-                  .duration = 0.1,
-                  .easingType = Base::Easings::Type::EaseOut,
-              } //
-          );
-        },
-        [=, this]()
-        {
-          GameCtx().Tweens->AddTween<float>(                    //
-              {card.get(), std::format("y-pos-offset-{0}", i)}, //
-              [=](float pos)
-              { card->GetRenderTransform().SetOffsetY(pos); }, //
-              {
-                  .startValue = card->GetRenderTransform().GetOffsetY(),
-                  .endValue = 0,
-                  .duration = 0.1,
-                  .easingType = Base::Easings::Type::EaseOut,
-              } //
-          );
-        },
+      [=, this]() {
+        GetOwner()->Engine().Tweens->AddTween<float>(                     //
+          {card.get(), std::format("y-pos-offset-{0}", i)},               //
+          [=](float pos) { card->GetRenderTransform().SetOffsetY(pos); }, //
+          {
+            .startValue = card->GetRenderTransform().GetOffsetY(),
+            .endValue = -30,
+            .duration = 0.1,
+            .easingType = Base::Easings::Type::EaseOut,
+          } //
+        );
+      },
+      [=, this]() {
+        GetOwner()->Engine().Tweens->AddTween<float>(                     //
+          {card.get(), std::format("y-pos-offset-{0}", i)},               //
+          [=](float pos) { card->GetRenderTransform().SetOffsetY(pos); }, //
+          {
+            .startValue = card->GetRenderTransform().GetOffsetY(),
+            .endValue = 0,
+            .duration = 0.1,
+            .easingType = Base::Easings::Type::EaseOut,
+          } //
+        );
+      },
     };
-    card->onClick = [this, i, card, fadeOutDuration, fadeInDuration]()
-    {
+    card->onClick = [this, i, card, fadeOutDuration, fadeInDuration]() {
       if (BuyItem(i))
       {
-        GameCtx().Tweens->AddTween<float>(                    //
-            {card.get(), std::format("y-pos-offset-{0}", i)}, //
-            [=](float pos)
-            { card->GetRenderTransform().SetOffsetY(pos); }, //
-            {
-                .startValue = card->GetRenderTransform().GetOffsetY(), //
-                .endValue = card->GetRenderTransform().GetOffsetY() - 50,
-                .duration = fadeOutDuration,
-                .easingType = Base::Easings::Type::EaseOut,
-                .priority = Base::TweenPriorityLevel::Medium,
-            } //
+        GetOwner()->Engine().Tweens->AddTween<float>(                     //
+          {card.get(), std::format("y-pos-offset-{0}", i)},               //
+          [=](float pos) { card->GetRenderTransform().SetOffsetY(pos); }, //
+          {
+            .startValue = card->GetRenderTransform().GetOffsetY(), //
+            .endValue = card->GetRenderTransform().GetOffsetY() - 50,
+            .duration = fadeOutDuration,
+            .easingType = Base::Easings::Type::EaseOut,
+            .priority = Base::TweenPriorityLevel::Medium,
+          } //
         );
 
-        GameCtx().Tweens->AddTween<float>(             //
-            {card.get(), std::format("alpha-{0}", i)}, //
-            [=](float pos)
-            { card->GetRenderTransform().SetOpacity(pos); }, //
-            {
-                .startValue = card->GetRenderTransform().GetOpacity(), //
-                .endValue = 0,
-                .duration = fadeOutDuration,
-                .easingType = Base::Easings::Type::EaseOut,
-                .onTweenEnd =
-                    [=, this]()
-                {
-                  // Refresh Shop
-                  auto alphas = UpdateItems();
+        GetOwner()->Engine().Tweens->AddTween<float>(                     //
+          {card.get(), std::format("alpha-{0}", i)},                      //
+          [=](float pos) { card->GetRenderTransform().SetOpacity(pos); }, //
+          {
+            .startValue = card->GetRenderTransform().GetOpacity(), //
+            .endValue = 0,
+            .duration = fadeOutDuration,
+            .easingType = Base::Easings::Type::EaseOut,
+            .onTweenEnd =
+              [=, this]() {
+                // Refresh Shop
+                auto alphas = UpdateItems();
 
-                  // Tween Card back to position
-                  GameCtx().Tweens->AddTween<float>(                    //
-                      {card.get(), std::format("y-pos-offset-{0}", i)}, //
-                      [=](float pos)
-                      { card->GetRenderTransform().SetOffsetY(pos); }, //
-                      {
-                          .startValue = card->GetRenderTransform().GetOffsetY(), //
-                          .endValue = 0,
-                          .duration = fadeInDuration,
-                          .easingType = Base::Easings::Type::EaseOut,
-                          .priority = Base::TweenPriorityLevel::Medium,
-                      } //
-                  );
+                // Tween Card back to position
+                GetOwner()->Engine().Tweens->AddTween<float>(                     //
+                  {card.get(), std::format("y-pos-offset-{0}", i)},               //
+                  [=](float pos) { card->GetRenderTransform().SetOffsetY(pos); }, //
+                  {
+                    .startValue = card->GetRenderTransform().GetOffsetY(), //
+                    .endValue = 0,
+                    .duration = fadeInDuration,
+                    .easingType = Base::Easings::Type::EaseOut,
+                    .priority = Base::TweenPriorityLevel::Medium,
+                  } //
+                );
 
-                  // Tween Cards to the correct alpha
-                  GameCtx().Tweens->AddTween<float>(             //
-                      {card.get(), std::format("alpha-{0}", i)}, //
-                      [=](float pos)
-                      { card->GetRenderTransform().SetOpacity(pos); }, //
-                      {
-                          .startValue = card->GetRenderTransform().GetOpacity(), //
-                          .endValue = alphas[i],
-                          .duration = fadeInDuration,
-                          .easingType = Base::Easings::Type::EaseOut,
-                          .priority = Base::TweenPriorityLevel::Medium,
-                      } //
-                  );
-                },
-                .priority = Base::TweenPriorityLevel::Medium,
-            } //
+                // Tween Cards to the correct alpha
+                GetOwner()->Engine().Tweens->AddTween<float>(                     //
+                  {card.get(), std::format("alpha-{0}", i)},                      //
+                  [=](float pos) { card->GetRenderTransform().SetOpacity(pos); }, //
+                  {
+                    .startValue = card->GetRenderTransform().GetOpacity(), //
+                    .endValue = alphas[i],
+                    .duration = fadeInDuration,
+                    .easingType = Base::Easings::Type::EaseOut,
+                    .priority = Base::TweenPriorityLevel::Medium,
+                  } //
+                );
+              },
+            .priority = Base::TweenPriorityLevel::Medium,
+          } //
         );
       };
     };
 
     auto name = card->AddChild<Base::UILabel>("name");
-    name->SetFont(GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
+    name->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
     name->SetFontSize(30);
-    name->SetText("Max Health");
+    name->SetText(L"Max Health");
     name->SetVAlignment(Base::VAlign::Center);
     name->SetHAlignment(Base::HAlign::Center);
-    name->SetTextColor(WHITE);
+    name->SetTextColor(Base::White);
 
     auto icon = card->AddChild<Base::UITextureRect>("icon");
-    icon->SetSprite({GameCtx().Assets->GetLocalAsset<Base::Texture>("heart-ui"), {}, {16, 0}, {8, 8}});
+    icon->SetSprite({GetOwner()->Engine().Assets->GetAsset<Base::Texture>("heart-ui"), {}, {16, 0}, {8, 8}});
     icon->SetSize({128, 128});
     icon->SetVAlignment(Base::VAlign::Center);
     icon->SetHAlignment(Base::HAlign::Center);
@@ -606,17 +563,17 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
     price->SetPadding(15, 10);
 
     auto lightIcon = price->AddChild<Base::UITextureRect>("light-icon");
-    lightIcon->SetSprite({GameCtx().Assets->GetLocalAsset<Base::Texture>("power-ups"), {}, {16, 8}, {8, 8}});
+    lightIcon->SetSprite({GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups"), {}, {16, 8}, {8, 8}});
     lightIcon->SetVAlignment(Base::VAlign::Center);
     lightIcon->SetHAlignment(Base::HAlign::Center);
     lightIcon->SetSize({32, 32});
 
     auto lightCost = price->AddChild<Base::UILabel>("light-cost");
-    lightCost->SetFont(GetOwner()->GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
+    lightCost->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
     lightCost->SetVAlignment(Base::VAlign::Center);
     lightCost->SetHAlignment(Base::HAlign::Center);
     lightCost->SetFontSize(30);
-    lightCost->SetTextColor(WHITE);
+    lightCost->SetTextColor(Base::White);
   }
   _buyMenu->Hide();
 }
@@ -624,7 +581,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
 bool GameUILayer::BuyItem(int index)
 {
   ShopItem item = _shop.GetItem(index);
-  auto player = GameCtx().Entities->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
+  auto player = GetOwner()->Engine().Entities->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
   auto lightComp = player->GetComponent<LightCollectorComponent>();
 
   if (lightComp->value >= item.cost)
@@ -655,27 +612,27 @@ std::array<float, 3> GameUILayer::UpdateItems()
     for (int i = 0; i < currentItems.size(); i++)
     {
       auto card = _buyMenu->GetRootElement<Base::UIStackPanel>()
-                      ->GetChild<Base::UIStackPanel>("card-stack")
-                      ->GetChild<Base::UIStackPanel>(std::format("card{0}", i));
+                    ->GetChild<Base::UIStackPanel>("card-stack")
+                    ->GetChild<Base::UIStackPanel>(std::format("card{0}", i));
       auto cost = card->GetChild<Base::UIStackPanel>("price-container")->GetChild<Base::UILabel>("light-cost");
       auto icon = card->GetChild<Base::UITextureRect>("icon");
       auto name = card->GetChild<Base::UILabel>("name");
 
-      cost->SetText(std::to_string(currentItems[i].cost));
+      cost->SetText(std::to_wstring(currentItems[i].cost));
       icon->SetSprite(currentItems[i].textureIcon);
       name->SetText(currentItems[i].name);
     }
     _shop.ResetNewItems();
   }
 
-  auto player = GameCtx().Entities->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
+  auto player = GetOwner()->Engine().Entities->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
   std::array<float, 3> alphas;
   float alpha = 0;
   for (int i = 0; i < currentItems.size(); i++)
   {
     auto card = _buyMenu->GetRootElement<Base::UIStackPanel>()
-                    ->GetChild<Base::UIStackPanel>("card-stack")
-                    ->GetChild<Base::UIStackPanel>(std::format("card{0}", i));
+                  ->GetChild<Base::UIStackPanel>("card-stack")
+                  ->GetChild<Base::UIStackPanel>(std::format("card{0}", i));
     if (currentItems[i].cost > player->GetComponent<LightCollectorComponent>()->value)
     {
       alpha = 0.3;
@@ -685,16 +642,15 @@ std::array<float, 3> GameUILayer::UpdateItems()
       alpha = 1;
     }
     alphas[i] = alpha;
-    GameCtx().Tweens->AddTween<float>(             //
-        {card.get(), std::format("alpha-{0}", i)}, //
-        [=](float pos)
-        { card->GetRenderTransform().SetOpacity(pos); }, //
-        {
-            .startValue = card->GetRenderTransform().GetOpacity(), //
-            .endValue = alpha,
-            .duration = 0.3,
-            .easingType = Base::Easings::Type::EaseOut,
-        } //
+    GetOwner()->Engine().Tweens->AddTween<float>(                     //
+      {card.get(), std::format("alpha-{0}", i)},                      //
+      [=](float pos) { card->GetRenderTransform().SetOpacity(pos); }, //
+      {
+        .startValue = card->GetRenderTransform().GetOpacity(), //
+        .endValue = alpha,
+        .duration = 0.3,
+        .easingType = Base::Easings::Type::EaseOut,
+      } //
     );
   }
   return alphas;

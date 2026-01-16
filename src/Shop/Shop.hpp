@@ -25,7 +25,7 @@ struct ShopItem
   uint16_t cost = 0;
   bool locked = false;
   bool bought = true;
-  std::string name = "";
+  std::wstring name = L"";
   StockItem *stockItem = nullptr;
 };
 

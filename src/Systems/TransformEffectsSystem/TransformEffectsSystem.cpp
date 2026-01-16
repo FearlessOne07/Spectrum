@@ -8,8 +8,6 @@
 #include <base/entities/EntityManager.hpp>
 #include <cmath>
 #include <memory>
-#include <raylib.h>
-#include <raymath.h>
 
 void TransformEffectsSystem::Update(                                                                      //
   float dt, Base::Ref<Base::EntityManager> entityManager, std::shared_ptr<const Base::Scene> currentScene //

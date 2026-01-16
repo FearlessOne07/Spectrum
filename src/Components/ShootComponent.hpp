@@ -1,12 +1,12 @@
 #pragma once
 #include "base/entities/Entity.hpp"
-#include "base/sprites/Sprite.hpp"
+#include "base/rendering/Sprite.hpp"
+#include "base/util/Type.hpp"
 #include <base/components/Component.hpp>
-#include <raylib.h>
 
 struct ShootComponent : public Base::Component
 {
-  Vector2 targetPosition = {0, 0};
+  Base::Vector2 targetPosition = {0, 0};
   Base::EntityID targetEntity;
   float bulletFireRate = 0.f;
   float bulletFireTimer = 0.f;

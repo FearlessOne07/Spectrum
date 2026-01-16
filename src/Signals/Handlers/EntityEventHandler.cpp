@@ -27,8 +27,6 @@
 #include <base/entities/signals/EntityCollisionSignal.hpp>
 #include <base/signals/SignalBus.hpp>
 #include <memory>
-#include <raylib.h>
-#include <raymath.h>
 
 void EntitySignalHandler::Init(Base::SceneLayer *parentLayer)
 {

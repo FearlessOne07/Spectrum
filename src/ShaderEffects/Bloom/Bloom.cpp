@@ -1,8 +1,6 @@
 #include "Bloom.hpp"
 #include "base/renderer/RenderLayer.hpp"
 #include "base/scenes/Scene.hpp"
-#include "raylib.h"
-#include "raymath.h"
 #include <algorithm>
 
 Bloom::Bloom(float bloomIntensity, float luminanceThresh, float blurResolution)

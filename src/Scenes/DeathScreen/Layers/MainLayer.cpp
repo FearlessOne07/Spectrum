@@ -1,33 +1,34 @@
 #include "MainLayer.hpp"
 #include "Scenes/GameScene/GameScene.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
+#include "base/scenes/Engine.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UIButton.hpp"
 #include "base/ui/elements/UICanvas.hpp"
 #include "base/ui/elements/UILabel.hpp"
 #include "base/ui/elements/UIStackPanel.hpp"
-#include "raylib.h"
+#include "base/util/Colors.hpp"
 
 void MainLayer::OnAttach()
 {
-  _mainLayer = GameCtx().Ui->AddLayer("main-layer", GetSize(), {0, 0}, *this);
+  _mainLayer = GetOwner()->Engine().Ui->AddLayer("main-layer", GetSize(), {0, 0}, *this);
   auto canvas = _mainLayer->SetRootElement<Base::UICanvas>();
   canvas->SetPosition({0, 0});
   canvas->SetSize({GetSize().x, GetSize().y});
 
   auto deathMessage = canvas->AddChild<Base::UILabel>("death-message");
-  deathMessage->SetText("YOU DIED");
-  deathMessage->SetFont(GetOwner()->GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
+  deathMessage->SetText(L"YOU DIED");
+  deathMessage->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
   deathMessage->SetPosition({GetSize().x / 2, GetSize().y / 2});
   deathMessage->SetHAlignment(Base::HAlign::Center);
   deathMessage->SetVAlignment(Base::VAlign::Center);
-  deathMessage->SetTextColor(RED);
+  deathMessage->SetTextColor(Base::Red);
   deathMessage->SetFontSize(80);
   deathMessage->GetRenderTransform().SetOffsetY(-100);
   deathMessage->SetVisibilityOff();
   deathMessage->onShow = [=, this]() {
-    GameCtx().Tweens->AddTween<float>( //
+    GetOwner()->Engine().Tweens->AddTween<float>( //
       {deathMessage.get(), "alpha"}, [=](float alpha) { deathMessage->GetRenderTransform().SetOpacity(alpha); },
       {
         .startValue = 0,
@@ -36,7 +37,7 @@ void MainLayer::OnAttach()
         .easingType = Base::Easings::Type::EaseInOut,
       } //
     );
-    GameCtx().Tweens->AddTween<float>( //
+    GetOwner()->Engine().Tweens->AddTween<float>( //
       {deathMessage.get(), "y-pos-offset"}, [=](float pos) { deathMessage->GetRenderTransform().SetOffsetY(pos); },
       {
         .startValue = deathMessage->GetRenderTransform().GetOffsetY(),
@@ -48,7 +49,7 @@ void MainLayer::OnAttach()
   };
 
   Base::NinePatchSprite buttonSprite = {
-    GameCtx().Assets->GetGlobalAsset<Base::Texture>("button"),
+    GetOwner()->Engine().Assets->GetAsset<Base::Texture>("button", true),
     {.top = 1, .bottom = 1, .left = 1, .right = 1},
     {0, 0},
     {16, 8},
@@ -66,7 +67,7 @@ void MainLayer::OnAttach()
   actionButtonContainer->GetRenderTransform().SetOpacity(0);
   actionButtonContainer->SetVisibilityOff();
   actionButtonContainer->onShow = [=, this]() {
-    GameCtx().Tweens->AddTween<float>( //
+    GetOwner()->Engine().Tweens->AddTween<float>( //
       {actionButtonContainer.get(), "alpha"},
       [=](float alpha) { actionButtonContainer->GetRenderTransform().SetOpacity(alpha); },
       {
@@ -76,7 +77,7 @@ void MainLayer::OnAttach()
         .easingType = Base::Easings::Type::EaseInOut,
       } //
     );
-    GameCtx().Tweens->AddTween<float>( //
+    GetOwner()->Engine().Tweens->AddTween<float>( //
       {actionButtonContainer.get(), "y-pos-offset"},
       [=](float pos) { actionButtonContainer->GetRenderTransform().SetOffsetY(pos); },
       {
@@ -91,8 +92,8 @@ void MainLayer::OnAttach()
   // Exit Button
   float hoverScale = 1.1;
   auto mainMenuButton = actionButtonContainer->AddChild<Base::UIButton>("main-menu-button");
-  mainMenuButton->SetFont(GetOwner()->GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
-  mainMenuButton->SetText("Quit");
+  mainMenuButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  mainMenuButton->SetText(L"Quit");
   mainMenuButton->SetFontSize(50);
   mainMenuButton->SetPadding(10);
   mainMenuButton->SetVAlignment(Base::VAlign::Center);
@@ -102,8 +103,8 @@ void MainLayer::OnAttach()
   };
   mainMenuButton->SetSprite(buttonSprite);
   mainMenuButton->onHover = {
-    [=, this]() {                        //
-      GameCtx().Tweens->AddTween<float>( //
+    [=, this]() {                                   //
+      GetOwner()->Engine().Tweens->AddTween<float>( //
         {mainMenuButton.get(), "font-size"},
         [=](float size) { mainMenuButton->GetRenderTransform().SetFontScale(size); },
         {
@@ -114,8 +115,8 @@ void MainLayer::OnAttach()
         } //
       );
     },
-    [=, this]() {                        //
-      GameCtx().Tweens->AddTween<float>( //
+    [=, this]() {                                   //
+      GetOwner()->Engine().Tweens->AddTween<float>( //
         {mainMenuButton.get(), "font-size"},
         [=](float size) { mainMenuButton->GetRenderTransform().SetFontScale(size); },
         {
@@ -130,8 +131,8 @@ void MainLayer::OnAttach()
 
   // Play button
   auto playButton = actionButtonContainer->AddChild<Base::UIButton>("play-button");
-  playButton->SetFont(GetOwner()->GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
-  playButton->SetText("Retry");
+  playButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  playButton->SetText(L"Retry");
   playButton->SetFontSize(55);
   playButton->onClick = [this]() {
     GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene);
@@ -141,8 +142,8 @@ void MainLayer::OnAttach()
   playButton->SetPadding(10);
   playButton->SetSprite(buttonSprite);
   playButton->onHover = {
-    [=, this]() {                        //
-      GameCtx().Tweens->AddTween<float>( //
+    [=, this]() {                                   //
+      GetOwner()->Engine().Tweens->AddTween<float>( //
         {playButton.get(), "font-size"}, [=](float size) { playButton->GetRenderTransform().SetFontScale(size); },
         {
           .startValue = playButton->GetRenderTransform().GetFontScale(),
@@ -153,7 +154,7 @@ void MainLayer::OnAttach()
       );
     },
     [=, this]() {                                                                                                  //
-      GameCtx().Tweens->AddTween<float>(                                                                           //
+      GetOwner()->Engine().Tweens->AddTween<float>(                                                                //
         {playButton.get(), "font-size"}, [=](float size) { playButton->GetRenderTransform().SetFontScale(size); }, //
         {
           .startValue = playButton->GetRenderTransform().GetFontScale(),
@@ -168,7 +169,7 @@ void MainLayer::OnAttach()
 
 void MainLayer::Render()
 {
-  GameCtx().Ui->RenderLayer(_mainLayer);
+  GetOwner()->Engine().Ui->RenderLayer(_mainLayer);
 }
 
 void MainLayer::Update(float dt)
@@ -199,5 +200,5 @@ void MainLayer::OnDetach()
 
 void MainLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {
-  GameCtx().Ui->OnInputEvent(event);
+  GetOwner()->Engine().Ui->OnInputEvent(event);
 }

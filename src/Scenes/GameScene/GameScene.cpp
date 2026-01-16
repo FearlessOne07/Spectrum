@@ -8,16 +8,15 @@
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
+#include "base/rendering/RenderContextSingleton.hpp"
 #include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
-#include <base/renderer/RenderContextSingleton.hpp>
 #include <memory>
-#include <raylib.h>
 
 void GameScene::Enter(const Base::SceneData &sceneData)
 {
-  GameCtx().Entities->Clear();
-  GameCtx().Systems->StartSystems();
+  Engine().Entities->Clear();
+  Engine().Systems->StartSystems();
   SetClearColor({7, 7, 15, 255});
 
   // Init Shared Data
@@ -27,34 +26,31 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   // Register Events
   auto bus = Base::SignalBus::GetInstance();
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-  Base::Ref<Base::SystemManager> systemManager = GameCtx().Systems;
+  Base::Ref<Base::SystemManager> systemManager = Engine().Systems;
 
   // Activate Systems
-  GameCtx().Assets->LoadLocalAsset<Base::Texture>("assets/textures/power-ups.png");
-  GameCtx().Assets->LoadLocalAsset<Base::Texture>("assets/textures/heart-ui.png");
+  Engine().Assets->LoadTexture("assets/textures/power-ups.png");
+  Engine().Assets->LoadTexture("assets/textures/heart-ui.png");
+  Engine().Assets->LoadTexture("assets/textures/entities.png");
+  Engine().Assets->LoadSound("assets/sounds/bullet-fire.wav");
+  Engine().Assets->LoadSound("assets/sounds/enemy-die.wav");
+  Engine().Assets->LoadSound("assets/sounds/player-hit.wav");
+  Engine().Assets->LoadShader("", "assets/shaders/vignette/vignette.frag ");
 
-  GameCtx().Assets->LoadLocalAsset<Base::Texture>("assets/textures/entities.png");
-
-  GameCtx().Assets->LoadLocalAsset<Base::Sound>("assets/sounds/bullet-fire.wav");
-  GameCtx().Assets->LoadLocalAsset<Base::Sound>("assets/sounds/enemy-die.wav");
-  GameCtx().Assets->LoadLocalAsset<Base::Sound>("assets/sounds/player-hit.wav");
-
-  GameCtx().Assets->LoadLocalAsset<Base::BaseShader>("assets/shaders/vignette/vignette.frag ");
-
-  auto uiLayer = GameCtx().Rendering->InitLayer(shared_from_this(), {0, 0}, Vector2{1920, 1080}, BLANK);
+  auto uiLayer = Engine().Rendering->InitLayer(shared_from_this(), {0, 0}, Base::Vector2{1920, 1080}, Base::Blank);
   AttachLayer<GameUILayer>(uiLayer);
 
   // MainRenderLayer
-  Vector2 mainLayerRes = Vector2{rd->gameWidth, rd->gameHeight} / 4;
+  Base::Vector2 mainLayerRes = Base::Vector2{rd->gameWidth, rd->gameHeight} / 4.f;
   auto mainLayer =
-    GameCtx().Rendering->InitLayer(shared_from_this(), {0, 0}, {mainLayerRes.x, mainLayerRes.y}, GetClearColor());
+    Engine().Rendering->InitLayer(shared_from_this(), {0, 0}, {mainLayerRes.x, mainLayerRes.y}, GetClearColor());
   mainLayer->SetCameraOffset({mainLayerRes.x / 2, mainLayerRes.y / 2});
   mainLayer->SetCameraZoom(mainLayerRes.x / rd->gameWidth);
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);
 
   // TODO: Fix Tone mapping for bloom??
-  mainLayer->AddShaderEffect<Vignette>(shared_from_this(), Color{255, 48, 48, 255}, 0.5f, 0.5);
+  mainLayer->AddShaderEffect<Vignette>(shared_from_this(), Base::Color{255, 48, 48, 255}, 0.5f, 0.5);
 
   AttachLayer<MainGameLayer>(mainLayer);
   AttachLayer<ParticleLayer>(mainLayer);
@@ -62,7 +58,7 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   auto bloom = AddPostProcessingEffect<Bloom>(1.2, 0.25, 0.25);
 
   std::shared_ptr<Base::PlayAudioStreamSignal> sig = std::make_shared<Base::PlayAudioStreamSignal>();
-  sig->streamHandle = GameCtx().Assets->GetGlobalAsset<Base::AudioStream>("game-track");
+  sig->streamHandle = Engine().Assets->GetAsset<Base::AudioStream>("game-track", true);
   sig->streamPan = 0.5;
   sig->streamVolume = 0.5;
   sig->loopStream = true;
@@ -71,8 +67,8 @@ void GameScene::Enter(const Base::SceneData &sceneData)
 
 void GameScene::Exit()
 {
-  GameCtx().Systems->StopSystems();
-  GameCtx().Entities->Clear();
+  Engine().Systems->StopSystems();
+  Engine().Entities->Clear();
 }
 
 void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)
@@ -81,12 +77,12 @@ void GameScene::OnInputEvent(std::shared_ptr<Base::InputEvent> event)
 
 void GameScene::Suspend()
 {
-  GameCtx().Systems->Suspend();
+  Engine().Systems->Suspend();
 }
 
 void GameScene::Resume()
 {
-  GameCtx().Systems->Unsuspend();
+  Engine().Systems->Unsuspend();
 };
 
 void GameScene::Pause()

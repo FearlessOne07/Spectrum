@@ -6,7 +6,6 @@
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/util/Circle.hpp"
-#include "raymath.h"
 #include <algorithm>
 
 void CollectionSystem::Update(                                                                            ///

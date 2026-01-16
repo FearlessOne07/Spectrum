@@ -1,8 +1,8 @@
 #pragma once
 
 #include "base/entities/Entity.hpp"
+#include "base/util/Type.hpp"
 #include <base/components/Component.hpp>
-#include <raylib.h>
 
 struct TransformEffectsComponent : public Base::Component
 {
@@ -17,6 +17,6 @@ struct TransformEffectsComponent : public Base::Component
 
   // Bounds
   bool bind = false;
-  Vector2 bindMin = {0, 0};
-  Vector2 bindMax = {0, 0};
+  Base::Vector2 bindMin = {0, 0};
+  Base::Vector2 bindMax = {0, 0};
 };

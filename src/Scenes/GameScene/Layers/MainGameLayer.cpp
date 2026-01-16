@@ -8,29 +8,26 @@
 #include "Signals/EntityDamagedSignal.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/input/InputEvent.hpp"
+#include "base/rendering/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/systems/SystemManager.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UICanvas.hpp"
 #include "base/ui/elements/UILabel.hpp"
-#include "raylib.h"
-#include <base/renderer/RenderContextSingleton.hpp>
 #include <base/systems/SystemManager.hpp>
 #include <format>
 #include <memory>
 
 void MainGameLayer::OnAttach()
 {
-  Rectangle worldBounds = {
-    GetScreenToWorld({-200, -200}).x,
-    GetScreenToWorld({-200, -200}).y,
-    GetSize().x + 400,
-    GetSize().y + 400,
+  Base::Rectangle worldBounds = {
+    {GetScreenToWorld({-200, -200}).x, GetScreenToWorld({-200, -200}).y},
+    {GetSize().x + 400, GetSize().y + 400},
   };
 
-  GameCtx().Entities->SetWorldBounds(worldBounds);
-  _waveManager.Init(this, GameCtx().Entities);
+  GetOwner()->Engine().Entities->SetWorldBounds(worldBounds);
+  _waveManager.Init(this, GetOwner()->Engine().Entities);
 
   auto sharedData = GetOwner()->GetSharedData<SharedGameData>();
   sharedData->PlayerId = _waveManager.SpawnPlayer(GetOwner()->GetSharedData<SharedGameData>()->PlayerShip);
@@ -43,17 +40,17 @@ void MainGameLayer::OnAttach()
 
   bus->SubscribeSignal<GamePausedSignal>([this](std::shared_ptr<Base::Signal>) {
     Pause();
-    GameCtx().Systems->Suspend();
+    GetOwner()->Engine().Systems->Suspend();
   });
 
   bus->SubscribeSignal<GameResumedSignal>([this](std::shared_ptr<Base::Signal>) {
     UnPause();
-    GameCtx().Systems->Unsuspend();
+    GetOwner()->Engine().Systems->Unsuspend();
   });
 
   SetCameraPauseMask();
 
-  _inWorldUILayer = GameCtx().Ui->AddLayer(                                                                        //
+  _inWorldUILayer = GetOwner()->Engine().Ui->AddLayer(                                                             //
     "in-world-ui", {GetSize().x / GetCameraZoom(), GetSize().y / GetCameraZoom()}, GetScreenToWorld({0, 0}), *this //
   );
   _inWorldUILayer->Hide();
@@ -70,7 +67,7 @@ void MainGameLayer::OnDetach()
 
 void MainGameLayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
 {
-  GameCtx().Systems->OnInputEvent(event);
+  GetOwner()->Engine().Systems->OnInputEvent(event);
 }
 
 void MainGameLayer::Update(float dt)
@@ -78,7 +75,7 @@ void MainGameLayer::Update(float dt)
   _waveManager.SpawnWaves(dt);
 
   // Update Vingette
-  auto player = GameCtx().Entities->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
+  auto player = GetOwner()->Engine().Entities->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
   if (player)
   {
     auto vignette = GetShaderEffect<Vignette>();
@@ -100,8 +97,8 @@ void MainGameLayer::Render()
 {
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   BeginCamera();
-  GameCtx().Ui->RenderLayer(_inWorldUILayer);
-  GameCtx().Systems->Render();
+  GetOwner()->Engine().Ui->RenderLayer(_inWorldUILayer);
+  GetOwner()->Engine().Systems->Render();
   EndCamera();
 }
 
@@ -110,20 +107,20 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
   auto sig = std::static_pointer_cast<EntityDamagedSignal>(signal);
   if (sig->entity->HasComponent<PlayerTag>() && sig->entity->IsAlive())
   {
-    Vector2 playerPos = sig->entity->GetComponent<Base::TransformComponent>()->position;
+    Base::Vector2 playerPos = sig->entity->GetComponent<Base::TransformComponent>()->position;
     std::string name = std::format("damage-popup-{}", _currentPopUp++);
     auto canvas = _inWorldUILayer->GetRootElement<Base::UICanvas>();
     auto popUp = canvas->AddChild<Base::UILabel>(name);
-    popUp->SetText(std::format("-{0}", sig->damageTaken));
-    popUp->SetFont(GameCtx().Assets->GetGlobalAsset<Base::BaseFont>("main-font"));
-    popUp->SetTextColor(RED);
+    popUp->SetText(std::format(L"-{0}", sig->damageTaken));
+    popUp->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+    popUp->SetTextColor(Base::Red);
     popUp->SetFontSize(43);
     popUp->SetPosition(GetWorldToScreen(playerPos));
     popUp->SetVAlignment(Base::VAlign::Center);
     popUp->SetHAlignment(Base::HAlign::Center);
 
     float offsetTarget = 0;
-    Vector2 min = GetScreenToWorld({0, 0});
+    Base::Vector2 min = GetScreenToWorld({0, 0});
     if (playerPos.y - min.y > 200)
     {
       offsetTarget = -200;
@@ -134,7 +131,7 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     }
 
     auto shrink = [this, popUp, name, canvas]() {
-      GameCtx().Tweens->AddTween<float>(                                       //
+      GetOwner()->Engine().Tweens->AddTween<float>(                            //
         {popUp.get(), name + "-font"},                                         //
         [popUp](float pos) { popUp->GetRenderTransform().SetFontScale(pos); }, //
         {
@@ -153,7 +150,7 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     };
 
     auto rise = [this, popUp, name, shrink, offsetTarget]() {
-      GameCtx().Tweens->AddTween<float>(                                     //
+      GetOwner()->Engine().Tweens->AddTween<float>(                          //
         {popUp.get(), name + "-offsetY"},                                    //
         [popUp](float pos) { popUp->GetRenderTransform().SetOffsetY(pos); }, //
         {
@@ -168,7 +165,7 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
 
     // Flash Vignette
     auto vignette = GetShaderEffect<Vignette>();
-    vignette->SetVignetteColor(Color{255, 48, 48, 255});
+    vignette->SetVignetteColor(Base::Color{255, 48, 48, 255});
     vignette->Flash();
   }
 }

@@ -7,8 +7,6 @@
 #include <base/entities/EntityManager.hpp>
 #include <base/renderer/RenderContextSingleton.hpp>
 #include <memory>
-#include <raylib.h>
-#include <raymath.h>
 
 void TrackingSystem::Update(                                                                              //
   float dt, Base::Ref<Base::EntityManager> entityManager, std::shared_ptr<const Base::Scene> currentScene //

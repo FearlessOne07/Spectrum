@@ -20,7 +20,6 @@
 #include <base/signals/Signal.hpp>
 #include <base/signals/SignalBus.hpp>
 #include <memory>
-#include <raymath.h>
 
 void BulletSystem::Start()
 {
