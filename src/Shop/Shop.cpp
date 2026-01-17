@@ -3,6 +3,7 @@
 #include "Modifiers/HealthBoost/HealthBoostModifier.hpp"
 #include "Modifiers/MaxHealthModifier/MaxHealthModifier.hpp"
 #include "Modifiers/SpeedModifier/SpeedModifier.hpp"
+#include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneLayer.hpp"
 #include <algorithm>
 #include <cmath>
@@ -21,12 +22,12 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
   _stock.emplace_back( //
     speed,
     Base::NinePatchSprite{
-      _ownerLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("power-ups"),
+      _ownerLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups"),
       {},
       {40, 8},
       {8, 8},
     },
-    1, "Speed", basePriceDist(_gen) //
+    1, L"Speed", basePriceDist(_gen) //
   );
 
   std::shared_ptr<MaxHealthModifier> maxHealth = std::make_shared<MaxHealthModifier>();
@@ -34,12 +35,12 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
   _stock.emplace_back( //
     maxHealth,
     Base::NinePatchSprite{
-      _ownerLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("heart-ui"),
+      _ownerLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("heart-ui"),
       {},
       {16, 0},
       {8, 8},
     },
-    1, "Max Health", basePriceDist(_gen) //
+    1, L"Max Health", basePriceDist(_gen) //
   );
 
   std::shared_ptr<HealthBoostModifier> health = std::make_shared<HealthBoostModifier>();
@@ -47,12 +48,12 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
   _stock.emplace_back( //
     health,
     Base::NinePatchSprite{
-      _ownerLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("heart-ui"),
+      _ownerLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("heart-ui"),
       {},
       {32, 0},
       {8, 8},
     },
-    1, "Heal", basePriceDist(_gen) //
+    1, L"Heal", basePriceDist(_gen) //
   );
 
   std::shared_ptr<DamageModifier> damageBoost = std::make_shared<DamageModifier>();
@@ -60,12 +61,12 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
   _stock.emplace_back( //
     damageBoost,
     Base::NinePatchSprite{
-      _ownerLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("power-ups"),
+      _ownerLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups"),
       {},
       {32, 24},
       {8, 8},
     },
-    1, "Damage Boost", basePriceDist(_gen) //
+    1, L"Damage Boost", basePriceDist(_gen) //
   );
 
   RefreshShop();

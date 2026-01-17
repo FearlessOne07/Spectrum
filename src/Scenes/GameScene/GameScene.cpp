@@ -6,10 +6,8 @@
 #include "ShaderEffects/Bloom/Bloom.hpp"
 #include "ShaderEffects/Vignette/Vignette.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
-#include "base/audio/Sound.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
 #include "base/rendering/RenderContextSingleton.hpp"
-#include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
 #include <memory>
 

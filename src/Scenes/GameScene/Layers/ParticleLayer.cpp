@@ -80,7 +80,8 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
       emitter.particleStartSpeed = speedDist(_gen);
 
       float angle = angleDist(_gen);
-      emitter.particleDirection = {static_cast<float>(sin(angle * DEG2RAD)), static_cast<float>(cos(angle * DEG2RAD))};
+      // emitter.particleDirection = {static_cast<float>(sin(angle * DEG2RAD)), static_cast<float>(cos(angle *
+      // DEG2RAD))};
       emitter.emissionPoint = transcmp->position;
     };
 
@@ -95,7 +96,7 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
 
     auto bus = Base::SignalBus::GetInstance();
     std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
-    sig->soundHandle = GetOwner()->Engine().Assets->GetLocalAsset<Base::Sound>("enemy-die");
+    sig->soundHandle = GetOwner()->Engine().Assets->GetAsset<Base::Sound>("enemy-die");
     bus->BroadCastSignal(sig);
   }
 }
