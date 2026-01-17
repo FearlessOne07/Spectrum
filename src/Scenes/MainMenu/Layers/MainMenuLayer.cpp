@@ -82,7 +82,7 @@ void MainMenuLayer::OnAttach()
   // Resume Button
   auto playButton = container->AddChild<Base::UIButton>("play-button");
   playButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
-  playButton->SetText(L"Play");
+  playButton->SetText("Play");
   playButton->SetHAlignment(Base::HAlign::Center);
   playButton->SetVAlignment(Base::VAlign::Center);
   playButton->SetFontSize(55);
@@ -121,7 +121,7 @@ void MainMenuLayer::OnAttach()
   // Exit Button
   auto exitButton = container->AddChild<Base::UIButton>("exit-button");
   exitButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
-  exitButton->SetText(L"Exit");
+  exitButton->SetText("Exit");
   exitButton->SetFontSize(55);
   exitButton->SetHAlignment(Base::HAlign::Center);
   exitButton->SetVAlignment(Base::VAlign::Center);

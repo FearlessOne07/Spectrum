@@ -27,7 +27,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
       {40, 8},
       {8, 8},
     },
-    1, L"Speed", basePriceDist(_gen) //
+    1, "Speed", basePriceDist(_gen) //
   );
 
   std::shared_ptr<MaxHealthModifier> maxHealth = std::make_shared<MaxHealthModifier>();
@@ -40,7 +40,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
       {16, 0},
       {8, 8},
     },
-    1, L"Max Health", basePriceDist(_gen) //
+    1, "Max Health", basePriceDist(_gen) //
   );
 
   std::shared_ptr<HealthBoostModifier> health = std::make_shared<HealthBoostModifier>();
@@ -53,7 +53,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
       {32, 0},
       {8, 8},
     },
-    1, L"Heal", basePriceDist(_gen) //
+    1, "Heal", basePriceDist(_gen) //
   );
 
   std::shared_ptr<DamageModifier> damageBoost = std::make_shared<DamageModifier>();
@@ -66,7 +66,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
       {32, 24},
       {8, 8},
     },
-    1, L"Damage Boost", basePriceDist(_gen) //
+    1, "Damage Boost", basePriceDist(_gen) //
   );
 
   RefreshShop();

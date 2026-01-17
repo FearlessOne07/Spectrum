@@ -111,7 +111,7 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     std::string name = std::format("damage-popup-{}", _currentPopUp++);
     auto canvas = _inWorldUILayer->GetRootElement<Base::UICanvas>();
     auto popUp = canvas->AddChild<Base::UILabel>(name);
-    popUp->SetText(std::format(L"-{0}", sig->damageTaken));
+    popUp->SetText(std::format("-{0}", sig->damageTaken));
     popUp->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
     popUp->SetTextColor(Base::Red);
     popUp->SetFontSize(43);

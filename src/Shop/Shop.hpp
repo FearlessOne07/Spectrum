@@ -14,7 +14,7 @@ struct StockItem
   std::shared_ptr<Modifier> modifier = nullptr;
   Base::NinePatchSprite itemSprite;
   int modifierLevel = 1;
-  std::wstring name = L"";
+  std::string name = "";
   int basePrice = 0;
 };
 
@@ -25,7 +25,7 @@ struct ShopItem
   uint16_t cost = 0;
   bool locked = false;
   bool bought = true;
-  std::wstring name = L"";
+  std::string name = "";
   StockItem *stockItem = nullptr;
 };
 

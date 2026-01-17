@@ -138,7 +138,7 @@ void GameUILayer::InitPauseMenu()
   float hoverScale = 1.1;
   auto resumeButton = container->AddChild<Base::UIButton>("resume-button");
   resumeButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
-  resumeButton->SetText(L"Resume");
+  resumeButton->SetText("Resume");
   resumeButton->SetFontSize(50);
   resumeButton->SetVAlignment(Base::VAlign::Center);
   resumeButton->SetHAlignment(Base::HAlign::Center);
@@ -178,7 +178,7 @@ void GameUILayer::InitPauseMenu()
   // Exit Button
   auto mainMenuButton = container->AddChild<Base::UIButton>("main-menu-button");
   mainMenuButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
-  mainMenuButton->SetText(L"Main Menu");
+  mainMenuButton->SetText("Main Menu");
   mainMenuButton->SetFontSize(50);
   mainMenuButton->SetPadding(10);
   mainMenuButton->SetVAlignment(Base::VAlign::Center);
@@ -276,9 +276,7 @@ void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
   playerHealth->SetVAlignment(Base::VAlign::Center);
   playerHealth->SetHAlignment(Base::HAlign::Center);
   playerHealth->Bind({
-    [hlthcmp]() -> std::wstring {
-      return std::format(L"{:.0f}/{:.0f}", hlthcmp->GetHealth(), hlthcmp->GetMaxHealth());
-    },
+    [hlthcmp]() -> std::string { return std::format("{:.0f}/{:.0f}", hlthcmp->GetHealth(), hlthcmp->GetMaxHealth()); },
   });
 
   auto lightContainer = hudStack->AddChild<Base::UIStackPanel>("light-stack");
@@ -298,7 +296,7 @@ void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
   playerLight->SetVAlignment(Base::VAlign::Center);
   playerLight->SetHAlignment(Base::HAlign::Center);
   playerLight->SetFontSize(40);
-  playerLight->Bind({[lightcmp]() -> std::wstring { return std::format(L"{}", lightcmp->value); }});
+  playerLight->Bind({[lightcmp]() -> std::string { return std::format("{}", lightcmp->value); }});
 
   auto fpsContainer = hudStack->AddChild<Base::UIStackPanel>("fps-stack");
   fpsContainer->SetOrientation(Base::UIStackPanel::Orientation::Horizontal);
@@ -310,7 +308,7 @@ void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
   fps->SetFontSize(40);
   fps->SetVAlignment(Base::VAlign::Center);
   fps->SetHAlignment(Base::HAlign::Center);
-  fps->Bind({[]() -> std::wstring { return std::format(L"FPS:{}", 0); }});
+  fps->Bind({[]() -> std::string { return std::format("FPS:{}", 0); }});
 }
 
 void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
@@ -432,7 +430,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
   playerLight->SetVAlignment(Base::VAlign::Center);
   playerLight->SetHAlignment(Base::HAlign::Center);
   playerLight->SetFontSize(40);
-  playerLight->Bind({[lightcmp]() -> std::wstring { return std::format(L"{}", lightcmp->value); }});
+  playerLight->Bind({[lightcmp]() -> std::string { return std::format("{}", lightcmp->value); }});
 
   auto cardStack = mainContainer->AddChild<Base::UIFlexContainer>("card-stack");
   cardStack->SetOrientation(Base::UIFlexContainer::Orientation::Horizontal);
@@ -544,7 +542,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
     auto name = card->AddChild<Base::UILabel>("name");
     name->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
     name->SetFontSize(30);
-    name->SetText(L"Max Health");
+    name->SetText("Max Health");
     name->SetVAlignment(Base::VAlign::Center);
     name->SetHAlignment(Base::HAlign::Center);
     name->SetTextColor(Base::White);
@@ -618,7 +616,7 @@ std::array<float, 3> GameUILayer::UpdateItems()
       auto icon = card->GetChild<Base::UITextureRect>("icon");
       auto name = card->GetChild<Base::UILabel>("name");
 
-      cost->SetText(std::to_wstring(currentItems[i].cost));
+      cost->SetText(std::to_string(currentItems[i].cost));
       icon->SetSprite(currentItems[i].textureIcon);
       name->SetText(currentItems[i].name);
     }

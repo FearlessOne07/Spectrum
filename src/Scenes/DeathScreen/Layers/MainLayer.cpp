@@ -18,7 +18,7 @@ void MainLayer::OnAttach()
   canvas->SetSize({GetSize().x, GetSize().y});
 
   auto deathMessage = canvas->AddChild<Base::UILabel>("death-message");
-  deathMessage->SetText(L"YOU DIED");
+  deathMessage->SetText("YOU DIED");
   deathMessage->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
   deathMessage->SetPosition({GetSize().x / 2, GetSize().y / 2});
   deathMessage->SetHAlignment(Base::HAlign::Center);
@@ -93,7 +93,7 @@ void MainLayer::OnAttach()
   float hoverScale = 1.1;
   auto mainMenuButton = actionButtonContainer->AddChild<Base::UIButton>("main-menu-button");
   mainMenuButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
-  mainMenuButton->SetText(L"Quit");
+  mainMenuButton->SetText("Quit");
   mainMenuButton->SetFontSize(50);
   mainMenuButton->SetPadding(10);
   mainMenuButton->SetVAlignment(Base::VAlign::Center);
@@ -132,7 +132,7 @@ void MainLayer::OnAttach()
   // Play button
   auto playButton = actionButtonContainer->AddChild<Base::UIButton>("play-button");
   playButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
-  playButton->SetText(L"Retry");
+  playButton->SetText("Retry");
   playButton->SetFontSize(55);
   playButton->onClick = [this]() {
     GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene);

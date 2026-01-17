@@ -54,7 +54,7 @@ void ShipSelectionLayer::OnAttach()
   shipMenuStack->SetGap(20);
 
   auto shipMenuText = shipMenuStack->AddChild<Base::UILabel>("select-ship-label");
-  shipMenuText->SetText(L"Select A Ship");
+  shipMenuText->SetText("Select A Ship");
   shipMenuText->SetVAlignment(Base::VAlign::Center);
   shipMenuText->SetHAlignment(Base::HAlign::Center);
   shipMenuText->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font"));
