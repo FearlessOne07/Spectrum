@@ -6,10 +6,11 @@
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/util/Circle.hpp"
+#include "base/util/Math.hpp"
 #include <algorithm>
 
-void CollectionSystem::Update(                                                                            ///
-  float dt, Base::Ref<Base::EntityManager> entityManager, std::shared_ptr<const Base::Scene> currentScene //
+void CollectionSystem::Update(                                                                      ///
+  float dt, Base::Ref<Base::EntityManager> entityManager, std::shared_ptr<Base::Scene> currentScene //
 )
 {
   auto entities = entityManager->Query<Collector>();
@@ -19,7 +20,7 @@ void CollectionSystem::Update(                                                  
     auto colcmp = e->item->GetComponent<Collector>();
     auto transcmp = e->item->GetComponent<Base::TransformComponent>();
 
-    auto light = entityManager->QueryArea(Circle{transcmp->position, colcmp->collectionRadius});
+    auto light = entityManager->QueryArea(Base::Circle{transcmp->position, colcmp->collectionRadius});
 
     for (auto item : light)
     {
@@ -28,14 +29,14 @@ void CollectionSystem::Update(                                                  
         auto mvcmp = item->item->GetComponent<Base::MoveComponent>();
         auto rbcmp = item->item->GetComponent<Base::RigidBodyComponent>();
         auto lightTranscmp = item->item->GetComponent<Base::TransformComponent>();
-        float distSqr = Vector2DistanceSqr(transcmp->position, lightTranscmp->position);
-        float colRadiusSqr = colcmp->collectionRadius * colcmp->collectionRadius;
+        float dist = Base::Math::Length(transcmp->position - lightTranscmp->position);
+        float colRadius = colcmp->collectionRadius;
 
-        if (distSqr <= colRadiusSqr)
+        if (dist <= colRadius)
         {
-          float scale = 1 - std::clamp<float>(distSqr / colRadiusSqr, 0, 1);
+          float scale = 1 - std::clamp<float>(dist / colRadius, 0, 1);
           mvcmp->driveForce = scale * scale * 4000;
-          rbcmp->direction = Vector2Normalize(Vector2Subtract(transcmp->position, lightTranscmp->position));
+          rbcmp->direction = Base::Math::Normalize(transcmp->position - lightTranscmp->position);
         }
       }
     }

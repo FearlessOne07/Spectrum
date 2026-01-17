@@ -17,4 +17,5 @@ struct ShootComponent : public Base::Component
   float bulletLifetime = 5;
   float bulletSpeed = 0.f;
   Base::Sprite bulletSprite;
+  Base::Vector2 targetBulletSize = {0, 0};
 };

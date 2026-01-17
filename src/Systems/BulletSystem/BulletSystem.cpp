@@ -7,6 +7,7 @@
 #include "Components/Tags/PlayerTag.hpp"
 #include "base/components/SpriteComponent.hpp"
 #include "base/scenes/Scene.hpp"
+#include "base/util/Math.hpp"
 #include <base/audio/signals/PlaySoundSignal.hpp>
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/ImpulseComponent.hpp>
@@ -30,7 +31,7 @@ void BulletSystem::Start()
 
 void BulletSystem::Update( //
   float dt, Base::Ref<Base::EntityManager> entityManager,
-  std::shared_ptr<const Base::Scene> currentScene //
+  std::shared_ptr<Base::Scene> currentScene //
 )
 {
   auto entities_shtcmp = entityManager->Query<ShootComponent>();
@@ -46,7 +47,7 @@ void BulletSystem::Update( //
     {
       if (shtcmp->IsFiring)
       {
-        Vector2 targetPos = {0, 0};
+        Base::Vector2 targetPos = {0, 0};
 
         if (shtcmp->targetEntity)
         {
@@ -66,16 +67,16 @@ void BulletSystem::Update( //
 
         float angle = atan2f(targetPos.y - transcmp->position.y, targetPos.x - transcmp->position.x);
 
-        bulTranscmp->rotation = (angle * RAD2DEG) + 90;
+        bulTranscmp->rotation = Base::Math::ToDegrees(angle) + 90;
 
         auto rbcmp = bullet->AddComponent<Base::RigidBodyComponent>();
         rbcmp->isKinematic = true;
-        rbcmp->direction = Vector2Subtract(targetPos, transcmp->position);
+        rbcmp->direction = targetPos - transcmp->position;
 
         auto mvcmp = bullet->AddComponent<Base::MoveComponent>();
         mvcmp->speed = shtcmp->bulletSpeed;
 
-        auto sprtcmp = bullet->AddComponent<Base::SpriteComponent>(shtcmp->bulletSprite);
+        auto sprtcmp = bullet->AddComponent<Base::SpriteComponent>(shtcmp->bulletSprite, shtcmp->targetBulletSize);
 
         auto bulcmp = bullet->AddComponent<BulletComponent>();
         bulcmp->lifeTime = shtcmp->bulletLifetime;
@@ -84,7 +85,7 @@ void BulletSystem::Update( //
 
         auto abbcmp = bullet->AddComponent<Base::ColliderComponent>();
         abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
-        abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
+        abbcmp->shape = Base::ColliderComponent::Shape::Circle;
 
         bullet->AddComponent<DamageComponent>(dmgcmp->GetDamage());
         entityManager->AddEntity(bullet);
@@ -92,7 +93,7 @@ void BulletSystem::Update( //
         // Emmit sound signal
         auto bus = Base::SignalBus::GetInstance();
         std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
-        sig->soundHandle = currentScene->GameCtx().Assets->GetLocalAsset<Base::Sound>("bullet-fire");
+        sig->soundHandle = currentScene->Engine().Assets->GetAsset<Base::Sound>("bullet-fire");
         sig->soundVolume = 0.5;
         bus->BroadCastSignal(sig);
       }

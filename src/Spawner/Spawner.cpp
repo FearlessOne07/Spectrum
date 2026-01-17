@@ -23,8 +23,11 @@
 #include "base/components/StateComponent.hpp"
 #include "base/components/TimerComponent.hpp"
 #include "base/input/MouseButtons.hpp"
+#include "base/rendering/RenderContextSingleton.hpp"
+#include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/state/TransitionConditionBlock.hpp"
+#include "base/util/Math.hpp"
 #include "base/util/Ref.hpp"
 #include <base/assets/AssetManager.hpp>
 #include <base/components/ColliderComponent.hpp>
@@ -36,7 +39,6 @@
 #include <base/components/TransformComponent.hpp>
 #include <base/entities/Entity.hpp>
 #include <base/entities/EntityManager.hpp>
-#include <base/renderer/RenderContextSingleton.hpp>
 #include <memory>
 #include <random>
 
@@ -70,7 +72,7 @@ int Spawner::GetToSpawnCount() const
   return _toSpawn.size();
 }
 
-Base::EntityID Spawner::SpawnPlayer(Vector2 position, const Ship &ship)
+Base::EntityID Spawner::SpawnPlayer(Base::Vector2 position, const Ship &ship)
 {
   auto e = _entityManager->CreateEntity();
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
@@ -105,22 +107,23 @@ Base::EntityID Spawner::SpawnPlayer(Vector2 position, const Ship &ship)
 
   auto sprtcmp = e->AddComponent<Base::SpriteComponent>( //
     Base::Sprite{
-      _parentLayer->GameCtx().Assets->GetGlobalAsset<Base::Texture>("ships"),
-      Vector2{ship.SpriteSource.x, ship.SpriteSource.y},
-      Vector2{ship.SpriteSource.width, ship.SpriteSource.height},
-      Vector2{64, 64},
-    } //
+      _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("ships", true).Get(),
+      ship.SpriteSource.GetPosition(),
+      ship.SpriteSource.GetSize(),
+    },
+    Base::Vector2{64, 64} //
   );
+
   shtcmp->bulletSprite = {
-    _parentLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("entities"),
+    _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
     {0, 8},
-    Vector2{8, 8},
-    Vector2{32, 32},
+    Base::Vector2{8, 8},
   };
+  shtcmp->targetBulletSize = Base::Vector2{32, 32};
 
   auto abbcmp = e->AddComponent<Base::ColliderComponent>();
   abbcmp->radius = sprtcmp->GetTargetSize().x / 2;
-  abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
+  abbcmp->shape = Base::ColliderComponent::Shape::Circle;
 
   auto inpcmp = e->AddComponent<Base::InputComponent>();
   inpcmp->BindKeyDown(Base::Key::A, [rbcmp]() { rbcmp->direction.x = -1; });
@@ -175,10 +178,10 @@ void Spawner::SpawnWave( //
     std::uniform_int_distribution sideDist(1, 4);
     int side = sideDist(_gen);
 
-    Vector2 min = {-_spawnOffset, -_spawnOffset};
-    Vector2 max = {_parentLayer->GetSize().x + _spawnOffset, _parentLayer->GetSize().y + _spawnOffset};
+    Base::Vector2 min = {-_spawnOffset, -_spawnOffset};
+    Base::Vector2 max = {_parentLayer->GetSize().x + _spawnOffset, _parentLayer->GetSize().y + _spawnOffset};
 
-    Vector2 position = {0, 0};
+    Base::Vector2 position = {0, 0};
     float ypos = 0.f;
     float xpos = 0.f;
 
@@ -221,7 +224,7 @@ void Spawner::SpawnWave( //
     rbcmp->mass = 1;
 
     auto abbcmp = e->AddComponent<Base::ColliderComponent>();
-    abbcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
+    abbcmp->shape = Base::ColliderComponent::Shape::Circle;
 
     auto transfxcmp = e->AddComponent<TransformEffectsComponent>();
     transfxcmp->rotate = true;
@@ -243,14 +246,12 @@ void Spawner::SpawnWave( //
 
     // Sprite
     std::shared_ptr<Base::SpriteComponent> sprtcmp = nullptr;
-    Vector2 worldMin = _parentLayer->GetScreenToWorld({abbcmp->radius, abbcmp->radius});
-    Vector2 worldMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
+    Base::Vector2 worldMin = _parentLayer->GetScreenToWorld({abbcmp->radius, abbcmp->radius});
+    Base::Vector2 worldMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
 
-    Rectangle screenWorldArea = {
-      worldMin.x,
-      worldMin.y,
-      worldMax.x - worldMin.x,
-      worldMax.y - worldMin.y,
+    Base::Rectangle screenWorldArea = {
+      {worldMin.x, worldMin.y},
+      {worldMax.x - worldMin.x, worldMax.y - worldMin.y},
     };
 
     switch (spec.Type)
@@ -259,11 +260,11 @@ void Spawner::SpawnWave( //
       auto trckcmp = e->AddComponent<TrackingComponent>(_playerID);
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
-          _parentLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("entities"),
-          Vector2{0, 0},
-          Vector2{8, 8},
-          Vector2{64, 64},
-        } //
+          _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
+          Base::Vector2{0, 0},
+          Base::Vector2{8, 8},
+        },
+        Base::Vector2{64, 64} //
       );
       mvcmp->driveForce = std::uniform_real_distribution<float>(400, 500)(_gen);
       break;
@@ -271,11 +272,11 @@ void Spawner::SpawnWave( //
     case EnemyType::SHOOTER: {
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
-          _parentLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("entities"),
-          Vector2{8, 0},
-          Vector2{8, 8},
-          Vector2{64, 64},
-        } //
+          _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
+          Base::Vector2{8, 0},
+          Base::Vector2{8, 8},
+        },
+        Base::Vector2{64, 64} //
       );
       mvcmp->driveForce = 350;
 
@@ -284,11 +285,11 @@ void Spawner::SpawnWave( //
       shtcmp->bulletKnockbackForce = 800;
       shtcmp->bulletSpeed = 1000.f;
       shtcmp->bulletSprite = {
-        _parentLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("entities"),
+        _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
         {8, 8},
-        Vector2{8, 8},
-        Vector2{32, 32},
+        Base::Vector2{8, 8},
       };
+      shtcmp->targetBulletSize = Base::Vector2{32, 32};
       transfxcmp->bindMin = _parentLayer->GetScreenToWorld({0, 0});
       transfxcmp->bindMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
 
@@ -344,11 +345,11 @@ void Spawner::SpawnWave( //
       mvcmp->driveForce = 500;
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
-          _parentLayer->GameCtx().Assets->GetGlobalAsset<Base::Texture>("entities"),
-          Vector2{16, 0},
-          Vector2{8, 8},
-          Vector2{64, 64},
-        } //
+          _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities", true).Get(),
+          Base::Vector2{16, 0},
+          Base::Vector2{8, 8},
+        },
+        Base::Vector2{64, 64} //
       );
 
       std::unordered_map<std::string, Base::State> states = {
@@ -449,17 +450,16 @@ void Spawner::SpawnHealthPack(std::shared_ptr<EntityDiedSignal> sig)
   e->AddComponent<CollectableComponent>();
 
   auto colcmp = e->AddComponent<Base::ColliderComponent>();
-  colcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
+  colcmp->shape = Base::ColliderComponent::Shape::Circle;
   colcmp->radius = 16 / 2.f;
 
   e->AddComponent<Base::SpriteComponent>( //
     Base::Sprite{
-      _parentLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("power-ups"),
-      Vector2{24, 8},
-      Vector2{8, 8},
-      Vector2{16, 16},
-    } //
-  );
+      _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups").Get(),
+      Base::Vector2{24, 8},
+      Base::Vector2{8, 8},
+    },
+    Base::Vector2{16, 16});
 
   auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
   rbcmp->isKinematic = false;
@@ -469,7 +469,7 @@ void Spawner::SpawnHealthPack(std::shared_ptr<EntityDiedSignal> sig)
   auto mvcmp = e->AddComponent<Base::MoveComponent>();
   mvcmp->driveForce = 0;
 
-  float angle = std::uniform_real_distribution<float>(0, 2 * PI)(_gen);
+  float angle = std::uniform_real_distribution<float>(0, 2 * Base::Math::Pi())(_gen);
   rbcmp->direction = {sin(angle), cos(angle)};
 
   auto impcmp = e->AddComponent<Base::ImpulseComponent>();
@@ -519,17 +519,16 @@ void Spawner::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
       sig->entity->GetComponent<Base::TransformComponent>()->position;
 
     auto colcmp = e->AddComponent<Base::ColliderComponent>();
-    colcmp->shape = Base::ColliderComponent::Shape::CIRCLE;
+    colcmp->shape = Base::ColliderComponent::Shape::Circle;
     colcmp->radius = targetSize / 2;
 
     e->AddComponent<Base::SpriteComponent>( //
       Base::Sprite{
-        _parentLayer->GameCtx().Assets->GetLocalAsset<Base::Texture>("power-ups"),
-        Vector2{16, 8},
-        Vector2{8, 8},
-        Vector2{targetSize, targetSize},
-      } //
-    );
+        _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups").Get(),
+        Base::Vector2{16, 8},
+        Base::Vector2{8, 8},
+      },
+      Base::Vector2{targetSize, targetSize});
 
     auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
     rbcmp->isKinematic = false;
@@ -539,7 +538,7 @@ void Spawner::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
     auto mvcmp = e->AddComponent<Base::MoveComponent>();
     mvcmp->driveForce = 0;
 
-    float angle = std::uniform_real_distribution<float>(0, 2 * PI)(_gen);
+    float angle = std::uniform_real_distribution<float>(0, 2 * Base::Math::Pi())(_gen);
     rbcmp->direction = {sin(angle), cos(angle)};
 
     auto impcmp = e->AddComponent<Base::ImpulseComponent>();
