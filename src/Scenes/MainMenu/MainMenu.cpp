@@ -6,16 +6,18 @@
 #include "base/audio/signals/StopAudioStreamSignal.hpp"
 #include "base/rendering/RenderContextSingleton.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/util/Colors.hpp"
 
 void MainMenu::Enter(const Base::SceneData &sceneData)
 {
-
   // MainRenderLayer
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   Base::Vector2 mainLayerRes = Base::Vector2{rd->gameWidth, rd->gameHeight};
   auto mainLayer =
-    Engine().Rendering->InitLayer(shared_from_this(), {0, 0}, {mainLayerRes.x, mainLayerRes.y}, GetClearColor());
-  mainLayer->AddShaderEffect<Bloom>(shared_from_this(), 1.2, 0.25, 0.25);
+      Engine().Rendering->InitLayer(shared_from_this(), {0, 0}, {mainLayerRes.x, mainLayerRes.y}, GetClearColor());
+  // mainLayer->AddShaderEffect<Bloom>(shared_from_this(), 1.2, 0.25, 0.25);
+
+  SetClearColor(Base::Red);
 
   AttachLayer<MainMenuLayer>(mainLayer);
   AttachLayer<ShipSelectionLayer>(mainLayer);
