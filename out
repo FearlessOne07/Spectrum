@@ -1,16 +1,16 @@
 /home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp: In member function ‘Base::Vector2 Base::CameraController::GetScreenToWorld(Base::Vector2) const’:
-/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp:152:3: warning: no return statement in function returning non-void [-Wreturn-type]
-  152 |   }
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp:158:3: warning: no return statement in function returning non-void [-Wreturn-type]
+  158 |   }
       |   ^
 /home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp: In member function ‘Base::Vector2 Base::CameraController::GetWorldToScreen(Base::Vector2) const’:
-/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp:157:3: warning: no return statement in function returning non-void [-Wreturn-type]
-  157 |   }
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp:163:3: warning: no return statement in function returning non-void [-Wreturn-type]
+  163 |   }
       |   ^
 /home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp: In member function ‘Base::Vector2 Base::CameraController::GetScreenToWorld(Base::Vector2) const’:
-/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp:152:3: warning: no return statement in function returning non-void [-Wreturn-type]
-  152 |   }
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp:158:3: warning: no return statement in function returning non-void [-Wreturn-type]
+  158 |   }
       |   ^
 /home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp: In member function ‘Base::Vector2 Base::CameraController::GetWorldToScreen(Base::Vector2) const’:
-/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp:157:3: warning: no return statement in function returning non-void [-Wreturn-type]
-  157 |   }
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp:163:3: warning: no return statement in function returning non-void [-Wreturn-type]
+  163 |   }
       |   ^
