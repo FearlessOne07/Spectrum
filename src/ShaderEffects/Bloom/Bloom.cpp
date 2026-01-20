@@ -2,7 +2,9 @@
 #include "base/rendering/FrameBuffer.hpp"
 #include "base/rendering/FramebufferAttachmentIndex.hpp"
 #include "base/scenes/Scene.hpp"
+#include "base/util/Colors.hpp"
 #include "base/util/Type.hpp"
+#include "internal/rendering/RenderCommand.hpp"
 #include <algorithm>
 
 Bloom::Bloom(float bloomIntensity, float luminanceThresh, float blurResolution)
@@ -38,12 +40,14 @@ void Bloom::Apply(Base::Ptr<Base::FrameBuffer> input, Base::Ptr<Base::FrameBuffe
 
   _brightMaterial.SetUniform("threshold", _luminanceThreshHold);
   BeginFrameBuffer(_brightPass);
+  ClearFrameBuffer(Base::Blank);
   DrawFrameBuffer(input, {resolution.x, resolution.y}, _brightMaterial, Base::FramebufferAttachmentIndex::Color0);
   EndFrameBuffer();
 
   _blurMaterial.SetUniform("resolution", _blurResolution);
   _blurMaterial.SetUniform("direction", Base::Vector2{1, 0});
   BeginFrameBuffer(_blurPassX);
+  ClearFrameBuffer(Base::Blank);
   DrawFrameBuffer( //
     _brightPass, {_blurResolution.x, _blurResolution.y}, _blurMaterial,
     Base::FramebufferAttachmentIndex::Color0 //
@@ -53,6 +57,7 @@ void Bloom::Apply(Base::Ptr<Base::FrameBuffer> input, Base::Ptr<Base::FrameBuffe
   _blurMaterial.SetUniform("resolution", _blurResolution);
   _blurMaterial.SetUniform("direction", Base::Vector2{0, 1});
   BeginFrameBuffer(_blurPassY);
+  ClearFrameBuffer(Base::Blank);
   DrawFrameBuffer( //
     _blurPassX, {_blurResolution.x, _blurResolution.y}, _blurMaterial,
     Base::FramebufferAttachmentIndex::Color0 //
@@ -63,6 +68,7 @@ void Bloom::Apply(Base::Ptr<Base::FrameBuffer> input, Base::Ptr<Base::FrameBuffe
   _combineMaterial.SetUniform("bloomIntensity", _bloomIntensitiy);
 
   BeginFrameBuffer(output);
+  ClearFrameBuffer(Base::Blank);
   DrawFrameBuffer(input, {resolution.x, resolution.y}, _combineMaterial, Base::FramebufferAttachmentIndex::Color0);
   EndFrameBuffer();
 }

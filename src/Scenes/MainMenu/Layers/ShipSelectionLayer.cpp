@@ -22,31 +22,26 @@ void ShipSelectionLayer::OnAttach()
   auto shipMenuStack = _shipMenu->SetRootElement<Base::UIStackPanel>();
   shipMenuStack->SetVisibilityOff();
   shipMenuStack->GetRenderTransform().SetOpacity(0);
-  shipMenuStack->onShow = [this, shipMenuStack, layerFadeDuration]()
-  {
+  shipMenuStack->onShow = [this, shipMenuStack, layerFadeDuration]() {
     GetOwner()->Engine().Tweens->AddTween<float>(
-        {shipMenuStack.get(), "alpha"},
-        [shipMenuStack](float alpha)
-        { shipMenuStack->GetRenderTransform().SetOpacity(alpha); },
-        {
-            .startValue = shipMenuStack->GetRenderTransform().GetOpacity(),
-            .endValue = 1,
-            .duration = layerFadeDuration,
-        } //
+      {shipMenuStack.get(), "alpha"},
+      [shipMenuStack](float alpha) { shipMenuStack->GetRenderTransform().SetOpacity(alpha); },
+      {
+        .startValue = shipMenuStack->GetRenderTransform().GetOpacity(),
+        .endValue = 1,
+        .duration = layerFadeDuration,
+      } //
     );
   };
-  shipMenuStack->onHide = [this, shipMenuStack, layerFadeDuration]()
-  {
+  shipMenuStack->onHide = [this, shipMenuStack, layerFadeDuration]() {
     GetOwner()->Engine().Tweens->AddTween<float>(
-        {shipMenuStack.get(), "alpha"},
-        [shipMenuStack](float alpha)
-        { shipMenuStack->GetRenderTransform().SetOpacity(alpha); },
-        {.startValue = shipMenuStack->GetRenderTransform().GetOpacity(),
-         .endValue = 0,
-         .duration = layerFadeDuration,
-         .onTweenEnd =
-             [shipMenuStack]()
-         {
+      {shipMenuStack.get(), "alpha"},
+      [shipMenuStack](float alpha) { shipMenuStack->GetRenderTransform().SetOpacity(alpha); },
+      {.startValue = shipMenuStack->GetRenderTransform().GetOpacity(),
+       .endValue = 0,
+       .duration = layerFadeDuration,
+       .onTweenEnd =
+         [shipMenuStack]() {
            shipMenuStack->SetVisibilityOff();
            auto bus = Base::SignalBus::GetInstance();
            auto sig = std::make_shared<ShipSelectionAbortedSignal>();
@@ -69,8 +64,8 @@ void ShipSelectionLayer::OnAttach()
   shipGrid->SetHAlignment(Base::HAlign::Center);
   shipGrid->SetVAlignment(Base::VAlign::Center);
   shipGrid->SetColumnDefinitions({
-      {Base::GridCellSizeMode::Auto},
-      {Base::GridCellSizeMode::Auto},
+    {Base::GridCellSizeMode::Auto},
+    {Base::GridCellSizeMode::Auto},
   });
   shipGrid->SetVisibilityOff();
   shipGrid->SetPadding(20);
@@ -82,55 +77,51 @@ void ShipSelectionLayer::OnAttach()
     std::string name = std::format("ship-{0}", i);
     auto shipText = shipGrid->AddGridElement<Base::UITextureRect>(name, {i, 0});
     shipText->SetSprite(
-        {GetOwner()->Engine().Assets->GetAsset<Base::Texture>("ships", true), {}, {i * 8.f, 0}, {8, 8}});
+      {GetOwner()->Engine().Assets->GetAsset<Base::Texture>("ships", true), {}, {i * 8.f, 0}, {8, 8}});
     shipText->SetHAlignment(Base::HAlign::Center);
     shipText->SetVAlignment(Base::VAlign::Center);
     shipText->SetSize({16 * 4, 16 * 4});
-    shipText->onClick = [this, i]()
-    {
+    shipText->onClick = [this, i]() {
       Base::SceneData data;
       data.Set(Ship({{i * 8.f, 0}, {8, 8}}));
       GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene, data);
     };
     shipText->onHover = {
-        [=, this]() {                                   //
-          GetOwner()->Engine().Tweens->AddTween<float>( //
-              {shipText.get(), name + "-scale"},
-              [=](float size)
-              {
-                shipText->GetRenderTransform().SetScaleY(size);
-                shipText->GetRenderTransform().SetScaleX(size);
-              },
-              {
-                  .startValue = shipText->GetRenderTransform().GetScaleX(),
-                  .endValue = hoverScale,
-                  .duration = 0.1,
-                  .easingType = Base::Easings::Type::EaseOut,
-              } //
-          );
-        },
-        [=, this]() {                                   //
-          GetOwner()->Engine().Tweens->AddTween<float>( //
-              {shipText.get(), name + "-scale"},
-              [=](float size)
-              {
-                shipText->GetRenderTransform().SetScaleY(size);
-                shipText->GetRenderTransform().SetScaleX(size);
-              },
-              {
-                  .startValue = shipText->GetRenderTransform().GetScaleX(),
-                  .endValue = 1,
-                  .duration = 0.1,
-                  .easingType = Base::Easings::Type::EaseOut,
-              } //
-          );
-        },
+      [=, this]() {                                   //
+        GetOwner()->Engine().Tweens->AddTween<float>( //
+          {shipText.get(), name + "-scale"},
+          [=](float size) {
+            shipText->GetRenderTransform().SetScaleY(size);
+            shipText->GetRenderTransform().SetScaleX(size);
+          },
+          {
+            .startValue = shipText->GetRenderTransform().GetScaleX(),
+            .endValue = hoverScale,
+            .duration = 0.1,
+            .easingType = Base::Easings::Type::EaseOut,
+          } //
+        );
+      },
+      [=, this]() {                                   //
+        GetOwner()->Engine().Tweens->AddTween<float>( //
+          {shipText.get(), name + "-scale"},
+          [=](float size) {
+            shipText->GetRenderTransform().SetScaleY(size);
+            shipText->GetRenderTransform().SetScaleX(size);
+          },
+          {
+            .startValue = shipText->GetRenderTransform().GetScaleX(),
+            .endValue = 1,
+            .duration = 0.1,
+            .easingType = Base::Easings::Type::EaseOut,
+          } //
+        );
+      },
     };
   }
 
   auto bus = Base::SignalBus::GetInstance();
-  bus->SubscribeSignal<ShipSelectionStartedSignal>([this](std::shared_ptr<Base::Signal> sig)
-                                                   { _shipMenu->Show(); });
+  bus->SubscribeSignal<ShipSelectionStartedSignal>([this](std::shared_ptr<Base::Signal> sig) { _shipMenu->Show(); });
 }
 
 void ShipSelectionLayer::Render()

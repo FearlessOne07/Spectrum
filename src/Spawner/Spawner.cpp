@@ -22,7 +22,6 @@
 #include "base/components/SpriteComponent.hpp"
 #include "base/components/StateComponent.hpp"
 #include "base/components/TimerComponent.hpp"
-#include "base/input/MouseButtons.hpp"
 #include "base/rendering/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
