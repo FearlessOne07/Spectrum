@@ -139,7 +139,7 @@ void MainLayer::OnAttach()
   };
   playButton->SetHAlignment(Base::HAlign::Center);
   playButton->SetVAlignment(Base::VAlign::Center);
-  playButton->SetPadding(10);
+  playButton->SetPadding(0);
   playButton->SetSprite(buttonSprite);
   playButton->onHover = {
     [=, this]() {                                   //
