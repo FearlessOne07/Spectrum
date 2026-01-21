@@ -6,7 +6,9 @@
 #include "ShaderEffects/Bloom/Bloom.hpp"
 #include "ShaderEffects/Vignette/Vignette.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
+#include "base/assets/BaseAsset.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
+#include "base/rendering/GeometryType.hpp"
 #include "base/rendering/RenderContextSingleton.hpp"
 #include "base/signals/SignalBus.hpp"
 #include <memory>
@@ -33,7 +35,7 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   Engine().Assets->LoadSound("assets/sounds/bullet-fire.wav");
   Engine().Assets->LoadSound("assets/sounds/enemy-die.wav");
   Engine().Assets->LoadSound("assets/sounds/player-hit.wav");
-  Engine().Assets->LoadShader("", "assets/shaders/vignette/vignette.frag ");
+  Engine().Assets->LoadShader(Base::ShaderPath{"", "assets/shaders/vignette/vignette.frag", Base::GeometryType::Quad});
 
   auto uiLayer = Engine().Rendering->InitLayer(shared_from_this(), {0, 0}, Base::Vector2{1920, 1080}, Base::Blank);
   AttachLayer<GameUILayer>(uiLayer);

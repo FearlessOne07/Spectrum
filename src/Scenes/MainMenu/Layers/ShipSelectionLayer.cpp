@@ -13,6 +13,7 @@
 #include "base/ui/elements/UILabel.hpp"
 #include "base/ui/elements/UIStackPanel.hpp"
 #include "base/ui/elements/UITextureRect.hpp"
+#include "base/util/Colors.hpp"
 #include <memory>
 
 void ShipSelectionLayer::OnAttach()
@@ -20,6 +21,7 @@ void ShipSelectionLayer::OnAttach()
   float layerFadeDuration = 0.2;
   _shipMenu = GetOwner()->Engine().Ui->AddLayer("ship-menu", GetSize(), {0, 0}, *this);
   auto shipMenuStack = _shipMenu->SetRootElement<Base::UIStackPanel>();
+  shipMenuStack->SetBackgroundColor(Base::Red);
   shipMenuStack->SetVisibilityOff();
   shipMenuStack->GetRenderTransform().SetOpacity(0);
   shipMenuStack->onShow = [this, shipMenuStack, layerFadeDuration]() {
