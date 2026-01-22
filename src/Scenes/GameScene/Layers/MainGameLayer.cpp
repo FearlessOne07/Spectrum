@@ -15,16 +15,17 @@
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UICanvas.hpp"
 #include "base/ui/elements/UILabel.hpp"
+#include "base/util/Type.hpp"
 #include <base/systems/SystemManager.hpp>
 #include <format>
 #include <memory>
 
 void MainGameLayer::OnAttach()
 {
-  Base::Rectangle worldBounds = {
-    {GetScreenToWorld({-200, -200}).x, GetScreenToWorld({-200, -200}).y},
-    {GetSize().x + 400, GetSize().y + 400},
-  };
+  float offset = 200;
+  Base::Vector2 min = GetScreenToWorld({-offset, -offset});
+  Base::Vector2 max = GetScreenToWorld({GetSize().x + 2 * offset, GetSize().y + 2 * offset});
+  Base::Rectangle worldBounds = {min, min + (max - min)};
 
   GetOwner()->Engine().Entities->SetWorldBounds(worldBounds);
   _waveManager.Init(this, GetOwner()->Engine().Entities);
@@ -115,7 +116,7 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     popUp->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
     popUp->SetTextColor(Base::Red);
     popUp->SetFontSize(43);
-    popUp->SetPosition(GetWorldToScreen(playerPos));
+    popUp->SetPosition(GetScreenToWorld(playerPos));
     popUp->SetVAlignment(Base::VAlign::Center);
     popUp->SetHAlignment(Base::HAlign::Center);
 

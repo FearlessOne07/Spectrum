@@ -10,6 +10,7 @@
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/util/Easings.hpp"
+#include "base/util/Math.hpp"
 #include <base/audio/signals/PlaySoundSignal.hpp>
 #include <base/particles/ParticleManager.hpp>
 #include <memory>
@@ -80,8 +81,10 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
       emitter.particleStartSpeed = speedDist(_gen);
 
       float angle = angleDist(_gen);
-      // emitter.particleDirection = {static_cast<float>(sin(angle * DEG2RAD)), static_cast<float>(cos(angle *
-      // DEG2RAD))};
+      emitter.particleDirection = {
+        sin(Base::Math::ToRadians(angle)),
+        cos(Base::Math::ToRadians(angle)),
+      };
       emitter.emissionPoint = transcmp->position;
     };
 

@@ -96,6 +96,7 @@ void MainLayer::OnAttach()
   mainMenuButton->SetText("Quit");
   mainMenuButton->SetFontSize(50);
   mainMenuButton->SetPadding(10);
+  mainMenuButton->SetTextColor(Base::White);
   mainMenuButton->SetVAlignment(Base::VAlign::Center);
   mainMenuButton->SetHAlignment(Base::HAlign::Center);
   mainMenuButton->onClick = [this]() {
@@ -134,12 +135,13 @@ void MainLayer::OnAttach()
   playButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
   playButton->SetText("Retry");
   playButton->SetFontSize(55);
+  playButton->SetTextColor(Base::White);
   playButton->onClick = [this]() {
     GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene);
   };
   playButton->SetHAlignment(Base::HAlign::Center);
   playButton->SetVAlignment(Base::VAlign::Center);
-  playButton->SetPadding(0);
+  playButton->SetPadding(10);
   playButton->SetSprite(buttonSprite);
   playButton->onHover = {
     [=, this]() {                                   //

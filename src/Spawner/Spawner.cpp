@@ -22,6 +22,7 @@
 #include "base/components/SpriteComponent.hpp"
 #include "base/components/StateComponent.hpp"
 #include "base/components/TimerComponent.hpp"
+#include "base/rendering/Origin.hpp"
 #include "base/rendering/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
@@ -54,7 +55,6 @@ void Spawner::Init(Base::SceneLayer *parentLayer, Base::Ref<Base::EntityManager>
 {
   _parentLayer = parentLayer;
   _entityManager = entityManager;
-  _spawnOffset = float(200 * _parentLayer->GetCameraZoom());
   _gen = std::mt19937_64(_rd());
 
   auto bus = Base::SignalBus::GetInstance();
@@ -109,6 +109,7 @@ Base::EntityID Spawner::SpawnPlayer(Base::Vector2 position, const Ship &ship)
       _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("ships", true).Get(),
       ship.SpriteSource.GetPosition(),
       ship.SpriteSource.GetSize(),
+      Base::Origin::Center,
     },
     Base::Vector2{64, 64} //
   );
@@ -117,6 +118,7 @@ Base::EntityID Spawner::SpawnPlayer(Base::Vector2 position, const Ship &ship)
     _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
     {0, 8},
     Base::Vector2{8, 8},
+    Base::Origin::Center,
   };
   shtcmp->targetBulletSize = Base::Vector2{32, 32};
 
@@ -148,8 +150,8 @@ Base::EntityID Spawner::SpawnPlayer(Base::Vector2 position, const Ship &ship)
 
   e->AddComponent<LightCollectorComponent>();
   auto colcmp = e->AddComponent<Collector>();
-  float baseRadius = abbcmp->radius / _parentLayer->GetCameraZoom();
-  colcmp->collectionRadius = (baseRadius + (baseRadius * 0.5));
+  float baseRadius = abbcmp->radius;
+  colcmp->collectionRadius = _parentLayer->GetScreenToWorld((baseRadius + (baseRadius * 0.5)));
   _entityManager->AddEntity(e);
 
   auto bus = Base::SignalBus::GetInstance();
@@ -245,7 +247,7 @@ void Spawner::SpawnWave( //
 
     // Sprite
     std::shared_ptr<Base::SpriteComponent> sprtcmp = nullptr;
-    Base::Vector2 worldMin = _parentLayer->GetScreenToWorld({abbcmp->radius, abbcmp->radius});
+    Base::Vector2 worldMin = _parentLayer->GetScreenToWorld({0, 0});
     Base::Vector2 worldMax = _parentLayer->GetScreenToWorld(_parentLayer->GetSize());
 
     Base::Rectangle screenWorldArea = {
@@ -262,6 +264,7 @@ void Spawner::SpawnWave( //
           _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
           Base::Vector2{0, 0},
           Base::Vector2{8, 8},
+          Base::Origin::Center,
         },
         Base::Vector2{64, 64} //
       );
@@ -274,6 +277,7 @@ void Spawner::SpawnWave( //
           _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
           Base::Vector2{8, 0},
           Base::Vector2{8, 8},
+          Base::Origin::Center,
         },
         Base::Vector2{64, 64} //
       );
@@ -314,7 +318,7 @@ void Spawner::SpawnWave( //
               Base::TransitionConditionBlock{
                 "chase",
                 Base::TransitionEvaluationType::OR,
-                std::make_shared<Base::ProximityExit>(_playerID, 250 / _parentLayer->GetCameraZoom()),
+                std::make_shared<Base::ProximityExit>(_playerID, _parentLayer->GetScreenToWorld(250)),
                 std::make_shared<Base::AreaExit>(screenWorldArea),
               },
             },
@@ -330,7 +334,7 @@ void Spawner::SpawnWave( //
               Base::TransitionConditionBlock{
                 "fire",
                 Base::TransitionEvaluationType::AND,
-                std::make_shared<Base::ProximityEntry>(_playerID, 500 / _parentLayer->GetCameraZoom()),
+                std::make_shared<Base::ProximityEntry>(_playerID, _parentLayer->GetScreenToWorld(500)),
                 std::make_shared<Base::AreaEntry>(screenWorldArea),
               },
             },
@@ -347,6 +351,7 @@ void Spawner::SpawnWave( //
           _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities", true).Get(),
           Base::Vector2{16, 0},
           Base::Vector2{8, 8},
+          Base::Origin::Center,
         },
         Base::Vector2{64, 64} //
       );
@@ -457,6 +462,7 @@ void Spawner::SpawnHealthPack(std::shared_ptr<EntityDiedSignal> sig)
       _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups").Get(),
       Base::Vector2{24, 8},
       Base::Vector2{8, 8},
+      Base::Origin::Center,
     },
     Base::Vector2{16, 16});
 
@@ -526,6 +532,7 @@ void Spawner::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
         _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups").Get(),
         Base::Vector2{16, 8},
         Base::Vector2{8, 8},
+        Base::Origin::Center,
       },
       Base::Vector2{targetSize, targetSize});
 

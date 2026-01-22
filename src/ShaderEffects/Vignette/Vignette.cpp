@@ -1,5 +1,6 @@
 #include "Vignette.hpp"
 #include "base/scenes/Scene.hpp"
+#include "base/util/Colors.hpp"
 #include <algorithm>
 
 Vignette::Vignette(Base::Color vignetteColor, float decayRate, float maxStrength)
@@ -16,6 +17,7 @@ void Vignette::Setup(std::weak_ptr<Base::Scene> scene)
 void Vignette::Apply(Base::Ptr<Base::FrameBuffer> input, Base::Ptr<Base::FrameBuffer> output, Base::Vector2 resolution)
 {
   BeginFrameBuffer(output);
+  ClearFrameBuffer(Base::Blank);
   _vignetteMaterial.SetUniform("uVignetteColor", _vignetteColor);
   _vignetteMaterial.SetUniform("uResolution", resolution);
   _vignetteMaterial.SetUniform("uVignetteStrength", _vignetteStrength);

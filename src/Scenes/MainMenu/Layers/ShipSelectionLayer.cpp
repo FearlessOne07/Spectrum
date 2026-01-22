@@ -21,7 +21,6 @@ void ShipSelectionLayer::OnAttach()
   float layerFadeDuration = 0.2;
   _shipMenu = GetOwner()->Engine().Ui->AddLayer("ship-menu", GetSize(), {0, 0}, *this);
   auto shipMenuStack = _shipMenu->SetRootElement<Base::UIStackPanel>();
-  shipMenuStack->SetBackgroundColor(Base::Red);
   shipMenuStack->SetVisibilityOff();
   shipMenuStack->GetRenderTransform().SetOpacity(0);
   shipMenuStack->onShow = [this, shipMenuStack, layerFadeDuration]() {
@@ -61,6 +60,7 @@ void ShipSelectionLayer::OnAttach()
   shipMenuText->SetHAlignment(Base::HAlign::Center);
   shipMenuText->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
   shipMenuText->SetFontSize(40);
+  shipMenuText->SetTextColor(Base::White);
 
   auto shipGrid = shipMenuStack->AddChild<Base::UIGrid>("ship-menu-grid");
   shipGrid->SetHAlignment(Base::HAlign::Center);

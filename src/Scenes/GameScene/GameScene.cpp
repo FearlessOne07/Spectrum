@@ -9,6 +9,7 @@
 #include "base/assets/BaseAsset.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
 #include "base/rendering/GeometryType.hpp"
+#include "base/rendering/Origin.hpp"
 #include "base/rendering/RenderContextSingleton.hpp"
 #include "base/signals/SignalBus.hpp"
 #include <memory>
@@ -44,10 +45,10 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   Base::Vector2 mainLayerRes = Base::Vector2{rd->gameWidth, rd->gameHeight} / 4.f;
   auto mainLayer =
     Engine().Rendering->InitLayer(shared_from_this(), {0, 0}, {mainLayerRes.x, mainLayerRes.y}, GetClearColor());
-  mainLayer->SetCameraOffset({mainLayerRes.x / 2, mainLayerRes.y / 2});
   mainLayer->SetCameraZoom(mainLayerRes.x / rd->gameWidth);
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);
+  mainLayer->SetCamerOriginPoint(Base::Origin::Center);
 
   // TODO: Fix Tone mapping for bloom??
   mainLayer->AddShaderEffect<Vignette>(shared_from_this(), Base::Color{255, 48, 48, 255}, 0.5f, 0.5);

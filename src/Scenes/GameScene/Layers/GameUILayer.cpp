@@ -426,7 +426,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
 
   auto lightcmp = player->GetComponent<LightCollectorComponent>();
   auto playerLight = lightContainer->AddChild<Base::UILabel>("player-light");
-  playerLight->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font"));
+  playerLight->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
   playerLight->SetVAlignment(Base::VAlign::Center);
   playerLight->SetHAlignment(Base::HAlign::Center);
   playerLight->SetFontSize(40);

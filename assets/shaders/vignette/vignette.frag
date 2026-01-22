@@ -1,5 +1,5 @@
 #version 330 core
-in vec2 fragTexCoord;
+in vec3 vUv;
 
 uniform sampler2D texture0;
 
@@ -19,10 +19,10 @@ float roundedBoxSDF(vec2 p, vec2 halfSize, float radius) {
 
 void main()
 {
-    vec4 color = texture(texture0, fragTexCoord);
+    vec4 color = texture(texture0, vUv.xy);
 
     // shift to center and correct aspect ratio
-    vec2 uv = fragTexCoord.xy - 0.5;
+    vec2 uv = vUv.xy.xy - 0.5;
 
     vec2 halfSize = vec2(0.5 - uVignetteThickness);
 
