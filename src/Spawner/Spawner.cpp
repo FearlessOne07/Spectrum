@@ -348,7 +348,7 @@ void Spawner::SpawnWave( //
       mvcmp->driveForce = 500;
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
-          _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities", true).Get(),
+          _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
           Base::Vector2{16, 0},
           Base::Vector2{8, 8},
           Base::Origin::Center,

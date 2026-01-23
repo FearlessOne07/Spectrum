@@ -15,6 +15,7 @@
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UICanvas.hpp"
 #include "base/ui/elements/UILabel.hpp"
+#include "base/util/Colors.hpp"
 #include "base/util/Type.hpp"
 #include <base/systems/SystemManager.hpp>
 #include <format>
@@ -109,6 +110,7 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
   if (sig->entity->HasComponent<PlayerTag>() && sig->entity->IsAlive())
   {
     Base::Vector2 playerPos = sig->entity->GetComponent<Base::TransformComponent>()->position;
+    Base::Vector2 playerPosScreen = GetWorldToScreen(playerPos);
     std::string name = std::format("damage-popup-{}", _currentPopUp++);
     auto canvas = _inWorldUILayer->GetRootElement<Base::UICanvas>();
     auto popUp = canvas->AddChild<Base::UILabel>(name);
@@ -116,7 +118,8 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     popUp->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
     popUp->SetTextColor(Base::Red);
     popUp->SetFontSize(43);
-    popUp->SetPosition(GetWorldToScreen(playerPos));
+
+    popUp->SetPosition(Base::Vector2{GetScreenToWorld(playerPosScreen.x), GetScreenToWorld(playerPosScreen.y)});
     popUp->SetVAlignment(Base::VAlign::Center);
     popUp->SetHAlignment(Base::HAlign::Center);
 

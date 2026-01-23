@@ -48,14 +48,6 @@ void MainLayer::OnAttach()
     );
   };
 
-  Base::NinePatchSprite buttonSprite = {
-    GetOwner()->Engine().Assets->GetAsset<Base::Texture>("button", true),
-    {.top = 1, .bottom = 1, .left = 1, .right = 1},
-    {0, 0},
-    {16, 8},
-    4,
-  };
-
   auto actionButtonContainer = canvas->AddChild<Base::UIStackPanel>("action-button-container");
   actionButtonContainer->SetOrientation(Base::UIStackPanel::Orientation::Horizontal);
   actionButtonContainer->SetPosition({GetSize().x / 2, (GetSize().y / 2) + 400});
@@ -102,7 +94,7 @@ void MainLayer::OnAttach()
   mainMenuButton->onClick = [this]() {
     GetOwner()->SetSceneTransition<MainMenu>(Base::SceneRequest::ReplaceCurrentScene);
   };
-  mainMenuButton->SetSprite(buttonSprite);
+  mainMenuButton->SetBackgroundColor(Base::Blank);
   mainMenuButton->onHover = {
     [=, this]() {                                   //
       GetOwner()->Engine().Tweens->AddTween<float>( //
@@ -142,7 +134,7 @@ void MainLayer::OnAttach()
   playButton->SetHAlignment(Base::HAlign::Center);
   playButton->SetVAlignment(Base::VAlign::Center);
   playButton->SetPadding(10);
-  playButton->SetSprite(buttonSprite);
+  playButton->SetBackgroundColor(Base::Blank);
   playButton->onHover = {
     [=, this]() {                                   //
       GetOwner()->Engine().Tweens->AddTween<float>( //
