@@ -308,7 +308,7 @@ void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
   fps->SetFontSize(40);
   fps->SetVAlignment(Base::VAlign::Center);
   fps->SetHAlignment(Base::HAlign::Center);
-  fps->Bind({[]() -> std::string { return std::format("FPS:{}", 0); }});
+  fps->Bind({[this]() -> std::string { return std::format("FPS:{}", GetOwner()->Engine().Time->GetFps()); }});
 }
 
 void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)

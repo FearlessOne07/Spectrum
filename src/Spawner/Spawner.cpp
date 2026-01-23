@@ -291,6 +291,7 @@ void Spawner::SpawnWave( //
         _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
         {8, 8},
         Base::Vector2{8, 8},
+        Base::Origin::Center,
       };
       shtcmp->targetBulletSize = Base::Vector2{32, 32};
       transfxcmp->bindMin = _parentLayer->GetScreenToWorld({0, 0});
