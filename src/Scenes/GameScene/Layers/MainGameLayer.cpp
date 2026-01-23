@@ -116,7 +116,7 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     popUp->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
     popUp->SetTextColor(Base::Red);
     popUp->SetFontSize(43);
-    popUp->SetPosition(GetScreenToWorld(playerPos));
+    popUp->SetPosition(GetWorldToScreen(playerPos));
     popUp->SetVAlignment(Base::VAlign::Center);
     popUp->SetHAlignment(Base::HAlign::Center);
 
