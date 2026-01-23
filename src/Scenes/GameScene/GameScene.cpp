@@ -36,7 +36,11 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   Engine().Assets->LoadSound("assets/sounds/bullet-fire.wav");
   Engine().Assets->LoadSound("assets/sounds/enemy-die.wav");
   Engine().Assets->LoadSound("assets/sounds/player-hit.wav");
-  Engine().Assets->LoadShader(Base::ShaderPath{"", "assets/shaders/vignette/vignette.frag", Base::GeometryType::Quad});
+  Engine().Assets->LoadShader(Base::ShaderPath{
+    "",
+    "assets/shaders/vignette/vignette.frag",
+    Base::GeometryType::Texture,
+  });
 
   auto uiLayer = Engine().Rendering->InitLayer(shared_from_this(), {0, 0}, Base::Vector2{1920, 1080}, Base::Blank);
   AttachLayer<GameUILayer>(uiLayer);

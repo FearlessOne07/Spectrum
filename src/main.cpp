@@ -41,9 +41,9 @@ int main(void)
         {
           Base::AssetType::Shader,
           {
-            Base::ShaderPath{"", "assets/shaders/bloom/blur_pass.frag", Base::GeometryType::Quad},
-            Base::ShaderPath{"", "assets/shaders/bloom/combine_pass.frag", Base::GeometryType::Quad},
-            Base::ShaderPath{"", "assets/shaders/bloom/bright_pass.frag", Base::GeometryType::Quad},
+            Base::ShaderPath{"", "assets/shaders/bloom/blur_pass.frag", Base::GeometryType::Texture},
+            Base::ShaderPath{"", "assets/shaders/bloom/combine_pass.frag", Base::GeometryType::Texture},
+            Base::ShaderPath{"", "assets/shaders/bloom/bright_pass.frag", Base::GeometryType::Texture},
           },
         },
       },
