@@ -1,8 +1,10 @@
 #include "Bloom.hpp"
-#include "base/renderer/RenderLayer.hpp"
+#include "base/rendering/FrameBuffer.hpp"
+#include "base/rendering/FramebufferAttachmentIndex.hpp"
 #include "base/scenes/Scene.hpp"
-#include "raylib.h"
-#include "raymath.h"
+#include "base/util/Colors.hpp"
+#include "base/util/Type.hpp"
+#include "internal/rendering/RenderCommand.hpp"
 #include <algorithm>
 
 Bloom::Bloom(float bloomIntensity, float luminanceThresh, float blurResolution)
@@ -12,82 +14,63 @@ Bloom::Bloom(float bloomIntensity, float luminanceThresh, float blurResolution)
   SetLuminanceThresh(luminanceThresh);
 }
 
-void Bloom::SetUpBuffers(Vector2 resolution)
+void Bloom::SetUpBuffers(Base::IVector2 resolution)
 {
-  _blurResolution = resolution * _blurResolutionScale;
-  _blurPassX = LoadRenderTexture(_blurResolution.x, _blurResolution.y);
-  _blurPassY = LoadRenderTexture(_blurResolution.x, _blurResolution.y);
-  _brightPass = LoadRenderTexture(resolution.x, resolution.y);
+  _blurResolution = Base::Vector2{resolution} * _blurResolutionScale;
+  _blurPassX = Base::FrameBuffer::Create({.Width = _blurResolution.x, .Height = _blurResolution.y});
+  _blurPassY = Base::FrameBuffer::Create({.Width = _blurResolution.x, .Height = _blurResolution.y});
+  _brightPass = Base::FrameBuffer::Create({.Width = resolution.x, .Height = resolution.y});
   _buffersSetUp = true;
 }
 
-void Bloom::Setup(std::weak_ptr<const Base::Scene> scene)
+void Bloom::Setup(std::weak_ptr<Base::Scene> scene)
 {
   _currentScene = scene;
-  _brightShader = scene.lock()->GameCtx().Assets->GetGlobalAsset<Base::BaseShader>("bright_pass");
-  _blurShader = scene.lock()->GameCtx().Assets->GetGlobalAsset<Base::BaseShader>("blur_pass");
-  _combineShader = scene.lock()->GameCtx().Assets->GetGlobalAsset<Base::BaseShader>("combine_pass");
+  _brightMaterial = {scene.lock()->Engine().Assets->GetAsset<Base::Shader>("bright_pass", true).Get()};
+  _blurMaterial = {scene.lock()->Engine().Assets->GetAsset<Base::Shader>("blur_pass", true).Get()};
+  _combineMaterial = {scene.lock()->Engine().Assets->GetAsset<Base::Shader>("combine_pass", true).Get()};
 }
 
-void Bloom::Apply(RenderTexture2D *input, RenderTexture2D *output, Vector2 resolution)
+void Bloom::Apply(Base::Ptr<Base::FrameBuffer> input, Base::Ptr<Base::FrameBuffer> output, Base::Vector2 resolution)
 {
-  auto shaderMan = _currentScene.lock()->GameCtx().Shaders;
   if (!_buffersSetUp)
   {
     SetUpBuffers(resolution);
   }
 
-  BeginTextureMode(_brightPass);
-  shaderMan->ActivateShader(_brightShader);
-  shaderMan->SetUniform(_brightShader, "threshold", _luminanceThreshHold);
-  DrawTexturePro( //
-    input->texture, {0, 0, resolution.x, -resolution.y}, {0, 0, resolution.x, resolution.y}, {0, 0}, 0,
-    WHITE //
-  );
-  shaderMan->DeactivateCurrentShader();
-  EndTextureMode();
+  _brightMaterial.SetUniform("threshold", _luminanceThreshHold);
+  BeginFrameBuffer(_brightPass);
+  ClearFrameBuffer(Base::Blank);
+  DrawFrameBuffer(input, {resolution.x, resolution.y}, _brightMaterial, Base::FramebufferAttachmentIndex::Color0);
+  EndFrameBuffer();
 
-  BeginTextureMode(_blurPassX);
-  shaderMan->ActivateShader(_blurShader);
-  shaderMan->SetUniform(_blurShader, "resolution", _blurResolution);
-  shaderMan->SetUniform(_blurShader, "direction", Vector2{1, 0});
-  DrawTexturePro( //
-    _brightPass.texture,
-    {
-      0,
-      0,
-      resolution.x,
-      -resolution.y,
-    },
-    {0, 0, _blurResolution.x, _blurResolution.y}, {0, 0}, 0,
-    WHITE //
+  _blurMaterial.SetUniform("resolution", _blurResolution);
+  _blurMaterial.SetUniform("direction", Base::Vector2{1, 0});
+  BeginFrameBuffer(_blurPassX);
+  ClearFrameBuffer(Base::Blank);
+  DrawFrameBuffer( //
+    _brightPass, {_blurResolution.x, _blurResolution.y}, _blurMaterial,
+    Base::FramebufferAttachmentIndex::Color0 //
   );
+  EndFrameBuffer();
 
-  shaderMan->DeactivateCurrentShader();
-  EndTextureMode();
-
-  BeginTextureMode(_blurPassY);
-  shaderMan->ActivateShader(_blurShader);
-  shaderMan->SetUniform(_blurShader, "resolution", _blurResolution);
-  shaderMan->SetUniform(_blurShader, "direction", Vector2{0, 1});
-  DrawTexturePro( //
-    _blurPassX.texture, {0, 0, _blurResolution.x, -_blurResolution.y}, {0, 0, _blurResolution.x, _blurResolution.y},
-    {0, 0}, 0,
-    WHITE //
+  _blurMaterial.SetUniform("resolution", _blurResolution);
+  _blurMaterial.SetUniform("direction", Base::Vector2{0, 1});
+  BeginFrameBuffer(_blurPassY);
+  ClearFrameBuffer(Base::Blank);
+  DrawFrameBuffer( //
+    _blurPassX, {_blurResolution.x, _blurResolution.y}, _blurMaterial,
+    Base::FramebufferAttachmentIndex::Color0 //
   );
-  shaderMan->DeactivateCurrentShader();
-  EndTextureMode();
+  EndFrameBuffer();
 
-  BeginTextureMode(*output);
-  shaderMan->ActivateShader(_combineShader);
-  shaderMan->SetUniform(_combineShader, "blurredTexture", _blurPassY.texture);
-  shaderMan->SetUniform(_combineShader, "bloomIntensity", _bloomIntensitiy);
-  DrawTexturePro( //
-    input->texture, {0, 0, resolution.x, -resolution.y}, {0, 0, resolution.x, resolution.y}, {0, 0}, 0,
-    WHITE //
-  );
-  shaderMan->DeactivateCurrentShader();
-  EndTextureMode();
+  _combineMaterial.SetTexture(1, _blurPassY->GetColorAttachment(Base::FramebufferAttachmentIndex::Color0));
+  _combineMaterial.SetUniform("bloomIntensity", _bloomIntensitiy);
+
+  BeginFrameBuffer(output);
+  ClearFrameBuffer(Base::Blank);
+  DrawFrameBuffer(input, {resolution.x, resolution.y}, _combineMaterial, Base::FramebufferAttachmentIndex::Color0);
+  EndFrameBuffer();
 }
 
 void Bloom::SetLuminanceThresh(float thresh)

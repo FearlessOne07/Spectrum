@@ -1,7 +1,6 @@
 #pragma once
 #include <algorithm>
 #include <base/components/Component.hpp>
-#include <cmath>
 
 struct HealthComponent : public Base::Component
 {

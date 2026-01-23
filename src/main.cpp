@@ -8,6 +8,7 @@
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
 #include "base/assets/BaseAsset.hpp"
+#include "base/rendering/GeometryType.hpp"
 #include <base/game/Game.hpp>
 
 int main(void)
@@ -40,9 +41,9 @@ int main(void)
         {
           Base::AssetType::Shader,
           {
-            "assets/shaders/bloom/blur_pass.frag",
-            "assets/shaders/bloom/combine_pass.frag",
-            "assets/shaders/bloom/bright_pass.frag",
+            Base::ShaderPath{"", "assets/shaders/bloom/blur_pass.frag", Base::GeometryType::Texture},
+            Base::ShaderPath{"", "assets/shaders/bloom/combine_pass.frag", Base::GeometryType::Texture},
+            Base::ShaderPath{"", "assets/shaders/bloom/bright_pass.frag", Base::GeometryType::Texture},
           },
         },
       },

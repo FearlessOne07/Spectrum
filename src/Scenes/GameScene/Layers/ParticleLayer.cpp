@@ -6,12 +6,11 @@
 #include "base/components/TransformComponent.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleEmitter.hpp"
-#include "base/renderer/RenderContextSingleton.hpp"
+#include "base/rendering/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
-#include "base/sprites/Sprite.hpp"
 #include "base/util/Easings.hpp"
-#include "raylib.h"
+#include "base/util/Math.hpp"
 #include <base/audio/signals/PlaySoundSignal.hpp>
 #include <base/particles/ParticleManager.hpp>
 #include <memory>
@@ -20,7 +19,7 @@
 void ParticleLayer::OnAttach()
 {
   _gen = std::mt19937_64(_rd());
-  _emitter = GameCtx().Particles->AddEmitter();
+  _emitter = GetOwner()->Engine().Particles->AddEmitter();
   _emitter->burst = true;
   _emitter->emissionType = Base::ParticleEmitter::EmissionType::Point;
   _emitter->easingType = Base::Easings::Type::EaseInOut;
@@ -51,7 +50,7 @@ void ParticleLayer::Render()
 {
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   BeginCamera();
-  GameCtx().Particles->Render();
+  GetOwner()->Engine().Particles->Render();
   EndCamera();
 }
 
@@ -82,7 +81,10 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
       emitter.particleStartSpeed = speedDist(_gen);
 
       float angle = angleDist(_gen);
-      emitter.particleDirection = {static_cast<float>(sin(angle * DEG2RAD)), static_cast<float>(cos(angle * DEG2RAD))};
+      emitter.particleDirection = {
+        sin(Base::Math::ToRadians(angle)),
+        cos(Base::Math::ToRadians(angle)),
+      };
       emitter.emissionPoint = transcmp->position;
     };
 
@@ -97,7 +99,7 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
 
     auto bus = Base::SignalBus::GetInstance();
     std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
-    sig->soundHandle = GetOwner()->GameCtx().Assets->GetLocalAsset<Base::Sound>("enemy-die");
+    sig->soundHandle = GetOwner()->Engine().Assets->GetAsset<Base::Sound>("enemy-die");
     bus->BroadCastSignal(sig);
   }
 }

@@ -1,8 +1,7 @@
 #pragma once
 
-#include "raylib.h"
-
+#include "base/rendering/Quad.hpp"
 struct Ship
 {
-  Rectangle SpriteSource = {0, 0, 0, 0};
+  Base::Rectangle SpriteSource;
 };

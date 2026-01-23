@@ -6,8 +6,8 @@
 #include <base/entities/EntityManager.hpp>
 #include <memory>
 
-void HealthSystem::Update(                                                                                //
-  float dt, Base::Ref<Base::EntityManager> entityManager, std::shared_ptr<const Base::Scene> currentScene //
+void HealthSystem::Update(                                                                          //
+  float dt, Base::Ref<Base::EntityManager> entityManager, std::shared_ptr<Base::Scene> currentScene //
 )
 {
   auto entities = entityManager->Query<HealthComponent>();

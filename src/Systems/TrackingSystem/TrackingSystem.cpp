@@ -1,17 +1,15 @@
 #include "TrackingSystem.hpp"
 #include "Components/TrackingComponent.hpp"
+#include "base/util/Math.hpp"
 #include <base/components/ColliderComponent.hpp>
 #include <base/components/RigidBodyComponent.hpp>
 #include <base/components/TransformComponent.hpp>
 #include <base/entities/Entity.hpp>
 #include <base/entities/EntityManager.hpp>
-#include <base/renderer/RenderContextSingleton.hpp>
 #include <memory>
-#include <raylib.h>
-#include <raymath.h>
 
 void TrackingSystem::Update(                                                                              //
-  float dt, Base::Ref<Base::EntityManager> entityManager, std::shared_ptr<const Base::Scene> currentScene //
+  float dt, Base::Ref<Base::EntityManager> entityManager, std::shared_ptr<Base::Scene> currentScene //
 )
 {
   auto entities = entityManager->Query<TrackingComponent>();
@@ -23,7 +21,7 @@ void TrackingSystem::Update(                                                    
     auto transcomp = e->GetComponent<Base::TransformComponent>();
     auto rbcmp = e->GetComponent<Base::RigidBodyComponent>();
 
-    Vector2 targetPos = {0, 0};
+    Base::Vector2 targetPos = {0, 0};
     if (trckcomp->GetTargetEntityID())
     {
       auto target = entityManager->GetEntity(trckcomp->GetTargetEntityID());
@@ -34,9 +32,8 @@ void TrackingSystem::Update(                                                    
       targetPos = trckcomp->GetTargetPosition();
     }
 
-    Vector2 trackingDirection = Vector2Subtract( //
-      targetPos, transcomp->position             //
-    );
-    rbcmp->direction = Vector2Normalize(trackingDirection);
+    Base::Vector2 trackingDirection = targetPos - transcomp->position;
+
+    rbcmp->direction = Base::Math::Normalize(trackingDirection);
   }
 }

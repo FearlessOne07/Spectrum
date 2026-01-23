@@ -2,10 +2,10 @@
 #include "Components/DiveComponent.hpp"
 #include "base/components/RigidBodyComponent.hpp"
 #include "base/components/TransformComponent.hpp"
-#include "raymath.h"
+#include "base/util/Math.hpp"
 
-void DiveSystem::Update(                                                                                  //
-  float dt, Base::Ref<Base::EntityManager> entityManager, std::shared_ptr<const Base::Scene> currentScene //
+void DiveSystem::Update(                                                                            //
+  float dt, Base::Ref<Base::EntityManager> entityManager, std::shared_ptr<Base::Scene> currentScene //
 )
 {
   auto entities_dvcmp = entityManager->Query<DiveComponent>();
@@ -18,9 +18,9 @@ void DiveSystem::Update(                                                        
 
     if (!divecmp->HasDived())
     {
-      Vector2 targetPos =
+      Base::Vector2 targetPos =
         entityManager->GetEntity(divecmp->GetDiveTarget())->GetComponent<Base::TransformComponent>()->position;
-      rbcmp->direction = Vector2Normalize(targetPos - transcmp->position);
+      rbcmp->direction = Base::Math::Normalize(targetPos - transcmp->position);
       divecmp->SetHasDived();
     }
   }

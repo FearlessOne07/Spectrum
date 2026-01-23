@@ -1,19 +1,19 @@
 #pragma once
 #include "base/entities/Entity.hpp"
-#include "raylib.h"
+#include "base/util/Type.hpp"
 #include <base/components/Component.hpp>
 
 class TrackingComponent : public Base::Component
 {
   Base::EntityID _targetEntityID;
-  Vector2 _targetPosition = {0, 0};
+  Base::Vector2 _targetPosition = {0, 0};
 
 public:
   TrackingComponent(const Base::EntityID &entityID) : _targetEntityID(entityID)
   {
   }
 
-  TrackingComponent(const Vector2 &targetPosition) : _targetPosition(targetPosition)
+  TrackingComponent(const Base::Vector2 &targetPosition) : _targetPosition(targetPosition)
   {
   }
 
@@ -22,7 +22,7 @@ public:
     return _targetEntityID;
   }
 
-  Vector2 GetTargetPosition() const
+  Base::Vector2 GetTargetPosition() const
   {
     return _targetPosition;
   }
@@ -32,7 +32,7 @@ public:
     _targetEntityID = entityId;
   }
 
-  void SetTargetPosition(Vector2 position)
+  void SetTargetPosition(Base::Vector2 position)
   {
     _targetPosition = position;
   }
