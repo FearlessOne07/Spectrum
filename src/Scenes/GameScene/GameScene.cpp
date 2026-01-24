@@ -66,7 +66,7 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   AttachLayer<MainGameLayer>(mainLayer);
   AttachLayer<ParticleLayer>(mainLayer);
 
-  auto bloom = AddPostProcessingEffect<Bloom>(1.2, 0.25, 0.25);
+  auto bloom = AddPostProcessingEffect<Bloom>(0.8, 0.05, 0.25);
 
   std::shared_ptr<Base::PlayAudioStreamSignal> sig = std::make_shared<Base::PlayAudioStreamSignal>();
   sig->streamHandle = Engine().Assets->GetAsset<Base::AudioStream>("game-track", true);

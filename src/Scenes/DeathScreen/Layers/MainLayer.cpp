@@ -9,6 +9,7 @@
 #include "base/ui/elements/UILabel.hpp"
 #include "base/ui/elements/UIStackPanel.hpp"
 #include "base/util/Colors.hpp"
+#include "Scenes/DeathScreen/SharedDeathData.hpp"
 
 void MainLayer::OnAttach()
 {
@@ -129,7 +130,9 @@ void MainLayer::OnAttach()
   playButton->SetFontSize(55);
   playButton->SetTextColor(Base::White);
   playButton->onClick = [this]() {
-    GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene);
+    Base::SceneData data;
+    data.Set(GetOwner()->GetSharedData<SharedDeathData>()->PlayerShip);
+    GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene, data);
   };
   playButton->SetHAlignment(Base::HAlign::Center);
   playButton->SetVAlignment(Base::VAlign::Center);

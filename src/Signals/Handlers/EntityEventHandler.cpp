@@ -1,4 +1,5 @@
 #include "EntityEventHandler.hpp"
+#include "Scenes/GameScene/SharedGameData.hpp"
 #include "Components/BulletComponent.hpp"
 #include "Components/DamageComponent.hpp"
 #include "Components/EnemyComponent.hpp"
@@ -172,7 +173,9 @@ void EntitySignalHandler::DeathHandler(const std::shared_ptr<Base::Signal> signa
   {
     if (entityDiedSig->entity->HasComponent<PlayerTag>())
     {
-      _parentLayer->GetOwner()->SetSceneTransition<DeathScreen>(Base::SceneRequest::ReplaceCurrentScene);
+      Base::SceneData data;
+      data.Set(_parentLayer->GetOwner()->GetSharedData<SharedGameData>()->PlayerShip);
+      _parentLayer->GetOwner()->SetSceneTransition<DeathScreen>(Base::SceneRequest::ReplaceCurrentScene, data);
     }
   }
 }
