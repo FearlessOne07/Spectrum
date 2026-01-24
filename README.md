@@ -41,6 +41,4 @@ Shoot Enemies, Collect Light, Upgrade in the Shop, Rinse and Repeat
   
 ## Credits
 
-Made using [raylib](https://github.com/raysan5/raylib).
-
 The "heart-ui" and "power-ups" textures are modified versions of these [assets](https://gvituri.itch.io/space-shooter)
