@@ -55,8 +55,7 @@ void GameUILayer::OnInputEvent(std::shared_ptr<Base::InputEvent> &event)
     {
       if (_buyMenu->IsVisible())
       {
-        _buyMenu->Hide();
-        UnPause();
+        CloseShop();
       }
       else if (_pauseMenu->IsVisible())
       {
@@ -338,19 +337,21 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
         .endValue = 1,
         .duration = buyMenuEntryDuration,
         .easingType = Base::Easings::Type::EaseOut,
+        .onTweenEnd = [this]() { GetRenderLayerState().Visibilty = Base::RenderLayerVisibilty::Opaque; },
       } //
     );
   };
-
   buyMenuPanel->onHide = [this, buyMenuPanel, buyMenuExitDuration]() {
     GetOwner()->Engine().Tweens->AddTween<float>(                             //
       {buyMenuPanel.get(), "buy-menu-alpha"},                                 //
       [=](float pos) { buyMenuPanel->GetRenderTransform().SetOpacity(pos); }, //
-      {.startValue = buyMenuPanel->GetRenderTransform().GetOpacity(),         //
-       .endValue = 0,
-       .duration = buyMenuExitDuration,
-       .easingType = Base::Easings::Type::EaseIn,
-       .onTweenEnd = [buyMenuPanel]() { buyMenuPanel->SetVisibilityOff(); }} //
+      {
+        .startValue = buyMenuPanel->GetRenderTransform().GetOpacity(), //
+        .endValue = 0,
+        .duration = buyMenuExitDuration,
+        .easingType = Base::Easings::Type::EaseIn,
+        .onTweenEnd = [buyMenuPanel, this]() { buyMenuPanel->SetVisibilityOff(); },
+      } //
     );
   };
 
@@ -656,6 +657,7 @@ std::array<float, 3> GameUILayer::UpdateItems()
 
 void GameUILayer::CloseShop()
 {
+  GetRenderLayerState().Visibilty = Base::RenderLayerVisibilty::Visible;
   _buyMenu->Hide();
   UnPause();
 };

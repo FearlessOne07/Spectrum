@@ -7,7 +7,13 @@
 
 void DeathScreen::Enter(const Base::SceneData &sceneData)
 {
-  auto mainLayer = Engine().Rendering->InitLayer(shared_from_this(), {0, 0}, {1920, 1080}, Base::Black);
+  auto mainLayer = Engine().Rendering->InitLayer( //
+    shared_from_this(), {0, 0}, Base::Black,
+    {
+      .Width = 1920,
+      .Height = 1080,
+    } //
+  );
   mainLayer->AddShaderEffect<Bloom>(shared_from_this(), 1.2, 0.25, 0.25);
   AttachLayer<MainLayer>(mainLayer);
 }

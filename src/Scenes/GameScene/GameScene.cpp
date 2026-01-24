@@ -42,13 +42,19 @@ void GameScene::Enter(const Base::SceneData &sceneData)
     Base::GeometryType::Texture,
   });
 
-  auto uiLayer = Engine().Rendering->InitLayer(shared_from_this(), {0, 0}, Base::Vector2{1920, 1080}, Base::Blank);
+  auto uiLayer =
+    Engine().Rendering->InitLayer(shared_from_this(), {0, 0}, Base::Blank, {.Width = 1920, .Height = 1080});
   AttachLayer<GameUILayer>(uiLayer);
 
   // MainRenderLayer
   Base::Vector2 mainLayerRes = Base::Vector2{rd->gameWidth, rd->gameHeight} / 4.f;
-  auto mainLayer =
-    Engine().Rendering->InitLayer(shared_from_this(), {0, 0}, {mainLayerRes.x, mainLayerRes.y}, GetClearColor());
+  auto mainLayer = Engine().Rendering->InitLayer( //
+    shared_from_this(), {0, 0}, GetClearColor(),
+    {
+      .Width = static_cast<int>(mainLayerRes.x),
+      .Height = static_cast<int>(mainLayerRes.y),
+    } //
+  );
   mainLayer->SetCameraZoom(mainLayerRes.x / rd->gameWidth);
   mainLayer->SetCameraTarget({0, 0});
   mainLayer->SetCameraRotation(0);

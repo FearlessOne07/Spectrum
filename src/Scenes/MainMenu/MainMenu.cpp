@@ -12,8 +12,13 @@ void MainMenu::Enter(const Base::SceneData &sceneData)
   // MainRenderLayer
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   Base::Vector2 mainLayerRes = Base::Vector2{rd->gameWidth, rd->gameHeight};
-  auto mainLayer =
-    Engine().Rendering->InitLayer(shared_from_this(), {0, 0}, {mainLayerRes.x, mainLayerRes.y}, GetClearColor());
+  auto mainLayer = Engine().Rendering->InitLayer( //
+    shared_from_this(), {0, 0}, GetClearColor(),
+    {
+      .Width = static_cast<int>(mainLayerRes.x),
+      .Height = static_cast<int>(mainLayerRes.y),
+    } //
+  );
   mainLayer->AddShaderEffect<Bloom>(shared_from_this(), 1.2, 0.25, 0.25);
 
   AttachLayer<MainMenuLayer>(mainLayer);
