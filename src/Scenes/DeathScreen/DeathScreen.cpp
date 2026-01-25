@@ -21,7 +21,7 @@ void DeathScreen::Enter(const Base::SceneData &sceneData)
       .Height = 1080,
     } //
   );
-  mainLayer->AddShaderEffect<Bloom>(shared_from_this(), 1.2, 0.25, 0.25);
+  mainLayer->AddShaderEffect<Bloom>(shared_from_this(), 0.8, 0.05, 0.25);
   AttachLayer<MainLayer>(mainLayer);
 }
 

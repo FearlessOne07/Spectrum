@@ -84,7 +84,7 @@ void MainGameLayer::Update(float dt)
     auto hlthcmp = player->GetComponent<HealthComponent>();
     if (hlthcmp->GetHealth() <= hlthcmp->GetMaxHealth() * 0.2)
     {
-      vignette->SetMinStrength(0.2);
+      vignette->SetMinStrength(0.5);
       vignette->SetMaintain(true);
     }
     else

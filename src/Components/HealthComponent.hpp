@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <base/components/Component.hpp>
+#include <cmath>
 
 struct HealthComponent : public Base::Component
 {
@@ -79,6 +80,6 @@ public:
 
   float GetLastTakenDamage()
   {
-    return _lastDamageTaken;
+    return std::round(_lastDamageTaken * 100.f) / 100.f;
   }
 };
