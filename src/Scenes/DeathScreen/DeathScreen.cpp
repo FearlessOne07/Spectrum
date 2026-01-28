@@ -1,18 +1,16 @@
 #include "Scenes/DeathScreen/DeathScreen.hpp"
 #include "Layers/MainLayer.hpp"
 #include "ShaderEffects/Bloom/Bloom.hpp"
+#include "SharedDeathData.hpp"
 #include "base/audio/signals/StopAudioStreamSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/util/Colors.hpp"
-#include "SharedDeathData.hpp"
-
-
 
 void DeathScreen::Enter(const Base::SceneData &sceneData)
 {
 
   InitSharedData<SharedDeathData>();
-  GetSharedData<SharedDeathData>()->PlayerShip = sceneData.Get<Ship>();
+  SharedData<SharedDeathData>()->PlayerShip = sceneData.Get<Ship>();
 
   auto mainLayer = Engine().Rendering->InitLayer( //
     shared_from_this(), {0, 0}, Base::Black,

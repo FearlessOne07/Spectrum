@@ -16,6 +16,7 @@
 #include "Components/TransformEffects.hpp"
 #include "Signals/EntityDiedSignal.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
+#include "WaveManager/EnemySpecs.hpp"
 #include "base/components/AnimationComponent.hpp"
 #include "base/components/AreaComponent.hpp"
 #include "base/components/ProximityComponent.hpp"
@@ -42,9 +43,9 @@
 #include <memory>
 #include <random>
 
-void Spawner::SetToSpawn(std::vector<EnemySpec> toSpawn, float difficultyScale)
+void Spawner::SetToSpawn(std::vector<SpawnSpec> toSpawn, float difficultyScale)
 {
-  for (EnemySpec &spec : toSpawn)
+  for (SpawnSpec &spec : toSpawn)
   {
     _difficultyScale = difficultyScale;
     _toSpawn.push(spec);
@@ -88,7 +89,7 @@ Base::EntityID Spawner::SpawnPlayer(Base::Vector2 position, const Ship &ship)
   transfxcmp->rotate = true;
 
   auto mvcmp = e->AddComponent<Base::MoveComponent>();
-  mvcmp->driveForce = 1500;
+  mvcmp->driveForce = ship.DriveForce;
   mvcmp->brakeForce = 500.f;
 
   auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
@@ -96,13 +97,13 @@ Base::EntityID Spawner::SpawnPlayer(Base::Vector2 position, const Ship &ship)
   rbcmp->mass = 1;
   rbcmp->drag = 3;
 
-  auto hlthcmp = e->AddComponent<HealthComponent>(20.f);
+  auto hlthcmp = e->AddComponent<HealthComponent>(ship.Health);
 
   auto shtcmp = e->AddComponent<ShootComponent>();
-  shtcmp->bulletFireRate = 0.6;
+  shtcmp->bulletFireRate = ship.FireRate;
   shtcmp->bulletLifetime = 3;
-  shtcmp->bulletFireTimer = 1;
-  shtcmp->bulletSpeed = 1500.f;
+  shtcmp->bulletFireTimer = 0;
+  shtcmp->bulletSpeed = ship.BulletSpeed;
 
   auto sprtcmp = e->AddComponent<Base::SpriteComponent>( //
     Base::Sprite{
@@ -115,9 +116,9 @@ Base::EntityID Spawner::SpawnPlayer(Base::Vector2 position, const Ship &ship)
   );
 
   shtcmp->bulletSprite = {
-    _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
-    {0, 8},
-    Base::Vector2{8, 8},
+    _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("ships", true).Get(),
+    ship.BulletSpriteSource.GetPosition(),
+    ship.BulletSpriteSource.GetSize(),
     Base::Origin::Center,
   };
   shtcmp->targetBulletSize = Base::Vector2{32, 32};
@@ -144,7 +145,7 @@ Base::EntityID Spawner::SpawnPlayer(Base::Vector2 position, const Ship &ship)
   });
   inpcmp->BindMouseButtonReleased(Base::MouseKey::Left, [shtcmp]() { shtcmp->IsFiring = false; });
 
-  auto dmgcmp = e->AddComponent<DamageComponent>(1);
+  auto dmgcmp = e->AddComponent<DamageComponent>(ship.Damage);
   e->AddComponent<Base::ImpulseComponent>();
   e->AddComponent<PlayerTag>();
 
@@ -173,7 +174,8 @@ void Spawner::SpawnWave( //
     _spawnTimer = 0.f;
     const Base::RenderContext *rctx = Base::RenderContextSingleton::GetInstance();
 
-    EnemySpec &spec = _toSpawn.front();
+    SpawnSpec &sSpec = _toSpawn.front();
+    auto &spec = EnemySpecDataBase::GetSpec(sSpec.Type);
     _toSpawn.pop();
 
     std::uniform_int_distribution sideDist(1, 4);
@@ -209,7 +211,7 @@ void Spawner::SpawnWave( //
     auto e = _entityManager->CreateEntity();
 
     auto enemcmp = e->AddComponent<EnemyComponent>();
-    enemcmp->type = spec.Type;
+    enemcmp->type = sSpec.Type;
     enemcmp->value = spec.Value;
 
     auto transcmp = e->GetComponent<Base::TransformComponent>();
@@ -255,9 +257,9 @@ void Spawner::SpawnWave( //
       {worldMax.x - worldMin.x, worldMax.y - worldMin.y},
     };
 
-    switch (spec.Type)
+    switch (sSpec.Type)
     {
-    case EnemyType::CHASER: {
+    case EnemyType::Chaser: {
       auto trckcmp = e->AddComponent<TrackingComponent>(_playerID);
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
@@ -271,7 +273,7 @@ void Spawner::SpawnWave( //
       mvcmp->driveForce = std::uniform_real_distribution<float>(400, 500)(_gen);
       break;
     }
-    case EnemyType::SHOOTER: {
+    case EnemyType::Shooter: {
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
           _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
@@ -318,7 +320,7 @@ void Spawner::SpawnWave( //
               },
               Base::TransitionConditionBlock{
                 "chase",
-                Base::TransitionEvaluationType::OR,
+                Base::TransitionEvaluationType::Or,
                 std::make_shared<Base::ProximityExit>(_playerID, _parentLayer->GetScreenToWorld(250)),
                 std::make_shared<Base::AreaExit>(screenWorldArea),
               },
@@ -334,7 +336,7 @@ void Spawner::SpawnWave( //
               },
               Base::TransitionConditionBlock{
                 "fire",
-                Base::TransitionEvaluationType::AND,
+                Base::TransitionEvaluationType::And,
                 std::make_shared<Base::ProximityEntry>(_playerID, _parentLayer->GetScreenToWorld(500)),
                 std::make_shared<Base::AreaEntry>(screenWorldArea),
               },
@@ -345,7 +347,7 @@ void Spawner::SpawnWave( //
       auto statecmp = e->AddComponent<Base::StateComponent>("chase", states);
       break;
     }
-    case EnemyType::KAMIKAZE: {
+    case EnemyType::Kamikaze: {
       mvcmp->driveForce = 500;
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
@@ -368,7 +370,7 @@ void Spawner::SpawnWave( //
             },
             Base::TransitionConditionBlock{
               "scope",
-              Base::TransitionEvaluationType::AND,
+              Base::TransitionEvaluationType::And,
               std::make_shared<Base::AreaEntry>(screenWorldArea),
             },
           },
@@ -385,7 +387,7 @@ void Spawner::SpawnWave( //
             },
             Base::TransitionConditionBlock{
               "dive",
-              Base::TransitionEvaluationType::OR,
+              Base::TransitionEvaluationType::Or,
               std::make_shared<Base::TimerComponent>(5.f),
             },
           },
@@ -415,7 +417,7 @@ void Spawner::SpawnWave( //
             },
             Base::TransitionConditionBlock{
               "chase",
-              Base::TransitionEvaluationType::OR,
+              Base::TransitionEvaluationType::Or,
               std::make_shared<Base::AreaExit>(screenWorldArea),
             },
           },
@@ -424,7 +426,7 @@ void Spawner::SpawnWave( //
       auto statecmp = e->AddComponent<Base::StateComponent>("chase", states);
       break;
     }
-    case EnemyType::NONE:
+    case EnemyType::None:
       break;
     }
 
@@ -535,7 +537,8 @@ void Spawner::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
         Base::Vector2{8, 8},
         Base::Origin::Center,
       },
-      Base::Vector2{targetSize, targetSize});
+      Base::Vector2{targetSize, targetSize} //
+    );
 
     auto rbcmp = e->AddComponent<Base::RigidBodyComponent>();
     rbcmp->isKinematic = false;

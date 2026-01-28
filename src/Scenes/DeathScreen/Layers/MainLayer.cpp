@@ -1,4 +1,5 @@
 #include "MainLayer.hpp"
+#include "Scenes/DeathScreen/SharedDeathData.hpp"
 #include "Scenes/GameScene/GameScene.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "base/scenes/Engine.hpp"
@@ -9,7 +10,6 @@
 #include "base/ui/elements/UILabel.hpp"
 #include "base/ui/elements/UIStackPanel.hpp"
 #include "base/util/Colors.hpp"
-#include "Scenes/DeathScreen/SharedDeathData.hpp"
 
 void MainLayer::OnAttach()
 {
@@ -131,7 +131,7 @@ void MainLayer::OnAttach()
   playButton->SetTextColor(Base::White);
   playButton->onClick = [this]() {
     Base::SceneData data;
-    data.Set(GetOwner()->GetSharedData<SharedDeathData>()->PlayerShip);
+    data.Set(GetOwner()->SharedData<SharedDeathData>()->PlayerShip);
     GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene, data);
   };
   playButton->SetHAlignment(Base::HAlign::Center);

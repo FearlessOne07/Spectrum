@@ -1,7 +1,7 @@
 #pragma once
-#include "Components/EnemyComponent.hpp"
 #include "Ship/Ship.hpp"
 #include "Signals/EntityDiedSignal.hpp"
+#include "WaveManager/EnemySpecs.hpp"
 #include "base/entities/Entity.hpp"
 #include "base/scenes/SceneLayer.hpp"
 #include <base/assets/AssetManager.hpp>
@@ -20,7 +20,7 @@ private:
   float _spawnDuration = 2.f;
   float _spawnTimer = _spawnDuration;
   float _spawnOffset = 200;
-  std::queue<EnemySpec> _toSpawn = {};
+  std::queue<SpawnSpec> _toSpawn = {};
   float _difficultyScale = 1;
 
   // Player
@@ -40,5 +40,5 @@ public:
   Base::EntityID SpawnPlayer(Base::Vector2 position, const Ship &ship);
   void SpawnWave(float dt, Base::EntityID playerID);
   int GetToSpawnCount() const;
-  void SetToSpawn(std::vector<EnemySpec> toSpawn, float difficultyScale);
+  void SetToSpawn(std::vector<SpawnSpec> toSpawn, float difficultyScale);
 };

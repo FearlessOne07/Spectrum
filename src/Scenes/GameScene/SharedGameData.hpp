@@ -1,8 +1,8 @@
 #pragma once
-#include "Ship/Ship.hpp"
+#include "Ship/ShipDataBase.hpp"
 #include "base/entities/Entity.hpp"
 struct SharedGameData
 {
   Base::EntityID PlayerId;
-  Ship PlayerShip;
+  ShipName PlayerShip;
 };

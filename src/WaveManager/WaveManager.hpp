@@ -1,9 +1,11 @@
 #pragma once
+#include "Components/EnemyComponent.hpp"
 #include "Ship/Ship.hpp"
 #include "Spawner/Spawner.hpp"
 #include "base/entities/Entity.hpp"
 #include "base/scenes/SceneLayer.hpp"
 #include "base/util/Ref.hpp"
+#include <array>
 #include <base/assets/AssetManager.hpp>
 #include <base/entities/EntityManager.hpp>
 #include <vector>
@@ -14,36 +16,8 @@ private:
   void GenerateWave();
 
 private:
-  // Enemy Weights
-  std::vector<EnemySpec> _enemySpawnInfo = {
-    EnemySpec{
-      .Type = EnemyType::CHASER,
-      .SpawnChance = 0.7f,
-      .Cost = 1,
-      .UnlockWave = 1,
-      .Value = 2,
-      .BaseDamage = 1,
-      .BaseHealth = 3,
-    },
-    EnemySpec{
-      .Type = EnemyType::SHOOTER,
-      .SpawnChance = 0.2f,
-      .Cost = 2,
-      .UnlockWave = 2,
-      .Value = 3,
-      .BaseDamage = 2,
-      .BaseHealth = 3,
-    },
-    EnemySpec{
-      .Type = EnemyType::KAMIKAZE,
-      .SpawnChance = 0.1f,
-      .Cost = 3,
-      .UnlockWave = 4,
-      .Value = 5,
-      .BaseDamage = 5,
-      .BaseHealth = 4,
-    },
-  };
+  // Types
+  std::array<EnemyType, 3> _enemyTypes = {EnemyType::Kamikaze, EnemyType::Shooter, EnemyType::Chaser};
 
   // Wave
   unsigned _currentWave = 1;
@@ -63,7 +37,7 @@ private:
   Spawner _spawner = Spawner();
 
   // Enemies
-  std::vector<EnemySpec> _enemiesToSpawn = {};
+  std::vector<SpawnSpec> _enemiesToSpawn = {};
 
   // Player
   Base::EntityID _playerID;

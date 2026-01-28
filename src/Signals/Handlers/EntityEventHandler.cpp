@@ -1,5 +1,4 @@
 #include "EntityEventHandler.hpp"
-#include "Scenes/GameScene/SharedGameData.hpp"
 #include "Components/BulletComponent.hpp"
 #include "Components/DamageComponent.hpp"
 #include "Components/EnemyComponent.hpp"
@@ -12,6 +11,7 @@
 #include "Components/Tags/HealthPack.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Scenes/DeathScreen/DeathScreen.hpp"
+#include "Scenes/GameScene/SharedGameData.hpp"
 #include "ShaderEffects/Vignette/Vignette.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
 #include "Signals/EntityDiedSignal.hpp"
@@ -88,7 +88,7 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
     {
       auto enemycmp = attack->GetComponent<EnemyComponent>();
 
-      if (enemycmp->type == EnemyType::KAMIKAZE)
+      if (enemycmp->type == EnemyType::Kamikaze)
       {
         attack->GetComponent<HealthComponent>()->Kill();
       }
@@ -174,7 +174,7 @@ void EntitySignalHandler::DeathHandler(const std::shared_ptr<Base::Signal> signa
     if (entityDiedSig->entity->HasComponent<PlayerTag>())
     {
       Base::SceneData data;
-      data.Set(_parentLayer->GetOwner()->GetSharedData<SharedGameData>()->PlayerShip);
+      data.Set(_parentLayer->GetOwner()->SharedData<SharedGameData>()->PlayerShip);
       _parentLayer->GetOwner()->SetSceneTransition<DeathScreen>(Base::SceneRequest::ReplaceCurrentScene, data);
     }
   }

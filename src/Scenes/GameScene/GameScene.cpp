@@ -5,6 +5,7 @@
 #include "Scenes/GameScene/SharedGameData.hpp"
 #include "ShaderEffects/Bloom/Bloom.hpp"
 #include "ShaderEffects/Vignette/Vignette.hpp"
+#include "Ship/ShipDataBase.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
 #include "base/assets/BaseAsset.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
@@ -22,7 +23,7 @@ void GameScene::Enter(const Base::SceneData &sceneData)
 
   // Init Shared Data
   InitSharedData<SharedGameData>();
-  GetSharedData<SharedGameData>()->PlayerShip = sceneData.Get<Ship>();
+  SharedData<SharedGameData>()->PlayerShip = sceneData.Get<ShipName>();
 
   // Register Events
   auto bus = Base::SignalBus::GetInstance();

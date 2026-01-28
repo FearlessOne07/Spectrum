@@ -1,5 +1,5 @@
 #pragma once
-#include "Ship/Ship.hpp"
+#include "Ship/ShipDataBase.hpp"
 #include "base/ui/UILayer.hpp"
 #include "base/util/Ref.hpp"
 #include <array>
@@ -9,7 +9,7 @@
 class ShipSelectionLayer : public Base::SceneLayer
 {
   Base::Ref<Base::UILayer> _shipMenu;
-  std::array<Ship, 2> _ships;
+  std::array<ShipName, 2> _ships = {ShipName::White, ShipName::Yellow};
 
 public:
   void Update(float dt) override;

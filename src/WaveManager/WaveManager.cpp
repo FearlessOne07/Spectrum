@@ -2,6 +2,7 @@
 #include "Components/EnemyComponent.hpp"
 #include "Ship/Ship.hpp"
 #include "Spawner/Spawner.hpp"
+#include "WaveManager/EnemySpecs.hpp"
 #include "base/components/ColliderComponent.hpp"
 #include "base/entities/Entity.hpp"
 #include "base/scenes/SceneLayer.hpp"
@@ -30,12 +31,13 @@ void WaveManager::GenerateWave()
   _wavePoints = (_baseWavePoints * _currentWave) - (3 * aliveCount);
 
   // Create pool of available enemies for this wave
-  std::unordered_map<EnemyType, EnemySpec> pool = {};
-  for (auto &spec : _enemySpawnInfo)
+  std::vector<EnemyType> pool = {};
+  for (auto &type : _enemyTypes)
   {
+    auto &spec = EnemySpecDataBase::GetSpec(type);
     if (_currentWave >= spec.UnlockWave && spec.Cost <= _wavePoints)
     {
-      pool[spec.Type] = spec;
+      pool.emplace_back(type);
     }
   }
 
@@ -48,16 +50,18 @@ void WaveManager::GenerateWave()
 
   // Calculate total chance for weighted selection
   float totalChance = 0;
-  for (auto &[type, spec] : pool)
+  for (auto &type : pool)
   {
+    auto &spec = EnemySpecDataBase::GetSpec(type);
     totalChance += spec.SpawnChance;
   }
 
   while (_wavePoints > 0)
   {
     bool canAffordAny = false;
-    for (auto &[type, spec] : pool)
+    for (auto &type : pool)
     {
+      auto &spec = EnemySpecDataBase::GetSpec(type);
       if (spec.Cost <= _wavePoints)
       {
         canAffordAny = true;
@@ -75,16 +79,18 @@ void WaveManager::GenerateWave()
     bool enemySelected = false;
     std::bernoulli_distribution bern(_healthPackerProbabilty);
 
-    for (auto &[type, spec] : pool)
+    for (auto &type : pool)
     {
+      auto &spec = EnemySpecDataBase::GetSpec(type);
       if (spec.Cost <= _wavePoints)
       {
+        bool isHelthPacker = false;
         runningSum += spec.SpawnChance;
         if (selectedChance <= runningSum)
         {
-          spec.IsHealthPacker = bern(_gen);
+          isHelthPacker = bern(_gen);
           _wavePoints -= spec.Cost;
-          _enemiesToSpawn.push_back(spec);
+          _enemiesToSpawn.push_back({type, isHelthPacker});
           enemySelected = true;
           break;
         }
@@ -93,29 +99,32 @@ void WaveManager::GenerateWave()
 
     if (!enemySelected)
     {
-      EnemySpec cheapest;
+      EnemyType cheapest;
       int lowestCost = INT_MAX;
 
-      for (auto &[type, spec] : pool)
+      for (auto &type : pool)
       {
+        auto &spec = EnemySpecDataBase::GetSpec(type);
         if (spec.Cost <= _wavePoints && spec.Cost < lowestCost)
         {
           lowestCost = spec.Cost;
-          cheapest = spec;
+          cheapest = type;
         }
       }
 
+      auto &spec = EnemySpecDataBase::GetSpec(cheapest);
       if (lowestCost != INT_MAX)
       {
-        _wavePoints -= cheapest.Cost;
-        _enemiesToSpawn.push_back(cheapest);
+        _wavePoints -= spec.Cost;
+        _enemiesToSpawn.push_back({cheapest, false});
       }
     }
   }
 
   if (_currentWave % _difficultyIncrement == 0)
   {
-    _difficulty = pow(std::uniform_real_distribution<float>(1.05, 1.1)(_gen), _currentWave / _difficultyIncrement);
+    _difficulty =
+      pow(std::uniform_real_distribution<float>(1.05, 1.1)(_gen), (float)_currentWave / _difficultyIncrement);
   }
 
   _spawner.SetToSpawn(_enemiesToSpawn, _difficulty);

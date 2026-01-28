@@ -2,6 +2,7 @@
 #include "Scenes/GameScene/GameScene.hpp"
 #include "Scenes/MainMenu/Signals/ShipSelectionAbortedSignal.hpp"
 #include "Scenes/MainMenu/Signals/ShipSelectionStartedSignal.hpp"
+#include "Ship/ShipDataBase.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/Keys.hpp"
 #include "base/scenes/SceneData.hpp"
@@ -74,24 +75,30 @@ void ShipSelectionLayer::OnAttach()
   shipGrid->SetCellGap(40);
 
   float hoverScale = 1.15;
-  for (int i = 0; i < 2; i++)
+  int i = 0;
+  for (const auto &name : _ships)
   {
-    std::string name = std::format("ship-{0}", i);
-    auto shipText = shipGrid->AddGridElement<Base::UITextureRect>(name, {i, 0});
-    shipText->SetSprite(
-      {GetOwner()->Engine().Assets->GetAsset<Base::Texture>("ships", true), {}, {i * 8.f, 0}, {8, 8}});
+    auto &ship = ShipDataBase::GetShip(name);
+    std::string texname = std::format("ship-{0}", i);
+    auto shipText = shipGrid->AddGridElement<Base::UITextureRect>(texname, {i, 0});
+    shipText->SetSprite( //
+      {GetOwner()->Engine().Assets->GetAsset<Base::Texture>("ships", true),
+       {},
+       ship.SpriteSource.GetPosition(),
+       ship.SpriteSource.GetSize()} //
+    );
     shipText->SetHAlignment(Base::HAlign::Center);
     shipText->SetVAlignment(Base::VAlign::Center);
     shipText->SetSize({16 * 4, 16 * 4});
-    shipText->onClick = [this, i]() {
+    shipText->onClick = [this, i, name]() {
       Base::SceneData data;
-      data.Set(Ship({{i * 8.f, 0}, {8, 8}}));
+      data.Set(name);
       GetOwner()->SetSceneTransition<GameScene>(Base::SceneRequest::ReplaceCurrentScene, data);
     };
     shipText->onHover = {
       [=, this]() {                                   //
         GetOwner()->Engine().Tweens->AddTween<float>( //
-          {shipText.get(), name + "-scale"},
+          {shipText.get(), texname + "-scale"},
           [=](float size) {
             shipText->GetRenderTransform().SetScaleY(size);
             shipText->GetRenderTransform().SetScaleX(size);
@@ -106,7 +113,7 @@ void ShipSelectionLayer::OnAttach()
       },
       [=, this]() {                                   //
         GetOwner()->Engine().Tweens->AddTween<float>( //
-          {shipText.get(), name + "-scale"},
+          {shipText.get(), texname + "-scale"},
           [=](float size) {
             shipText->GetRenderTransform().SetScaleY(size);
             shipText->GetRenderTransform().SetScaleX(size);
@@ -120,6 +127,7 @@ void ShipSelectionLayer::OnAttach()
         );
       },
     };
+    i++;
   }
 
   auto bus = Base::SignalBus::GetInstance();

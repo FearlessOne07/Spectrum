@@ -5,6 +5,7 @@
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "ShaderEffects/Vignette/Vignette.hpp"
+#include "Ship/ShipDataBase.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/input/InputEvent.hpp"
@@ -31,8 +32,9 @@ void MainGameLayer::OnAttach()
   GetOwner()->Engine().Entities->SetWorldBounds(worldBounds);
   _waveManager.Init(this, GetOwner()->Engine().Entities);
 
-  auto sharedData = GetOwner()->GetSharedData<SharedGameData>();
-  sharedData->PlayerId = _waveManager.SpawnPlayer(GetOwner()->GetSharedData<SharedGameData>()->PlayerShip);
+  auto sharedData = GetOwner()->SharedData<SharedGameData>();
+  auto &playerShip = ShipDataBase::GetShip(GetOwner()->SharedData<SharedGameData>()->PlayerShip);
+  sharedData->PlayerId = _waveManager.SpawnPlayer(playerShip);
   _entityEVH.Init(this);
 
   auto bus = Base::SignalBus::GetInstance();
@@ -77,7 +79,7 @@ void MainGameLayer::Update(float dt)
   _waveManager.SpawnWaves(dt);
 
   // Update Vingette
-  auto player = GetOwner()->Engine().Entities->GetEntity(GetOwner()->GetSharedData<SharedGameData>()->PlayerId);
+  auto player = GetOwner()->Engine().Entities->GetEntity(GetOwner()->SharedData<SharedGameData>()->PlayerId);
   if (player)
   {
     auto vignette = GetShaderEffect<Vignette>();
