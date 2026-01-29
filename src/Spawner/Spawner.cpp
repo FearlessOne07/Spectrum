@@ -237,7 +237,7 @@ void Spawner::SpawnWave( //
     transfxcmp->lookAt = true;
     transfxcmp->lookAtTarget = _playerID;
 
-    if (spec.IsHealthPacker)
+    if (sSpec.IsHealthPacker)
     {
       transfxcmp->lookAt = false;
       e->AddComponent<HealthPacker>();

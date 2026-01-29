@@ -27,6 +27,7 @@ set(SOURCES
   "./Modifiers/MaxHealthModifier/MaxHealthModifier.cpp"
   "./Modifiers/HealthBoost/HealthBoostModifier.cpp"
   "./Modifiers/DamageBoostModifier/DamageModifier.cpp"
+  "./Modifiers/AttackSpeedModifier/AttackSpeedModifier.cpp"
 
   "./ShaderEffects/Bloom/Bloom.cpp"
   "./ShaderEffects/Vignette/Vignette.cpp"

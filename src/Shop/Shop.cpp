@@ -1,4 +1,5 @@
 #include "Shop.hpp"
+#include "Modifiers/AttackSpeedModifier/AttackSpeedModifier.hpp"
 #include "Modifiers/DamageBoostModifier/DamageModifier.hpp"
 #include "Modifiers/HealthBoost/HealthBoostModifier.hpp"
 #include "Modifiers/MaxHealthModifier/MaxHealthModifier.hpp"
@@ -43,17 +44,17 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
     1, "Max Health", basePriceDist(_gen) //
   );
 
-  std::shared_ptr<HealthBoostModifier> health = std::make_shared<HealthBoostModifier>();
-  health->SetHealthBoost(5);
+  std::shared_ptr<AttackSpeedModifier> attackSpeed = std::make_shared<AttackSpeedModifier>();
+  attackSpeed->SetSpeedBoost(0.05);
   _stock.emplace_back( //
-    health,
+    attackSpeed,
     Base::NinePatchSprite{
       _ownerLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("heart-ui"),
       {},
       {32, 0},
       {8, 8},
     },
-    1, "Heal", basePriceDist(_gen) //
+    1, "Attack Speed", basePriceDist(_gen) //
   );
 
   std::shared_ptr<DamageModifier> damageBoost = std::make_shared<DamageModifier>();
