@@ -11,11 +11,11 @@
 #include "Components/Tags/HealthPack.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Scenes/DeathScreen/DeathScreen.hpp"
+#include "Scenes/GameScene/GameSceneAssets.hpp"
 #include "Scenes/GameScene/SharedGameData.hpp"
 #include "ShaderEffects/Vignette/Vignette.hpp"
 #include "Signals/EntityDamagedSignal.hpp"
 #include "Signals/EntityDiedSignal.hpp"
-#include "base/audio/Sound.hpp"
 #include "base/components/ColliderComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
@@ -61,7 +61,7 @@ void EntitySignalHandler::CollisionHandler(const std::shared_ptr<Base::Signal> e
 
     auto bus = Base::SignalBus::GetInstance();
     std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
-    sig->soundHandle = _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Sound>("player-hit");
+    sig->soundHandle = _parentLayer->GetOwner()->AssetStore<GameSceneAssets>()->PlayerHit;
     sig->soundVolume = 0.75;
 
     if (                                                                                                   //

@@ -1,4 +1,5 @@
 #include "MainGameLayer.hpp"
+#include "Assets/GlobalAssets.hpp"
 #include "Components/HealthComponent.hpp"
 #include "Components/Tags/PlayerTag.hpp"
 #include "Scenes/GameScene/SharedGameData.hpp"
@@ -117,7 +118,7 @@ void MainGameLayer::OnPlayerDamaged(std::shared_ptr<Base::Signal> signal)
     auto canvas = _inWorldUILayer->GetRootElement<Base::UICanvas>();
     auto popUp = canvas->AddChild<Base::UILabel>(name);
     popUp->SetText(std::format("-{0}", sig->damageTaken));
-    popUp->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+    popUp->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
     popUp->SetTextColor(Base::Red);
     popUp->SetFontSize(43);
 

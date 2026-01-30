@@ -1,17 +1,14 @@
 #include "Vignette.hpp"
-#include "base/scenes/Scene.hpp"
 #include "base/util/Colors.hpp"
 #include <algorithm>
 
-Vignette::Vignette(Base::Color vignetteColor, float decayRate, float maxStrength)
-  : _vignetteColor(vignetteColor), _decayRate(decayRate), _maxVignetteStrength((std::clamp<float>(maxStrength, 0, 1)))
+Vignette::Vignette( //
+  Base::Color vignetteColor, float decayRate, float maxStrength,
+  Base::AssetHandle<Base::Shader> vignetteShader //
+  )
+  : _vignetteColor(vignetteColor), _decayRate(decayRate), _maxVignetteStrength((std::clamp<float>(maxStrength, 0, 1))),
+    _vignetteMaterial(vignetteShader.Get())
 {
-}
-
-void Vignette::Setup(std::weak_ptr<Base::Scene> scene)
-{
-  _currentScene = scene;
-  _vignetteMaterial = scene.lock()->Engine().Assets->GetAsset<Base::Shader>("vignette").Get();
 }
 
 void Vignette::Apply(Base::Ptr<Base::FrameBuffer> input, Base::Ptr<Base::FrameBuffer> output, Base::Vector2 resolution)

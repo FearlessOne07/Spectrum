@@ -1,9 +1,9 @@
 #include "Shop.hpp"
 #include "Modifiers/AttackSpeedModifier/AttackSpeedModifier.hpp"
 #include "Modifiers/DamageBoostModifier/DamageModifier.hpp"
-#include "Modifiers/HealthBoost/HealthBoostModifier.hpp"
 #include "Modifiers/MaxHealthModifier/MaxHealthModifier.hpp"
 #include "Modifiers/SpeedModifier/SpeedModifier.hpp"
+#include "Scenes/GameScene/GameSceneAssets.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneLayer.hpp"
 #include <algorithm>
@@ -23,7 +23,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
   _stock.emplace_back( //
     speed,
     Base::NinePatchSprite{
-      _ownerLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups"),
+      _ownerLayer->GetOwner()->AssetStore<GameSceneAssets>()->PowerUps,
       {},
       {40, 8},
       {8, 8},
@@ -36,7 +36,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
   _stock.emplace_back( //
     maxHealth,
     Base::NinePatchSprite{
-      _ownerLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("heart-ui"),
+      _ownerLayer->GetOwner()->AssetStore<GameSceneAssets>()->HeartUi,
       {},
       {16, 0},
       {8, 8},
@@ -49,7 +49,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
   _stock.emplace_back( //
     attackSpeed,
     Base::NinePatchSprite{
-      _ownerLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("heart-ui"),
+      _ownerLayer->GetOwner()->AssetStore<GameSceneAssets>()->HeartUi,
       {},
       {32, 0},
       {8, 8},
@@ -62,7 +62,7 @@ void Shop::Init(Base::SceneLayer *ownerLayer)
   _stock.emplace_back( //
     damageBoost,
     Base::NinePatchSprite{
-      _ownerLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups"),
+      _ownerLayer->GetOwner()->AssetStore<GameSceneAssets>()->PowerUps,
       {},
       {32, 24},
       {8, 8},

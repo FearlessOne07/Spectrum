@@ -1,4 +1,5 @@
 #include "ShipSelectionLayer.hpp"
+#include "Assets/GlobalAssets.hpp"
 #include "Scenes/GameScene/GameScene.hpp"
 #include "Scenes/MainMenu/Signals/ShipSelectionAbortedSignal.hpp"
 #include "Scenes/MainMenu/Signals/ShipSelectionStartedSignal.hpp"
@@ -59,7 +60,7 @@ void ShipSelectionLayer::OnAttach()
   shipMenuText->SetText("Select A Ship");
   shipMenuText->SetVAlignment(Base::VAlign::Center);
   shipMenuText->SetHAlignment(Base::HAlign::Center);
-  shipMenuText->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  shipMenuText->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
   shipMenuText->SetFontSize(40);
   shipMenuText->SetTextColor(Base::White);
 
@@ -82,7 +83,7 @@ void ShipSelectionLayer::OnAttach()
     std::string texname = std::format("ship-{0}", i);
     auto shipText = shipGrid->AddGridElement<Base::UITextureRect>(texname, {i, 0});
     shipText->SetSprite( //
-      {GetOwner()->Engine().Assets->GetAsset<Base::Texture>("ships", true),
+      {GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->Ships,
        {},
        ship.SpriteSource.GetPosition(),
        ship.SpriteSource.GetSize()} //

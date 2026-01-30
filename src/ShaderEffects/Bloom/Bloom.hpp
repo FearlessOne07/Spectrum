@@ -1,3 +1,5 @@
+#include "base/assets/AssetHandle.hpp"
+#include "base/rendering/Material.hpp"
 #include "base/shaders/ShaderEffect.hpp"
 
 class Bloom : public Base::ShaderEffect
@@ -23,13 +25,16 @@ private:
   void SetUpBuffers(Base::IVector2 resolution);
 
 public:
-  void Setup(std::weak_ptr<Base::Scene> scene) override;
   void Apply( //
     Base::Ptr<Base::FrameBuffer> input, Base::Ptr<Base::FrameBuffer> output,
     Base::Vector2 resolution //
     ) override;
 
-  Bloom(float bloomIntensity, float luminanceThresh, float blurResolutionScale);
+  Bloom( //
+    float bloomIntensity, float luminanceThresh, float blurResolution, Base::AssetHandle<Base::Shader> blurShader,
+    Base::AssetHandle<Base::Shader> brightPassShader,
+    Base::AssetHandle<Base::Shader> combineShader //
+  );
 
   // Uniforms
   void SetBlurResoltuionScale(float res);

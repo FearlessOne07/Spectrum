@@ -1,13 +1,16 @@
 #include "Bloom.hpp"
 #include "base/rendering/FrameBuffer.hpp"
 #include "base/rendering/FramebufferAttachmentIndex.hpp"
-#include "base/scenes/Scene.hpp"
 #include "base/util/Colors.hpp"
 #include "base/util/Type.hpp"
-#include "internal/rendering/RenderCommand.hpp"
 #include <algorithm>
 
-Bloom::Bloom(float bloomIntensity, float luminanceThresh, float blurResolution)
+Bloom::Bloom( //
+  float bloomIntensity, float luminanceThresh, float blurResolution, Base::AssetHandle<Base::Shader> blurShader,
+  Base::AssetHandle<Base::Shader> brightPassShader,
+  Base::AssetHandle<Base::Shader> combineShader //
+  )
+  : _blurMaterial(blurShader.Get()), _brightMaterial(brightPassShader.Get()), _combineMaterial(combineShader.Get())
 {
   SetBlurResoltuionScale(blurResolution);
   SetBloomIntensity(bloomIntensity);
@@ -21,14 +24,6 @@ void Bloom::SetUpBuffers(Base::IVector2 resolution)
   _blurPassY = Base::FrameBuffer::Create({.Width = _blurResolution.x, .Height = _blurResolution.y});
   _brightPass = Base::FrameBuffer::Create({.Width = resolution.x, .Height = resolution.y});
   _buffersSetUp = true;
-}
-
-void Bloom::Setup(std::weak_ptr<Base::Scene> scene)
-{
-  _currentScene = scene;
-  _brightMaterial = {scene.lock()->Engine().Assets->GetAsset<Base::Shader>("bright_pass", true).Get()};
-  _blurMaterial = {scene.lock()->Engine().Assets->GetAsset<Base::Shader>("blur_pass", true).Get()};
-  _combineMaterial = {scene.lock()->Engine().Assets->GetAsset<Base::Shader>("combine_pass", true).Get()};
 }
 
 void Bloom::Apply(Base::Ptr<Base::FrameBuffer> input, Base::Ptr<Base::FrameBuffer> output, Base::Vector2 resolution)

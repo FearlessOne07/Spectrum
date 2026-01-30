@@ -1,15 +1,15 @@
 #include "GameScene.hpp"
+#include "Assets/GlobalAssets.hpp"
 #include "Layers/GameUILayer.hpp"
 #include "Layers/MainGameLayer.hpp"
 #include "Layers/ParticleLayer.hpp"
+#include "Scenes/GameScene/GameSceneAssets.hpp"
 #include "Scenes/GameScene/SharedGameData.hpp"
 #include "ShaderEffects/Bloom/Bloom.hpp"
 #include "ShaderEffects/Vignette/Vignette.hpp"
 #include "Ship/ShipDataBase.hpp"
 #include "Systems/BulletSystem/BulletSystem.hpp"
-#include "base/assets/BaseAsset.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
-#include "base/rendering/GeometryType.hpp"
 #include "base/rendering/Origin.hpp"
 #include "base/rendering/RenderContextSingleton.hpp"
 #include "base/signals/SignalBus.hpp"
@@ -30,18 +30,8 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
   Base::Ref<Base::SystemManager> systemManager = Engine().Systems;
 
-  // Activate Systems
-  Engine().Assets->LoadTexture("assets/textures/power-ups.png");
-  Engine().Assets->LoadTexture("assets/textures/heart-ui.png");
-  Engine().Assets->LoadTexture("assets/textures/entities.png");
-  Engine().Assets->LoadSound("assets/sounds/bullet-fire.wav");
-  Engine().Assets->LoadSound("assets/sounds/enemy-die.wav");
-  Engine().Assets->LoadSound("assets/sounds/player-hit.wav");
-  Engine().Assets->LoadShader(Base::ShaderPath{
-    "",
-    "assets/shaders/vignette/vignette.frag",
-    Base::GeometryType::Texture,
-  });
+  // Init Assets
+  InitAssetStore<GameSceneAssets>();
 
   auto uiLayer =
     Engine().Rendering->InitLayer(shared_from_this(), {0, 0}, Base::Blank, {.Width = 1920, .Height = 1080});
@@ -62,15 +52,21 @@ void GameScene::Enter(const Base::SceneData &sceneData)
   mainLayer->SetCamerOriginPoint(Base::Origin::Center);
 
   // TODO: Fix Tone mapping for bloom??
-  mainLayer->AddShaderEffect<Vignette>(shared_from_this(), Base::Color{255, 48, 48, 255}, 0.5f, 1);
+  mainLayer->AddShaderEffect<Vignette>( //
+    shared_from_this(), Base::Color{255, 48, 48, 255}, 0.5f, 1,
+    AssetStore<GameSceneAssets>()->Vignette //
+  );
 
   AttachLayer<MainGameLayer>(mainLayer);
   AttachLayer<ParticleLayer>(mainLayer);
 
-  auto bloom = AddPostProcessingEffect<Bloom>(0.8, 0.05, 0.25);
+  auto &blur = Engine().Assets->GlobalAssetStore<GlobalAssets>()->BlurPass;
+  auto &bright = Engine().Assets->GlobalAssetStore<GlobalAssets>()->BrightPass;
+  auto &combine = Engine().Assets->GlobalAssetStore<GlobalAssets>()->CombinePass;
+  auto bloom = AddPostProcessingEffect<Bloom>(0.8, 0.05, 0.25, blur, bright, combine);
 
   std::shared_ptr<Base::PlayAudioStreamSignal> sig = std::make_shared<Base::PlayAudioStreamSignal>();
-  sig->streamHandle = Engine().Assets->GetAsset<Base::AudioStream>("game-track", true);
+  sig->streamHandle = Engine().Assets->GlobalAssetStore<GlobalAssets>()->GameTrack;
   sig->streamPan = 0.5;
   sig->streamVolume = 0.5;
   sig->loopStream = true;

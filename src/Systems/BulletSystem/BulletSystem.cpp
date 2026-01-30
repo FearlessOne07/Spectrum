@@ -5,6 +5,7 @@
 #include "Components/HealthComponent.hpp"
 #include "Components/ShootComponent.hpp"
 #include "Components/Tags/PlayerTag.hpp"
+#include "Scenes/GameScene/GameSceneAssets.hpp"
 #include "base/components/SpriteComponent.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/util/Math.hpp"
@@ -93,7 +94,7 @@ void BulletSystem::Update( //
         // Emmit sound signal
         auto bus = Base::SignalBus::GetInstance();
         std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
-        sig->soundHandle = currentScene->Engine().Assets->GetAsset<Base::Sound>("bullet-fire");
+        sig->soundHandle = currentScene->AssetStore<GameSceneAssets>()->BulletFire;
         sig->soundVolume = 0.5;
         bus->BroadCastSignal(sig);
       }

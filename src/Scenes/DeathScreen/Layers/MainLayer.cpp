@@ -1,4 +1,5 @@
 #include "MainLayer.hpp"
+#include "Assets/GlobalAssets.hpp"
 #include "Scenes/DeathScreen/SharedDeathData.hpp"
 #include "Scenes/GameScene/GameScene.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
@@ -20,7 +21,7 @@ void MainLayer::OnAttach()
 
   auto deathMessage = canvas->AddChild<Base::UILabel>("death-message");
   deathMessage->SetText("YOU DIED");
-  deathMessage->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  deathMessage->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
   deathMessage->SetPosition({GetSize().x / 2, GetSize().y / 2});
   deathMessage->SetHAlignment(Base::HAlign::Center);
   deathMessage->SetVAlignment(Base::VAlign::Center);
@@ -85,7 +86,7 @@ void MainLayer::OnAttach()
   // Exit Button
   float hoverScale = 1.1;
   auto mainMenuButton = actionButtonContainer->AddChild<Base::UIButton>("main-menu-button");
-  mainMenuButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  mainMenuButton->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
   mainMenuButton->SetText("Quit");
   mainMenuButton->SetFontSize(50);
   mainMenuButton->SetPadding(10);
@@ -125,7 +126,7 @@ void MainLayer::OnAttach()
 
   // Play button
   auto playButton = actionButtonContainer->AddChild<Base::UIButton>("play-button");
-  playButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  playButton->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
   playButton->SetText("Retry");
   playButton->SetFontSize(55);
   playButton->SetTextColor(Base::White);

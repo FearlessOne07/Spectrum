@@ -1,7 +1,7 @@
 #include "MainMenuLayer.hpp"
+#include "Assets/GlobalAssets.hpp"
 #include "Scenes/MainMenu/Signals/ShipSelectionAbortedSignal.hpp"
 #include "Scenes/MainMenu/Signals/ShipSelectionStartedSignal.hpp"
-#include "ShaderEffects/Vignette/Vignette.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/signals/SignalBus.hpp"
@@ -82,7 +82,7 @@ void MainMenuLayer::OnAttach()
 
   // Resume Button
   auto playButton = container->AddChild<Base::UIButton>("play-button");
-  playButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  playButton->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
   playButton->SetText("Play");
   playButton->SetHAlignment(Base::HAlign::Center);
   playButton->SetVAlignment(Base::VAlign::Center);
@@ -120,7 +120,7 @@ void MainMenuLayer::OnAttach()
 
   // Exit Button
   auto exitButton = container->AddChild<Base::UIButton>("exit-button");
-  exitButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  exitButton->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
   exitButton->SetText("Exit");
   exitButton->SetFontSize(55);
   exitButton->SetHAlignment(Base::HAlign::Center);

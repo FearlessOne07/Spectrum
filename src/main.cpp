@@ -1,3 +1,4 @@
+#include "Assets/GlobalAssets.hpp"
 #include "Scenes/DeathScreen/DeathScreen.hpp"
 #include "Scenes/GameScene/GameScene.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
@@ -7,8 +8,6 @@
 #include "Systems/HealthSystem/HealthSystem.hpp"
 #include "Systems/TrackingSystem/TrackingSystem.hpp"
 #include "Systems/TransformEffectsSystem/TransformEffectsSystem.hpp"
-#include "base/assets/BaseAsset.hpp"
-#include "base/rendering/GeometryType.hpp"
 #include <base/game/Game.hpp>
 
 int main(void)
@@ -16,38 +15,9 @@ int main(void)
   Base::Game game;
   game.Init({
     .Title = "Spectrum",
-    .GlobalAssets =
-      {
-        {
-          Base::AssetType::Font,
-          {
-            "assets/fonts/main-font.ttf",
-          },
-        },
-        {
-          Base::AssetType::AudioStream,
-          {
-            "assets/music/game-track.mp3",
-            "assets/music/main-menu-track.wav",
-          },
-        },
-        {
-          Base::AssetType::Texture,
-          {
-            "assets/textures/button.png",
-            "assets/textures/ships.png",
-          },
-        },
-        {
-          Base::AssetType::Shader,
-          {
-            Base::ShaderPath{"", "assets/shaders/bloom/blur_pass.frag", Base::GeometryType::Texture},
-            Base::ShaderPath{"", "assets/shaders/bloom/combine_pass.frag", Base::GeometryType::Texture},
-            Base::ShaderPath{"", "assets/shaders/bloom/bright_pass.frag", Base::GeometryType::Texture},
-          },
-        },
-      },
   });
+
+  game.LoadGlobalAssets<GlobalAssets>();
 
   // Register Scenes
   game.RegisterScene<MainMenu>(true);

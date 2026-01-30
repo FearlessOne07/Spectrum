@@ -1,7 +1,7 @@
 #pragma once
-#include "Ship/Ship.hpp"
+#include "Ship/ShipDataBase.hpp"
 
 struct SharedDeathData
 {
-    Ship PlayerShip;
+  ShipName PlayerShip;
 };

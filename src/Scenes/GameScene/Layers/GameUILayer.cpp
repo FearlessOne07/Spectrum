@@ -1,6 +1,8 @@
 #include "GameUILayer.hpp"
+#include "Assets/GlobalAssets.hpp"
 #include "Components/HealthComponent.hpp"
 #include "Components/LightCollectorComponent.hpp"
+#include "Scenes/GameScene/GameSceneAssets.hpp"
 #include "Scenes/GameScene/SharedGameData.hpp"
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
@@ -136,7 +138,7 @@ void GameUILayer::InitPauseMenu()
   // Resume Button
   float hoverScale = 1.1;
   auto resumeButton = container->AddChild<Base::UIButton>("resume-button");
-  resumeButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  resumeButton->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
   resumeButton->SetText("Resume");
   resumeButton->SetFontSize(50);
   resumeButton->SetVAlignment(Base::VAlign::Center);
@@ -176,7 +178,7 @@ void GameUILayer::InitPauseMenu()
 
   // Exit Button
   auto mainMenuButton = container->AddChild<Base::UIButton>("main-menu-button");
-  mainMenuButton->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  mainMenuButton->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
   mainMenuButton->SetText("Main Menu");
   mainMenuButton->SetFontSize(50);
   mainMenuButton->SetPadding(10);
@@ -185,7 +187,7 @@ void GameUILayer::InitPauseMenu()
   mainMenuButton->onClick = [this]() {
     auto bus = Base::SignalBus::GetInstance();
     std::shared_ptr<Base::StopAudioStreamSignal> sig = std::make_shared<Base::StopAudioStreamSignal>();
-    sig->streamHandle = GetOwner()->Engine().Assets->GetAsset<Base::AudioStream>("game-track", true);
+    sig->streamHandle = GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->GameTrack;
     bus->BroadCastSignal(sig);
     GetOwner()->SetSceneTransition<MainMenu>(Base::SceneRequest::ReplaceCurrentScene);
   };
@@ -263,14 +265,14 @@ void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
   healtContainer->SetPadding(15, 10);
 
   auto heartIcon = healtContainer->AddChild<Base::UITextureRect>("heart-icon");
-  heartIcon->SetSprite({GetOwner()->Engine().Assets->GetAsset<Base::Texture>("heart-ui"), {}, {16, 0}, {8, 8}});
+  heartIcon->SetSprite({GetOwner()->AssetStore<GameSceneAssets>()->HeartUi, {}, {16, 0}, {8, 8}});
   heartIcon->SetSize({40, 40});
   heartIcon->SetVAlignment(Base::VAlign::Center);
   heartIcon->SetHAlignment(Base::HAlign::Center);
 
   auto hlthcmp = player->GetComponent<HealthComponent>();
   auto playerHealth = healtContainer->AddChild<Base::UILabel>("player-health");
-  playerHealth->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  playerHealth->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
   playerHealth->SetFontSize(40);
   playerHealth->SetVAlignment(Base::VAlign::Center);
   playerHealth->SetHAlignment(Base::HAlign::Center);
@@ -284,14 +286,14 @@ void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
   lightContainer->SetPadding(15, 10);
 
   auto lightIcon = lightContainer->AddChild<Base::UITextureRect>("light-icon");
-  lightIcon->SetSprite({GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups"), {}, {16, 8}, {8, 8}});
+  lightIcon->SetSprite({GetOwner()->AssetStore<GameSceneAssets>()->PowerUps, {}, {16, 8}, {8, 8}});
   lightIcon->SetVAlignment(Base::VAlign::Center);
   lightIcon->SetHAlignment(Base::HAlign::Center);
   lightIcon->SetSize({40, 40});
 
   auto lightcmp = player->GetComponent<LightCollectorComponent>();
   auto playerLight = lightContainer->AddChild<Base::UILabel>("player-light");
-  playerLight->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  playerLight->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
   playerLight->SetVAlignment(Base::VAlign::Center);
   playerLight->SetHAlignment(Base::HAlign::Center);
   playerLight->SetFontSize(40);
@@ -303,7 +305,7 @@ void GameUILayer::InitHud(std::shared_ptr<Base::Entity> player)
   fpsContainer->SetPadding(15, 10);
 
   auto fps = fpsContainer->AddChild<Base::UILabel>("fps");
-  fps->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  fps->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
   fps->SetFontSize(40);
   fps->SetVAlignment(Base::VAlign::Center);
   fps->SetHAlignment(Base::HAlign::Center);
@@ -315,7 +317,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
   float buyMenuEntryDuration = 0.5;
   float buyMenuExitDuration = 0.3;
   Base::NinePatchSprite cardSprite = {
-    GetOwner()->Engine().Assets->GetAsset<Base::Texture>("button", true),
+    GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->Button,
     {.top = 2, .bottom = 2, .left = 2, .right = 2},
     {0, 0},
     {16, 8},
@@ -420,14 +422,14 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
   };
 
   auto lightIcon = lightContainer->AddChild<Base::UITextureRect>("light-icon");
-  lightIcon->SetSprite({GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups"), {}, {16, 8}, {8, 8}});
+  lightIcon->SetSprite({GetOwner()->AssetStore<GameSceneAssets>()->PowerUps, {}, {16, 8}, {8, 8}});
   lightIcon->SetVAlignment(Base::VAlign::Center);
   lightIcon->SetHAlignment(Base::HAlign::Center);
   lightIcon->SetSize({40, 40});
 
   auto lightcmp = player->GetComponent<LightCollectorComponent>();
   auto playerLight = lightContainer->AddChild<Base::UILabel>("player-light");
-  playerLight->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+  playerLight->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
   playerLight->SetVAlignment(Base::VAlign::Center);
   playerLight->SetHAlignment(Base::HAlign::Center);
   playerLight->SetFontSize(40);
@@ -541,7 +543,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
     };
 
     auto name = card->AddChild<Base::UILabel>("name");
-    name->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+    name->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
     name->SetFontSize(30);
     name->SetText("Max Health");
     name->SetVAlignment(Base::VAlign::Center);
@@ -549,7 +551,7 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
     name->SetTextColor(Base::White);
 
     auto icon = card->AddChild<Base::UITextureRect>("icon");
-    icon->SetSprite({GetOwner()->Engine().Assets->GetAsset<Base::Texture>("heart-ui"), {}, {16, 0}, {8, 8}});
+    icon->SetSprite({GetOwner()->AssetStore<GameSceneAssets>()->HeartUi, {}, {16, 0}, {8, 8}});
     icon->SetSize({128, 128});
     icon->SetVAlignment(Base::VAlign::Center);
     icon->SetHAlignment(Base::HAlign::Center);
@@ -562,13 +564,13 @@ void GameUILayer::InitShopMenu(std::shared_ptr<Base::Entity> player)
     price->SetPadding(15, 10);
 
     auto lightIcon = price->AddChild<Base::UITextureRect>("light-icon");
-    lightIcon->SetSprite({GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups"), {}, {16, 8}, {8, 8}});
+    lightIcon->SetSprite({GetOwner()->AssetStore<GameSceneAssets>()->PowerUps, {}, {16, 8}, {8, 8}});
     lightIcon->SetVAlignment(Base::VAlign::Center);
     lightIcon->SetHAlignment(Base::HAlign::Center);
     lightIcon->SetSize({32, 32});
 
     auto lightCost = price->AddChild<Base::UILabel>("light-cost");
-    lightCost->SetFont(GetOwner()->Engine().Assets->GetAsset<Base::Font>("main-font", true));
+    lightCost->SetFont(GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->MainFont);
     lightCost->SetVAlignment(Base::VAlign::Center);
     lightCost->SetHAlignment(Base::HAlign::Center);
     lightCost->SetFontSize(30);

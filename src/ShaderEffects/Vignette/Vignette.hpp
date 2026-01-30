@@ -1,4 +1,5 @@
 #pragma once
+#include "base/assets/AssetHandle.hpp"
 #include "base/rendering/FrameBuffer.hpp"
 #include "base/rendering/Material.hpp"
 #include "base/shaders/ShaderEffect.hpp"
@@ -16,8 +17,7 @@ class Vignette : public Base::ShaderEffect
   float _maintain = false;
 
 public:
-  Vignette(Base::Color vignetteColor, float decayRate, float maxStrenth);
-  void Setup(std::weak_ptr<Base::Scene> layer) override;
+  Vignette(Base::Color vignetteColor, float decayRate, float maxStrenth, Base::AssetHandle<Base::Shader> vignetteShader);
   void Apply( //
     Base::Ptr<Base::FrameBuffer> input, Base::Ptr<Base::FrameBuffer> output,
     Base::Vector2 resolution //

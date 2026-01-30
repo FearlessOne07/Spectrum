@@ -1,5 +1,6 @@
 #include "ParticleLayer.hpp"
 #include "Components/EnemyComponent.hpp"
+#include "Scenes/GameScene/GameSceneAssets.hpp"
 #include "Scenes/GameScene/Signals/GamePause.hpp"
 #include "Scenes/GameScene/Signals/GameResume.hpp"
 #include "base/components/SpriteComponent.hpp"
@@ -99,7 +100,7 @@ void ParticleLayer::OnEntityDiedSignal(std::shared_ptr<EntityDiedSignal> signal)
 
     auto bus = Base::SignalBus::GetInstance();
     std::shared_ptr<Base::PlaySoundSignal> sig = std::make_shared<Base::PlaySoundSignal>();
-    sig->soundHandle = GetOwner()->Engine().Assets->GetAsset<Base::Sound>("enemy-die");
+    sig->soundHandle = GetOwner()->AssetStore<GameSceneAssets>()->EnemyDie;
     bus->BroadCastSignal(sig);
   }
 }

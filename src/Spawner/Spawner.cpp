@@ -1,4 +1,5 @@
 #include "Spawner.hpp"
+#include "Assets/GlobalAssets.hpp"
 #include "Components/CollectableComponent.hpp"
 #include "Components/DamageComponent.hpp"
 #include "Components/DiveComponent.hpp"
@@ -14,6 +15,7 @@
 #include "Components/Tags/PlayerTag.hpp"
 #include "Components/TrackingComponent.hpp"
 #include "Components/TransformEffects.hpp"
+#include "Scenes/GameScene/GameSceneAssets.hpp"
 #include "Signals/EntityDiedSignal.hpp"
 #include "Signals/PlayerSpawnedSignal.hpp"
 #include "WaveManager/EnemySpecs.hpp"
@@ -107,7 +109,7 @@ Base::EntityID Spawner::SpawnPlayer(Base::Vector2 position, const Ship &ship)
 
   auto sprtcmp = e->AddComponent<Base::SpriteComponent>( //
     Base::Sprite{
-      _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("ships", true).Get(),
+      _parentLayer->GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->Ships.Get(),
       ship.SpriteSource.GetPosition(),
       ship.SpriteSource.GetSize(),
       Base::Origin::Center,
@@ -116,7 +118,7 @@ Base::EntityID Spawner::SpawnPlayer(Base::Vector2 position, const Ship &ship)
   );
 
   shtcmp->bulletSprite = {
-    _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("ships", true).Get(),
+    _parentLayer->GetOwner()->Engine().Assets->GlobalAssetStore<GlobalAssets>()->Ships.Get(),
     ship.BulletSpriteSource.GetPosition(),
     ship.BulletSpriteSource.GetSize(),
     Base::Origin::Center,
@@ -263,7 +265,7 @@ void Spawner::SpawnWave( //
       auto trckcmp = e->AddComponent<TrackingComponent>(_playerID);
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
-          _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
+          _parentLayer->GetOwner()->AssetStore<GameSceneAssets>()->Entities.Get(),
           Base::Vector2{0, 0},
           Base::Vector2{8, 8},
           Base::Origin::Center,
@@ -276,7 +278,7 @@ void Spawner::SpawnWave( //
     case EnemyType::Shooter: {
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
-          _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
+          _parentLayer->GetOwner()->AssetStore<GameSceneAssets>()->Entities.Get(),
           Base::Vector2{8, 0},
           Base::Vector2{8, 8},
           Base::Origin::Center,
@@ -290,7 +292,7 @@ void Spawner::SpawnWave( //
       shtcmp->bulletKnockbackForce = 800;
       shtcmp->bulletSpeed = 1000.f;
       shtcmp->bulletSprite = {
-        _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
+        _parentLayer->GetOwner()->AssetStore<GameSceneAssets>()->Entities.Get(),
         {8, 8},
         Base::Vector2{8, 8},
         Base::Origin::Center,
@@ -351,7 +353,7 @@ void Spawner::SpawnWave( //
       mvcmp->driveForce = 500;
       sprtcmp = e->AddComponent<Base::SpriteComponent>( //
         Base::Sprite{
-          _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("entities").Get(),
+          _parentLayer->GetOwner()->AssetStore<GameSceneAssets>()->Entities.Get(),
           Base::Vector2{16, 0},
           Base::Vector2{8, 8},
           Base::Origin::Center,
@@ -462,7 +464,7 @@ void Spawner::SpawnHealthPack(std::shared_ptr<EntityDiedSignal> sig)
 
   e->AddComponent<Base::SpriteComponent>( //
     Base::Sprite{
-      _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups").Get(),
+      _parentLayer->GetOwner()->AssetStore<GameSceneAssets>()->PowerUps.Get(),
       Base::Vector2{24, 8},
       Base::Vector2{8, 8},
       Base::Origin::Center,
@@ -532,7 +534,7 @@ void Spawner::SpawnLight(std::shared_ptr<EntityDiedSignal> sig)
 
     e->AddComponent<Base::SpriteComponent>( //
       Base::Sprite{
-        _parentLayer->GetOwner()->Engine().Assets->GetAsset<Base::Texture>("power-ups").Get(),
+        _parentLayer->GetOwner()->AssetStore<GameSceneAssets>()->PowerUps.Get(),
         Base::Vector2{16, 8},
         Base::Vector2{8, 8},
         Base::Origin::Center,
